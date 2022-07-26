@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Controllers[Namespace];
+
+
+[Controller_Base_Namespace]
+use App\Core\Engine\Router\Request;
+use App\Core\Engine\Router\Response;
+
+
+class [Controller] extends Controller {
+
+    public function index() {
+        
+        return Response::view("[View]/index");
+    }
+
+}

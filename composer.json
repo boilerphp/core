@@ -1,0 +1,22 @@
+{
+    "name": "boiler/core",
+    "description": "Simple PHP webapp backend framework for developers",
+    "require": {
+        "doctrine/dbal": "4.0.x-dev",
+        "phpunit/phpunit": "10.0.x-dev",
+        "phpmailer/phpmailer": "dev-master",
+        "nesbot/carbon": "3.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Boiler\\Core\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "donalkens",
+            "email": "akinniyiakinpelumi@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

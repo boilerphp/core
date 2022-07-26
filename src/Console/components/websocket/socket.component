@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__."/core/app_loader.php";
+
+/*
+* -----------------------------
+* Load socket manager file
+* -----------------------------
+*/ 
+require __DIR__."/core/Engine/Socket/SocketManager.php";
+
+/*
+* -----------------------------------------------------
+* Include server class namespace
+* -----------------------------------------------------
+*/ 
+
+use App\Core\Engine\Socket\SocketManager;
+
+/*
+* -----------------------------------------------------
+* Initialize WebSocket Manager
+* -----------------------------------------------------
+*/ 
+
+$socket = new SocketManager(
+    new App\Core\Server(), $argv
+);
+
+/*
+* --------------------------------------------------------
+* Socket will be start listening to operations from the 
+* command line using 'php socket [SocketName]'
+* -------------------------------------------------------
+*/ 
+
+$socket->run();
