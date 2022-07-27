@@ -1,16 +1,14 @@
 <?php
 
-namespace App\Core;
+namespace Boiler\Core;
 
 use App\Config\App;
 use App\Config\ViewsConfig;
 use Boiler\Core\Middlewares\Session;
 use Boiler\Core\Engine\Router\Route;
 use Boiler\Core\Configs\GlobalConfig;
-use Boiler\Core\Engine\Router\Request;
 use Boiler\Core\Engine\Router\Response;
 use Boiler\Core\FileSystem\Fs;
-use PHPUnit\Util\Json;
 
 class Server extends App
 {
