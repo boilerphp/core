@@ -10,8 +10,16 @@
     },
     "autoload": {
         "psr-4": {
-            "Boiler\\Core\\": "src/"
-        }
+            "Boiler\\Core\\": "src/",
+            "Console\\Support\\": "src/Console/src/"
+        },
+        "files": [
+            "src/Helpers/app.php",
+            "src/Helpers/auth.php",
+            "src/Helpers/forms.php",
+            "src/Helpers/routes.php",
+            "src/Helpers/views.php"
+        ]
     },
     "authors": [
         {
