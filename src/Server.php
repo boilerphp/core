@@ -71,9 +71,9 @@ class Server extends App
     public function getAppCongigurations()
     {
 
-        if (file_exists(__DIR__ . "/../appsettings.json")) {
+        if (file_exists(__DIR__ . "/../../../../appsettings.json")) {
 
-            $this->configurations = json_decode(file_get_contents(__DIR__ . "/../appsettings.json"));
+            $this->configurations = json_decode(file_get_contents(__DIR__ . "/../../../../appsettings.json"));
             return true;
         }
 
@@ -111,8 +111,8 @@ class Server extends App
 
     public function setEnv()
     {
-        if (file_exists(__DIR__ . "/../.env")) {
-            $get_env_file = fopen(__DIR__ . "/../.env", "r");
+        if (file_exists(__DIR__ . "/../../../../.env")) {
+            $get_env_file = fopen(__DIR__ . "/../../../../.env", "r");
             if ($get_env_file) {
                 while (!feof($get_env_file)) {
 
@@ -132,7 +132,7 @@ class Server extends App
 
     public function initRouteHandler()
     {
-        require __DIR__ . "/../routes/route.php";
+        require __DIR__ . "/../../../../routes/route.php";
 
         // Route::pattern();
         Route::listen();
