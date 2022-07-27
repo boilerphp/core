@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Http;
+namespace Boiler\Core\Http;
 
 class Api {
 

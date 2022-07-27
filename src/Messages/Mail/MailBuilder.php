@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Messages\Mail;
+namespace Boiler\Core\Messages\Mail;
 
 use App\Config\MailConfig;
-use App\Core\Engine\Router\Response;
+use Boiler\Core\Engine\Router\Response;
 
 
 

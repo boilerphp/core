@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Messages\Mail;
+namespace Boiler\Core\Messages\Mail;
 
-use App\Core\Configs\GlobalConfig;
+use Boiler\Core\Configs\GlobalConfig;
 use Swift_SendmailTransport;
 use Swift_SmtpTransport;
 use Swift_Mailer;

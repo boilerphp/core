@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Core\Messages\Notification;
+namespace Boiler\Core\Messages\Notification;
 
 interface NotifyBuilderInterface
 {

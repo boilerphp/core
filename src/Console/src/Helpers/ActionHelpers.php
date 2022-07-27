@@ -2,9 +2,9 @@
 
 namespace Console\Support\Helpers;
 
-use App\Core\FileSystem\Fs;
-use App\Core\Database\Console\MigrationReflection;
-use App\Core\Database\Migration\Table;
+use Boiler\Core\FileSystem\Fs;
+use Boiler\Core\Database\Console\MigrationReflection;
+use Boiler\Core\Database\Migration\Table;
 use Console\Support\Interfaces\ActionHelpersInterface;
 
 class ActionHelpers implements ActionHelpersInterface
@@ -383,7 +383,7 @@ class ActionHelpers implements ActionHelpersInterface
 
         if ($this->readComponent($component_path) !== "") {
 
-            $this->component = preg_replace("/\[Controller_Base_Namespace\]/", 'use App\Core\Actions\Urls\Controller;', $this->component);
+            $this->component = preg_replace("/\[Controller_Base_Namespace\]/", 'use Boiler\Core\Actions\Urls\Controller;', $this->component);
             if ($this->checkNamaspacePrefix($controller_name)) {
 
                 $this->component = preg_replace("/\[Namespace\]/", $this->use_namespace, $this->component);

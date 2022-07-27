@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\FileSystem;
+namespace Boiler\Core\FileSystem;
 
 class Image
 {

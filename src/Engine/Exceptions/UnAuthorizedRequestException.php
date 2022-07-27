@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Engine\Exceptions;
+namespace Boiler\Core\Engine\Exceptions;
 
-use App\Core\Engine\Router\Response;
+use Boiler\Core\Engine\Router\Response;
 use Exception;
 use Throwable;
 

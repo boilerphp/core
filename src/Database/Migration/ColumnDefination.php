@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Database\Migration;
+namespace Boiler\Core\Database\Migration;
 
-use App\Core\Database\DataTypes;
-use App\Core\Database\Schema;
+use Boiler\Core\Database\DataTypes;
+use Boiler\Core\Database\Schema;
 
 class ColumnDefination extends DataTypes
 {

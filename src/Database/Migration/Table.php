@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Database\Migration;
+namespace Boiler\Core\Database\Migration;
 
-use App\Core\Database\Schema;
+use Boiler\Core\Database\Schema;
 
 
 class Table implements MigrationInterface
@@ -31,7 +31,7 @@ class Table implements MigrationInterface
     /**
      * Database Connection key
      *
-     * @var App\Core\Database\Schema
+     * @var Boiler\Core\Database\Schema
      *
      */
     protected static $schema;

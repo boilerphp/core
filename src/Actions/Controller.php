@@ -3,7 +3,7 @@
 namespace App\Action\Urls\Controllers;
 
 
-use App\Core\Urls\Controllers\BaseController;
+use Boiler\Core\Urls\Controllers\BaseController;
 
 
 class Controller extends BaseController {

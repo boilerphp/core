@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Exceptions\Console;
+namespace Boiler\Core\Exceptions\Console;
 
-use App\Core\Exceptions\Interfaces\ExceptionInterface;
+use Boiler\Core\Exceptions\Interfaces\ExceptionInterface;
 
 class BadActionException extends \Exception implements ExceptionInterface
 {

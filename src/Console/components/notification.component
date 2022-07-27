@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use App\Core\Messages\Mail\Mail;
-use App\Core\Messages\Notification\Notification;
+use Boiler\Core\Messages\Mail\Mail;
+use Boiler\Core\Messages\Notification\Notification;
 
 
 class [Notification] extends Notification {

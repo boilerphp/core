@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Engine\Socket;
+namespace Boiler\Core\Engine\Socket;
 
-use App\Core\Engine\Socket\Interfaces\WebSocketEventsInterface;
+use Boiler\Core\Engine\Socket\Interfaces\WebSocketEventsInterface;
 use Exception;
 
 class WsServer implements WebSocketEventsInterface {

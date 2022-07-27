@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Core\Database\Model;
+use Boiler\Core\Database\Model;
 
 
 class [Model] extends Model {

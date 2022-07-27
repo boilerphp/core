@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Database\Migration;
+namespace Boiler\Core\Database\Migration;
 
-use App\Core\Database\Schema;
+use Boiler\Core\Database\Schema;
 
 class Migration extends Schema
 {

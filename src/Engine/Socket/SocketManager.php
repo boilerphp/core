@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Engine\Socket;
+namespace Boiler\Core\Engine\Socket;
 
-use App\Core\Server;
+use Boiler\Core\Server;
 
 class SocketManager {
 

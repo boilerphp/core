@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Engine\Template;
+namespace Boiler\Core\Engine\Template;
 
 use App\Config\ViewsConfig;
 
@@ -83,7 +83,7 @@ class TemplateEngine
 
         $fcontent = $fileContent;
         // $fcontent = TemplateEngine::htmlSymbolicCharacters($fcontent);
-        $fcontent = preg_replace("/@\{\{(.*)load (.*)\}\}/", '<?php echo \App\Core\Engine\Template\TemplateEngine::loadFile("./../' . ViewsConfig::$views_path . '/".($2).".".self::$ext, $content); ?>', $fcontent);
+        $fcontent = preg_replace("/@\{\{(.*)load (.*)\}\}/", '<?php echo \Boiler\Core\Engine\Template\TemplateEngine::loadFile("./../' . ViewsConfig::$views_path . '/".($2).".".self::$ext, $content); ?>', $fcontent);
         $fcontent = static::auth($fcontent);
         $fcontent = static::sessions($fcontent);
         $fcontent = static::keys($fcontent, $content);

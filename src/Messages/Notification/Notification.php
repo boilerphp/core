@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Messages\Notification;
+namespace Boiler\Core\Messages\Notification;
 
-use App\Core\Messages\Mail\Mail;
+use Boiler\Core\Messages\Mail\Mail;
 
 class Notification extends Notify
 {

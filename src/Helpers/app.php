@@ -1,9 +1,9 @@
 <?php
 
-use App\Core\Engine\Router\Response;
-use App\Core\Hashing\Hash;
-use App\Core\Middlewares\Session;
-use App\Core\Middlewares\Cookie;
+use Boiler\Core\Engine\Router\Response;
+use Boiler\Core\Hashing\Hash;
+use Boiler\Core\Middlewares\Session;
+use Boiler\Core\Middlewares\Cookie;
 
 
 if(!function_exists("dump"))
@@ -424,7 +424,7 @@ if(!function_exists("view"))
      * 
      * @param array $data
      * 
-     * @return App\Core\Engine\Router\Response
+     * @return Boiler\Core\Engine\Router\Response
      */
 
     function view($view, $data = [], $status = 200) {
@@ -442,7 +442,7 @@ if(!function_exists("absolute_view"))
      * 
      * @param array $data
      * 
-     * @return App\Core\Engine\Router\Response
+     * @return Boiler\Core\Engine\Router\Response
      */
 
     function absolute_view($path, $data = [], $status = 200) {

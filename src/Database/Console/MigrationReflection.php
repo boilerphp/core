@@ -1,8 +1,8 @@
 <?php 
 
-namespace App\Core\Database\Console;
+namespace Boiler\Core\Database\Console;
 
-use App\Core\Database\Migration\Migration;
+use Boiler\Core\Database\Migration\Migration;
 
 class MigrationReflection extends Migration {
 

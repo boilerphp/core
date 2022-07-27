@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Core\Engine\Router;
+namespace Boiler\Core\Engine\Router;
 
 use App\Config\ViewsConfig;
-use App\Core\Engine\Router\Request;
-use App\Core\Engine\Template\TemplateEngine;
-use App\Core\FileSystem\Fs;
+use Boiler\Core\Engine\Router\Request;
+use Boiler\Core\Engine\Template\TemplateEngine;
+use Boiler\Core\FileSystem\Fs;
 use Exception;
 
 

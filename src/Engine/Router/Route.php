@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Core\Engine\Router;
+namespace Boiler\Core\Engine\Router;
 
 
 use Exception;
 use App\Config\RoutesConfig;
-use App\Core\Actions\Urls\Controller;
-use App\Core\Database\Schema;
-use App\Core\Hashing\Hash;
-use App\Core\Admin\Auth;
+use Boiler\Core\Actions\Urls\Controller;
+use Boiler\Core\Database\Schema;
+use Boiler\Core\Hashing\Hash;
+use Boiler\Core\Admin\Auth;
 
 class Route extends RoutesConfig
 {

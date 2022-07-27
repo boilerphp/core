@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Messages\Mail;
+namespace Boiler\Core\Messages\Mail;
 
 interface MailBuilderInterface
 {

@@ -3,9 +3,9 @@
 namespace Console\Support;
 
 use App\FileSystem\Fs;
-use App\Core\Database\Console\Support\MigrationReflection;
-use App\Core\Database\Migration\Table;
-use App\Core\Database\Schema;
+use Boiler\Core\Database\Console\Support\MigrationReflection;
+use Boiler\Core\Database\Migration\Table;
+use Boiler\Core\Database\Schema;
 use Console\Support\Interfaces\ActionHelpersInterface;
 
 

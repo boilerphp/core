@@ -2,7 +2,7 @@
 
 namespace App\WebSocket;
 
-use App\Core\Engine\Socket\WebSocket;
+use Boiler\Core\Engine\Socket\WebSocket;
 use Exception;
 
 

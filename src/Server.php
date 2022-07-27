@@ -4,12 +4,12 @@ namespace App\Core;
 
 use App\Config\App;
 use App\Config\ViewsConfig;
-use App\Core\Middlewares\Session;
-use App\Core\Engine\Router\Route;
-use App\Core\Configs\GlobalConfig;
-use App\Core\Engine\Router\Request;
-use App\Core\Engine\Router\Response;
-use App\Core\FileSystem\Fs;
+use Boiler\Core\Middlewares\Session;
+use Boiler\Core\Engine\Router\Route;
+use Boiler\Core\Configs\GlobalConfig;
+use Boiler\Core\Engine\Router\Request;
+use Boiler\Core\Engine\Router\Response;
+use Boiler\Core\FileSystem\Fs;
 use PHPUnit\Util\Json;
 
 class Server extends App

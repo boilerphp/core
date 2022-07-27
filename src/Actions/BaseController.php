@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Urls\Controllers;
+namespace Boiler\Core\Urls\Controllers;
 
 
 use Exception;

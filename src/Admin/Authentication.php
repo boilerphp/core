@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Core\Admin;
+namespace Boiler\Core\Admin;
 
-use App\Core\Middlewares\Session;
-use App\Models\User;
+use Boiler\Core\Middlewares\Session;
 
 class Authentication
 {
@@ -14,7 +13,7 @@ class Authentication
         if(Session::get("auth")) 
         {
             $id = Session::get("auth");
-            return (new User)->find($id);
+            return (new AuthenticableUser)->find($id);
         }
 
         return null;

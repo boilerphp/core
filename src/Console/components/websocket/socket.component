@@ -16,7 +16,7 @@ require __DIR__."/core/Engine/Socket/SocketManager.php";
 * -----------------------------------------------------
 */ 
 
-use App\Core\Engine\Socket\SocketManager;
+use Boiler\Core\Engine\Socket\SocketManager;
 
 /*
 * -----------------------------------------------------
@@ -25,7 +25,7 @@ use App\Core\Engine\Socket\SocketManager;
 */ 
 
 $socket = new SocketManager(
-    new App\Core\Server(), $argv
+    new Boiler\Core\Server(), $argv
 );
 
 /*

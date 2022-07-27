@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Database;
+namespace Boiler\Core\Database;
 
-use App\Core\Configs\GlobalConfig;
+use Boiler\Core\Configs\GlobalConfig;
 use ErrorException, PDO;
 
 class Connection

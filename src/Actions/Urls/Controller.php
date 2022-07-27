@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Actions\Urls;
+namespace Boiler\Core\Actions\Urls;
 
 
 class Controller extends BaseController {

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Core\Configs;
+namespace Boiler\Core\Configs;
 
-use App\Core\Database\Connection;
+use Boiler\Core\Database\Connection;
 
 class GlobalConfig
 {

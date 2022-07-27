@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Database\Migration;
+namespace Boiler\Core\Database\Migration;
 
 
 class Diagram extends ColumnDefination {

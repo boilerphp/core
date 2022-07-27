@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Admin;
+namespace Boiler\Core\Admin;
 
 class Auth extends Authentication
 { 

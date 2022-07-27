@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Core\Exceptions\Interfaces;
+namespace Boiler\Core\Exceptions\Interfaces;
 
 interface ExceptionInterface {
 

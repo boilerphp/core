@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Hashing;
+namespace Boiler\Core\Hashing;
 
 class Hash {
 

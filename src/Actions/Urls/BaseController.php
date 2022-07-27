@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Actions\Urls;
+namespace Boiler\Core\Actions\Urls;
 
-use App\Core\Engine\Router\Response;
-use App\Core\Admin\Auth;
+use Boiler\Core\Engine\Router\Response;
+use Boiler\Core\Admin\Auth;
 
 
 class BaseController

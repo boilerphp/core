@@ -1,7 +1,7 @@
 <?php
 
 use App\Config\ViewsConfig;
-use App\Core\Middlewares\Session;
+use Boiler\Core\Middlewares\Session;
 
 
 
@@ -30,7 +30,7 @@ if(!function_exists("validation"))
      * returns a validation message set by request Validator
      * 
      * @param string $key
-     * @return App\Core\Urls\Validator|string
+     * @return Boiler\Core\Urls\Validator|string
     */
     function validation($key = "all", $message = null)
     {

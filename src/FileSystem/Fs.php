@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\FileSystem;
+namespace Boiler\Core\FileSystem;
 
 use Error, ZipArchive;
-use App\Core\Hashing\Hash;
+use Boiler\Core\Hashing\Hash;
 
 class Fs
 {

@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Core\Engine\Socket;
+namespace Boiler\Core\Engine\Socket;
 
 
 class WebSocket extends WsServer {

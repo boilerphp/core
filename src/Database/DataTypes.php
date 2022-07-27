@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Database;
+namespace Boiler\Core\Database;
 
 
 class DataTypes {
@@ -23,7 +23,7 @@ class DataTypes {
     /**
      * Set column datatype to big increments
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function bigIncrements() 
     {
@@ -41,7 +41,7 @@ class DataTypes {
      * 
      * @param $length 
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function bigInteger($length = 20) 
     {
@@ -54,7 +54,7 @@ class DataTypes {
      * 
      * @param $length 
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function unsignedBigInteger($length = 20) 
     {
@@ -66,7 +66,7 @@ class DataTypes {
     /**
      * Set column datatype to boolean
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function boolean() 
     {
@@ -85,7 +85,7 @@ class DataTypes {
     /**
      * Set column datatype to date
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function date()
     {
@@ -96,7 +96,7 @@ class DataTypes {
     /**
      * Set column default value
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function default($value)
     {
@@ -112,7 +112,7 @@ class DataTypes {
      * @param $length
      * @param $decimal 
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function float($length = 10, $decimal = 2) 
     {
@@ -128,7 +128,7 @@ class DataTypes {
      * @param $table - name of the foreign table
      * @param $reference - relating column of the foreign table
      * 
-     * @return App\Core\Database\ColumnDefination
+     * @return Boiler\Core\Database\ColumnDefination
      */
     public function foreign($table, $reference = "id")
     {
@@ -159,7 +159,7 @@ class DataTypes {
      * Set column datatype to integer datatype
      * with auto increment value.
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function increments() 
     {
@@ -178,7 +178,7 @@ class DataTypes {
      * 
      * @param $name - Default value 'id'
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function id($name = "id")
     {
@@ -195,7 +195,7 @@ class DataTypes {
      * 
      * @param $name - Default value 'id'
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function uniqeId($name = "id")
     {
@@ -211,7 +211,7 @@ class DataTypes {
      * 
      * @param $length - Default value '100'
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function stringId($length = 100)
     {
@@ -226,7 +226,7 @@ class DataTypes {
      * 
      * @param $length - Default value '9'
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function integer($length = 9) 
     {
@@ -240,7 +240,7 @@ class DataTypes {
      * 
      * @param $length - Default value '100'
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function string($length = 100) 
     {
@@ -252,7 +252,7 @@ class DataTypes {
     /**
      * Set column datatype to text
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function text() 
     {
@@ -264,7 +264,7 @@ class DataTypes {
     /**
      * Set column datatype to longtext
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function longtext() 
     {
@@ -275,7 +275,7 @@ class DataTypes {
     /**
      * Define column as primary key
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function primary($column = "")
     {
@@ -295,7 +295,7 @@ class DataTypes {
      * 
      * @param $state - Default value 'true'
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function nullable($state = true) 
     {
@@ -308,7 +308,7 @@ class DataTypes {
     /**
      * Set column datatype to time
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function time() 
     {
@@ -319,7 +319,7 @@ class DataTypes {
     /**
      * Set column datatype to datetime
      * 
-     * @return App\Core\Database\DataTypes
+     * @return Boiler\Core\Database\DataTypes
      */
     public function timestamp() 
     {

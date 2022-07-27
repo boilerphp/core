@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Admin;
+namespace Boiler\Core\Admin;
 
 use Exception;
-use App\Core\Middlewares\Session;
+use Boiler\Core\Middlewares\Session;
 
 
 class Door

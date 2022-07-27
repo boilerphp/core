@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Core\Console;
+namespace Boiler\Core\Console;
 
 use Console\Support\Actions;
 

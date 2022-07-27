@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Core\Database\QueryConstructor;
+namespace Boiler\Core\Database\QueryConstructor;
 
 
 class SqlLiteQueryConstructor {

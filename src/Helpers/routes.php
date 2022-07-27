@@ -1,6 +1,6 @@
 <?php
 
-use App\Core\Engine\Router\Request;
+use Boiler\Core\Engine\Router\Request;
 
 
 if(!function_exists("request"))
@@ -8,7 +8,7 @@ if(!function_exists("request"))
     /**
      * Instantiating request class for app 
      * view 
-     * @return App\Core\Engine\Router\Request|bool;
+     * @return Boiler\Core\Engine\Router\Request|bool;
      * */ 
 
     function request($url = null) {

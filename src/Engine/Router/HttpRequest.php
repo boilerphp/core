@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Engine\Router;
+namespace Boiler\Core\Engine\Router;
 
 
 abstract class HttpRequest

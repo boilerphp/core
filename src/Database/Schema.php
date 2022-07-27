@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Core\Database;
+namespace Boiler\Core\Database;
 
 use ReflectionClass;
 use ReflectionMethod;
-use App\Core\Configs\GlobalConfig;
+use Boiler\Core\Configs\GlobalConfig;
 
 class Schema extends QueryBuilder
 {
@@ -66,7 +66,7 @@ class Schema extends QueryBuilder
     /**
      * Database connection 
      *
-     * @var App\Core\Database\Connection
+     * @var Boiler\Core\Database\Connection
      *
      */
     protected $connection;

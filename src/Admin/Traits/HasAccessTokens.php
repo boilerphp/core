@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Core\Admin\Traits;
+namespace Boiler\Core\Admin\Traits;
 
 
 trait HasAccessTokens {

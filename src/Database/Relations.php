@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Database;
+namespace Boiler\Core\Database;
 
 class Relations extends Schema {
 

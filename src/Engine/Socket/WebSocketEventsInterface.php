@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Core\Factory\Socket\Interfaces;
+namespace Boiler\Core\Factory\Socket\Interfaces;
 
 use Exception;
 

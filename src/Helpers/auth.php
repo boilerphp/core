@@ -1,7 +1,7 @@
 <?php
 
-use App\Core\Admin\Door;
-use App\Core\Admin\Auth;
+use Boiler\Core\Admin\Door;
+use Boiler\Core\Admin\Auth;
 
 if(!function_exists("auth")) 
 {

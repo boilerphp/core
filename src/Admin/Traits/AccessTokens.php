@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Admin\Traits;
+namespace Boiler\Core\Admin\Traits;
 
-use App\Core\Database\Schema;
-use App\Core\Hashing\Hash;
+use Boiler\Core\Database\Schema;
+use Boiler\Core\Hashing\Hash;
 
 trait AccessTokens
 { 
