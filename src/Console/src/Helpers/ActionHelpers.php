@@ -199,7 +199,7 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureNotification($notification_name, $notification_path)
     {
-        $component_path = "./core/Console/components/notification.component";
+        $component_path = __DIR__."/../../components/notification.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[Notification\]/", $notification_name, $this->component);
@@ -222,7 +222,7 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureModel($model_name, $model_path)
     {
-        $component_path = "./core/Console/components/model.component";
+        $component_path = __DIR__."/../../components/model.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[Model\]/", $model_name, $this->component);
@@ -246,7 +246,7 @@ class ActionHelpers implements ActionHelpersInterface
      */
     public function configureMigration($migration_name, $migration_path, $component)
     {
-        $component_path = "./core/Console/components/$component.component";
+        $component_path = __DIR__."/../../components/$component.component";
         if ($this->readComponent($component_path)) {
             $class_name = ucfirst($migration_name);
             if (strpos($migration_name, "_")) {
@@ -296,7 +296,7 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureSocket($socket_name, $socket_path)
     {
-        $component_path = "./core/Console/components/websocket/socket-skeleton.component";
+        $component_path = __DIR__."/../../components/websocket/socket-skeleton.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[SocketName\]/", $socket_name, $this->component);
@@ -379,7 +379,7 @@ class ActionHelpers implements ActionHelpersInterface
      */
     public function configureController($controller_name, $controller_path)
     {
-        $component_path = "./core/Console/components/controller.component";
+        $component_path = __DIR__."/../../components/controller.component";
 
         if ($this->readComponent($component_path) !== "") {
 
@@ -416,7 +416,7 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureSeeder($seeder_name, $seeder_path)
     {
-        $component_path = "./core/Console/components/seeder.component";
+        $component_path = __DIR__."/../../components/seeder.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[ClassName\]/", $seeder_name, $this->component);
@@ -628,43 +628,11 @@ class ActionHelpers implements ActionHelpersInterface
         }
     }
 
-    public function enableThirdPartyLibrary()
-    {
-        $component_path = "./core/Console/components/enable-third-party.component";
-        if ($this->readComponent($component_path) !== "") {
-            $path = "./core/app_loader.php";
-            $this->module = $this->component;
-            if ($this->writeModule($path)) {
-                $this->verbose("Third party libray has been enabled!");
-                return true;
-            }
-
-            $this->verbose("Process Failed!");
-            return false;
-        }
-    }
-
-    public function disableThirdPartyLibrary()
-    {
-        $component_path = "./core/Console/components/disable-third-party.component";
-        if ($this->readComponent($component_path) !== "") {
-            $path = "./core/app_loader.php";
-            $this->module = $this->component;
-            if ($this->writeModule($path)) {
-                $this->verbose("Third party libray has been disabled!");
-                return true;
-            }
-
-            $this->verbose("Process Failed!");
-            return false;
-        }
-    }
-
     public function enableWebSocket($flag = null)
     {
 
-        $component_path = "./core/Console/components/websocket/socket-skeleton.component";
-        $manager_path = "./core/Console/components/websocket/socket.component";
+        $component_path = __DIR__."/../../components/websocket/socket-skeleton.component";
+        $manager_path = __DIR__."/../../components/websocket/socket.component";
 
         if (!$this->checkExistent("./socket")) {
 

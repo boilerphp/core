@@ -164,23 +164,6 @@ class Actions extends ActionHelpers
         return false;
     }
 
-    public function thirdpartylibrary($state, $flag = null)
-    {
-        if ($state == true) {
-            if ($this->enableThirdPartyLibrary()) {
-                return true;
-            } else {
-                return false;
-            }
-        } else if ($state == false) {
-            if ($this->disableThirdPartyLibrary()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
-
     public function websocket($state, $flag = null)
     {
 
