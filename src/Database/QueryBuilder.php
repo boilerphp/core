@@ -205,7 +205,7 @@ class QueryBuilder extends DataTypes
 
 	protected function orWhereQuery($key, $value, $operation = null)
 	{
-		$this->whereQuery .= " OR ";
+		$this->whereQuery = trim($this->whereQuery, "AND ") . " OR ";
 
 		if (is_array($key)) {
 			$index = 0;
@@ -262,7 +262,7 @@ class QueryBuilder extends DataTypes
 
 			if (!empty($this->whereQuery)) {
 				$this->queryString .= trim($this->whereQuery, "AND ");
-				$this->queryString .= trim($this->whereQuery, "OR ");
+				$this->queryString = trim($this->queryString, "OR ");
 			}
 
 			if (!empty($this->groupQuery)) {
