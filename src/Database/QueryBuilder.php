@@ -203,6 +203,39 @@ class QueryBuilder extends DataTypes
 		}
 	}
 
+	protected function orWhereQuery($key, $value, $operation = null)
+	{
+		$this->whereQuery .= " OR ";
+
+		if (is_array($key)) {
+			$index = 0;
+			foreach ($key as $column => $val) {
+				if ($operation != null) {
+					if (is_array($operation)) {
+						$op = $operation[$index];
+						$this->whereQuery .= " `$column` $op '$val' OR ";
+					} else {
+						$this->whereQuery .= " `$column` $operation '$val' OR ";
+					}
+				} else {
+					$this->whereQuery .= " `$column` = :$column OR ";
+					$this->whereData = array_merge($this->whereData, $key);
+				}
+
+				$index++;
+			}
+		} else if (!is_array($key)) {
+			if ($operation != null) {
+
+				$this->whereQuery .= "`$key` $operation '$value' OR ";
+			} else {
+
+				$this->whereQuery .= "`$key` = :$key OR ";
+				$this->whereData = array_merge($this->whereData, array($key => $value));
+			}
+		}
+	}
+
 	protected function groupQuery($column)
 	{
 		$this->groupQuery = " GROUP BY `$column`";
@@ -229,6 +262,7 @@ class QueryBuilder extends DataTypes
 
 			if (!empty($this->whereQuery)) {
 				$this->queryString .= trim($this->whereQuery, "AND ");
+				$this->queryString .= trim($this->whereQuery, "OR ");
 			}
 
 			if (!empty($this->groupQuery)) {

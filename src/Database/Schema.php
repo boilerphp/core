@@ -502,6 +502,12 @@ class Schema extends QueryBuilder
         return $this;
     }
 
+    public function orWhere($keys, $value = null)
+    {
+        $this->orWhereQuery($keys, $value);
+        return $this;
+    }
+
 
     public function whereWithOperation($keys, $opration, $value = null)
     {
