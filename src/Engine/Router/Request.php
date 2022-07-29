@@ -34,14 +34,6 @@ class Request extends Validator
     public $url;
 
     /**
-     * request url
-     *
-     * @var object
-     */
-    public $json;
-
-
-    /**
      * set the method use in http request
      *
      * @param string method of http request action
@@ -119,7 +111,7 @@ class Request extends Validator
                 return null;
             }
         }
-        return $this->json = $data;
+        return $data;
     }
 
 
