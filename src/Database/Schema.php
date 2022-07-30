@@ -343,17 +343,17 @@ class Schema extends QueryBuilder
         return $result;
     }
 
-    public function create(array $data, $callback = null)
+    public function create(array $data, callable|null $callback = null)
     {
         $instance = $this->insert($data);
         if ($callback !== null) {
-            $callback($instance);
+            return $callback($instance);
         }
 
         return $instance;
     }
 
-    public function createAll(array $list = [], callable $callback = null)
+    public function createAll(array $list = [], callable|null $callback = null)
     {
         if (count($list)) {
 
@@ -524,15 +524,7 @@ class Schema extends QueryBuilder
 
     public function toArray()
     {
-        $this->result_data_format = "arrays";
-
-        if ($this->selectQuery()) {
-            $result = $this->fetch();
-            if ($result) {
-                return (!isset($result[0])) ? [$result] : $result;
-            }
-        }
-        return null;
+        return json_decode(json_encode($this), true);
     }
 
 
