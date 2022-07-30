@@ -516,7 +516,7 @@ class ActionHelpers implements ActionHelpersInterface
                 $this->migrationReflection->deleteMigration($migration_file);
 
                 $this->verbose("Rolled Back: ", "success", false);
-                $this->verbose("{$migration_file}");
+                $this->verbose("{$name}");
 
                 $index++;
             }
