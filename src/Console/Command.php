@@ -111,7 +111,7 @@ class Command extends Actions {
 
         $this->migrationReflection();
 
-        if($this->fresh) { $this->dropAllExistingTable(); exit; }
+        if($this->fresh) { $this->dropAllExistingTable(); }
         if($this->rollback) { $this->rollbackMigrations($target, $steps); exit; }
         
 
