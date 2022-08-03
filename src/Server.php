@@ -106,7 +106,7 @@ class Server extends App
             }
         }
 
-        header("HTTP/1.0 200 OK");
+        header("HTTP/1.1 200 OK");
     }
 
     public function setEnv()
