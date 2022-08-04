@@ -84,6 +84,7 @@ class Server extends App
 
     public function loadHeaders()
     {
+        header("HTTP/1.1 200 OK");
 
         foreach ($this->headers as $key => $value) {
 
@@ -106,7 +107,6 @@ class Server extends App
             }
         }
 
-        header("HTTP/1.1 200 OK");
     }
 
     public function setEnv()
