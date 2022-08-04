@@ -6,8 +6,7 @@
         "doctrine/dbal": "^4.0.x-dev",
         "phpunit/phpunit": "^10.0.x-dev",
         "phpmailer/phpmailer": "dev-master",
-        "nesbot/carbon": "^3.x-dev",
-        "asm89/stack-cors": "2.1.x-dev"
+        "nesbot/carbon": "^3.x-dev"
     },
     "autoload": {
         "psr-4": {

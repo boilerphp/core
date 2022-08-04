@@ -45,37 +45,15 @@ class Server extends App
         $this->boot();
     }
 
-
-    public function corsInit() {
-
-        $cors = new CorsService([
-            'allowedHeaders'         => $this->corsHeaders ?? ["Origin", "Content-Type", "X-Requested-With", "Authorization", "Accept"],
-            'allowedMethods'         => $this->corsMethods ?? ["GET", "PUT", "PATCH", "POST", "DELETE", "OPTIONS"],
-            'allowedOrigins'         => $this->allowed_domains ?? ["*"],
-            'allowedOriginsPatterns' => ['/localhost:\d/'],
-            'exposedHeaders'         => false,
-            'maxAge'                 => $this->maxAge ?? 0,
-            'supportsCredentials'    => false,
-        ]);
-
-        // $cors->addActualRequestHeaders(Response $response, $origin);
-        // $cors->handlePreflightRequest(Request $request);
-        // $cors->isActualRequestAllowed(Request $request);
-        // $cors->isCorsRequest(Request $request);
-        // $cors->isPreflightRequest(Request $request);
-    }
-
     public function boot()
     {
-
-        $this->corsInit();
 
         if (env('APP_ENV') !== 'testing') {
 
             $this->sessionConfigs();
             (new Session)->initialize();
 
-            // $this->loadHeaders();
+            $this->loadHeaders();
         }
     }
 
