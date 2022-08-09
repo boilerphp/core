@@ -227,26 +227,21 @@ class Actions extends ActionHelpers
                 $this->verbose("{$seed_file}", breakline: true);
             }
         } else {
-            $all_seed_file = glob("./database/Seeders/*.php");
+            
+            $seed_file = "./database/Seeders/DatabaseSeeder.php";
+            $this->requireOnce($seed_file);
 
-            if ($all_seed_file) 
-            {
-                foreach ($all_seed_file as $seed_file) 
-                {
-                    $this->requireOnce($seed_file);
+            $className = ($this->FileClassName($seed_file)['class']);
+            
+            $this->verbose("Seeding: ", "info", false);
+            $this->verbose("{$seed_file}", breakline: true);
 
-                    $className = ($this->FileClassName($seed_file)['class']);
-                    
-                    $this->verbose("Seeding: ", "info", false);
-                    $this->verbose("{$seed_file}", breakline: true);
+            $class = new $className;
+            $class->run();
 
-                    $class = new $className;
-                    $class->run();
-
-                    $this->verbose("Seeded: ", "success", false);
-                    $this->verbose("{$seed_file}", breakline: true);
-                }
-            }
+            $this->verbose("Seeded: ", "success", false);
+            $this->verbose("{$seed_file}", breakline: true);
+            
         }
 
         $this->verbose("Database seeding completed!", "success");

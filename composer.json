@@ -11,7 +11,8 @@
     "autoload": {
         "psr-4": {
             "Boiler\\Core\\": "src/",
-            "Console\\Support\\": "src/Console/src/"
+            "Console\\Support\\": "src/Console/src/",
+            "Tests\\": "tests/" 
         },
         "files": [
             "src/Helpers/app.php",

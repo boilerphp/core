@@ -1,23 +1,23 @@
 <?php
 
 use Boiler\Core\Engine\Router\Request;
+use Boiler\Core\Engine\Router\Response;
 
-
-if(!function_exists("request"))
-{
+if (!function_exists("request")) {
     /**
      * Instantiating request class for app 
      * view 
      * @return Boiler\Core\Engine\Router\Request|bool;
-     * */ 
+     * */
 
-    function request($url = null) {
+    function request($url = null)
+    {
 
         $method = $_SERVER["REQUEST_METHOD"];
         $request = new Request($method);
 
-        if(!is_null($url)) {
-            if($request->location() == $url) {
+        if (!is_null($url)) {
+            if ($request->location() == $url) {
                 return true;
             } else {
                 return false;
@@ -25,110 +25,124 @@ if(!function_exists("request"))
         }
 
         return $request;
-
     }
 }
 
-if(!function_exists("url")) 
-{
+if (!function_exists("url")) {
     /**
      * Gets the full url of the page
      * 
      * @param bool $decode
      * @return string
-     * */ 
+     * */
 
     function url($decode = true)
     {
-        if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) 
-            ||  isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        if (
+            isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)
+            ||  isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+        ) {
             $protocol = 'https://';
-        }
-        else 
-        {
+        } else {
             $protocol = 'http://';
         }
 
-        $url = $protocol.$_SERVER["HTTP_HOST"].$_SERVER["REQUEST_URI"];
-        if($decode) 
-        {
+        $url = $protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
+        if ($decode) {
             $url = urldecode($url);
         }
-        
+
         return $url;
     }
 }
 
-if(!function_exists("domain")) 
-{
+if (!function_exists("domain")) {
     /**
      * Gets the full domain of the page
      * @return string;
-     * */ 
+     * */
 
     function domain()
     {
-        if (isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1) 
-            ||  isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+        if (
+            isset($_SERVER['HTTPS']) && ($_SERVER['HTTPS'] == 'on' || $_SERVER['HTTPS'] == 1)
+            ||  isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'
+        ) {
             $protocol = 'https://';
-        }
-        else 
-        {
+        } else {
             $protocol = 'http://';
         }
-        return $protocol.$_SERVER["HTTP_HOST"];
+        return $protocol . $_SERVER["HTTP_HOST"];
     }
 }
 
-if(!function_exists("route")) 
-{
+if (!function_exists("route")) {
     /** 
      * returns a url string
      * 
      * @param string $path
      * @param string $params
      * @return string
-    */
+     */
 
     function route($name, $paramters = null)
     {
-       if(isset($_ENV["app_route_name_specifier"][$name])) {
-           $route = $_ENV["app_route_name_specifier"][$name]["url"];
+        if (isset($_ENV["app_route_name_specifier"][$name])) {
+            $route = $_ENV["app_route_name_specifier"][$name]["url"];
 
-           if(preg_match("/\{/", $route)) {
+            if (preg_match("/\{/", $route)) {
 
                 $paths = explode("/", $route);
                 $url = "";
-                foreach($paths as $path) {
-                    if(strpos($path, ":")) {
+                foreach ($paths as $path) {
+                    if (strpos($path, ":")) {
                         $clean = explode(":", $path);
                         $key = str_replace("{", "", $clean[0]);
-                        
-                            if(!is_null($paramters)) {
-                                if(array_key_exists($key, $paramters)) {
-                                    $url .= "/".$paramters[$key];
-                                }
-                            } else 
-                            {
-                                $url .= "/null";
+
+                        if (!is_null($paramters)) {
+                            if (array_key_exists($key, $paramters)) {
+                                $url .= "/" . $paramters[$key];
                             }
-                    } else 
-                    {
+                        } else {
+                            $url .= "/null";
+                        }
+                    } else {
                         $url .= "/$path";
                     }
                 }
-
-           } else
-           {
+            } else {
                 $url = $route;
-           }
+            }
+        } else {
+            $url = null;
+        }
 
-       } else 
-       {
-           $url = null;
-       }
+        return $url;
+    }
+}
 
-       return $url;
-    
+
+if (!function_exists("redirect")) {
+    /**
+     * Redirecting to request a controller
+     * 
+     * */
+
+    function redirect($path)
+    {
+        return Response::redirect($path);
+    }
+}
+
+
+if (!function_exists("redirectToHost")) {
+    /**
+     * Redirecting to request a new host url
+     * 
+     * */
+
+    function redirectToHost($url)
+    {
+        return Response::redirectToHost($url);
     }
 }

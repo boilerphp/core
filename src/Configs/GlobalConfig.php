@@ -133,11 +133,11 @@ class GlobalConfig
     {
 
         if (static::$CONNECTION != null) {
-            static::$CONNECTION->closeConnectionSocket();
+            static::$CONNECTION->closeConnection();
         }
 
         if (static::$targetDatabase != null) {
-            static::$targetDatabase->closeConnectionSocket();
+            static::$targetDatabase->closeConnection();
         }
 
         $CONNECTION = null;

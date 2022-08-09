@@ -8,15 +8,8 @@ class SocketManager {
 
     public function __construct(Server $server, $argv) {
 
-        
-        $server->load_socket_modules();
-
-        $server->load_app_models();
-        $server->load_app_notifications();
-        
-
+        $server->start(true);
         $this->arguments = $argv;
-
     }
 
     public function run() {

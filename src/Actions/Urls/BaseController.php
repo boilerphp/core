@@ -2,7 +2,6 @@
 
 namespace Boiler\Core\Actions\Urls;
 
-use Boiler\Core\Engine\Router\Response;
 use Boiler\Core\Admin\Auth;
 
 
@@ -10,9 +9,9 @@ class BaseController
 {
 
 
-	public function detectCrossDomain($redirect)
+	public function detectCrossDomain($redirect, $domainSuffix = "*")
 	{
-		if (stripos($redirect, "account.") > 0) {
+		if (stripos($redirect, ($domainSuffix === "*" ? "." : $domainSuffix)) > 0) {
 			return true;
 		} else {
 			return false;
@@ -27,9 +26,9 @@ class BaseController
 			$logger = true;
 		} else {
 			if (strpos($redirect, "//")) {
-				Response::redirectToHost($redirect);
+				redirectToHost($redirect);
 			} else {
-				Response::redirect($redirect);
+				redirect($redirect);
 			}
 		}
 	}
@@ -40,7 +39,7 @@ class BaseController
 		$permissions = Auth::user()->permissions;
 
 		if (!array_key_exists($permission, $permissions)) {
-			return Response::redirect($redirect);
+			return redirect($redirect);
 		}
 	}
 
@@ -51,7 +50,7 @@ class BaseController
 
 		foreach ($list as $permission) {
 			if (!array_key_exists($permission, $permissions)) {
-				return Response::redirect($redirect);
+				return redirect($redirect);
 			}
 		}
 	}

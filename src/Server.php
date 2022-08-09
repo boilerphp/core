@@ -4,7 +4,6 @@ namespace Boiler\Core;
 
 use App\Config\App;
 use App\Config\ViewsConfig;
-use Asm89\Stack\CorsService;
 use Boiler\Core\Middlewares\Session;
 use Boiler\Core\Engine\Router\Route;
 use Boiler\Core\Configs\GlobalConfig;

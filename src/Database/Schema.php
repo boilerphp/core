@@ -5,6 +5,7 @@ namespace Boiler\Core\Database;
 use ReflectionClass;
 use ReflectionMethod;
 use Boiler\Core\Configs\GlobalConfig;
+use Doctrine\DBAL\DriverManager;
 
 class Schema extends QueryBuilder
 {
@@ -391,6 +392,11 @@ class Schema extends QueryBuilder
         }
 
         return null;
+    }
+
+    public static function createDatabase($name) {
+        
+        // getSocket()->executeQuery("CREATE DATABASE `$name`");
     }
 
     protected function insert(array $data)

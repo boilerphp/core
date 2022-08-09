@@ -3,6 +3,7 @@
 namespace Boiler\Core\Database;
 
 use Boiler\Core\Configs\GlobalConfig;
+use Doctrine\DBAL\DriverManager;
 use ErrorException, PDO;
 
 class Connection
@@ -88,12 +89,12 @@ class Connection
     protected $connection;
 
 
-    public function getConnectionSocket()
+    public function getConnection()
     {
         return $this->connection;
     }
 
-    public function closeConnectionSocket()
+    public function closeConnection()
     {
         $this->connection = null;
     }
@@ -109,6 +110,18 @@ class Connection
                 }
 
                 $this->buildConnectionString();
+
+                if($this->driver === "sqlite" || $this->driver === "pdo_sqlite") {
+
+                    $connParams = [
+                        'url' => $this->dataSource,
+                    ];
+
+                    $this->connection = DriverManager::getConnection($connParams);
+
+                    return;
+                }
+
 
                 $this->connection = new PDO($this->dataSource, $this->username, $this->password);
 
