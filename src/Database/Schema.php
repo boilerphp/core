@@ -599,7 +599,7 @@ class Schema extends QueryBuilder
                 GlobalConfig::setAppConnetion();
             }
 
-            return GlobalConfig::getAppConnetion()->getConnectionSocket();
+            return GlobalConfig::getAppConnetion()->getConnection();
         }
     }
 
