@@ -143,7 +143,7 @@ class Connection
     {
         if (env('APP_ENV') == 'testing' && env('DB_CONNECTION') == 'sqlite') {
             $this->driver = env('DB_CONNECTION');
-            $this->dataSource = env('DB_CONNECTION') . ':' . (env('DB_DATABASE') == ':memory:' ? env('DB_DATABASE') : __DIR__ . '../../' . env('DB_DATABASE'));
+            $this->dataSource = env('DB_CONNECTION') . ':///' . (env('DB_DATABASE') == ':memory:' ? env('DB_DATABASE') : __DIR__ . '../../' . env('DB_DATABASE'));
             return;
         }
 
