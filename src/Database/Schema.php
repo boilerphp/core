@@ -587,7 +587,7 @@ class Schema extends QueryBuilder
 
         if ($this->database !== null && $this->database !== 'default') {
 
-            return GlobalConfig::setTarget($this->database)->getConnectionSocket();
+            return GlobalConfig::setTarget($this->database)->getConnection();
         } else {
 
             if (!GlobalConfig::$IS_CONNECTED) {
