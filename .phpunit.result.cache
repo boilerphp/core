@@ -1,1 +1,0 @@
-{"version":1,"defects":{"Tests\\Integration\\SqlLiteConnectionTest::testConnection":8},"times":{"Tests\\Unit\\SampleTest::testAssetionTrue":0.026,"Tests\\Integration\\SqlLiteConnectionTest::testConnection":0.073}}

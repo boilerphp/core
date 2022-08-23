@@ -9,6 +9,7 @@ use Boiler\Core\Engine\Router\Route;
 use Boiler\Core\Configs\GlobalConfig;
 use Boiler\Core\Engine\Router\Response;
 use Boiler\Core\FileSystem\Fs;
+use Exception;
 
 class Server extends App
 {
@@ -46,6 +47,15 @@ class Server extends App
 
     public function boot()
     {
+        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+            // error was suppressed with the @-operator
+            if (0 === error_reporting()) {
+                return false;
+            }
+            
+            throw new Exception($errstr, 0, $errno, $errfile, $errline);
+        });
+        
 
         if (env('APP_ENV') !== 'testing') {
 

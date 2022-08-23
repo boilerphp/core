@@ -1,5 +1,7 @@
 <?php
 
+use Boiler\Core\Configs\GlobalConfig;
+use Boiler\Core\Console\Console;
 use Boiler\Core\Engine\Router\Response;
 use Boiler\Core\Hashing\Hash;
 use Boiler\Core\Middlewares\Session;
@@ -448,5 +450,29 @@ if(!function_exists("absolute_view"))
     function absolute_view($path, $data = [], $status = 200) {
 
         return Response::absoluteView($path, $data, $status);
+    }
+}
+
+if(!function_exists("trimmer")) {
+
+    function trimmer($str, $chars = " ") 
+    {
+        return !is_null($str) ? trim($str, $chars) : null;
+    }
+}
+
+if(!function_exists("verbose")) {
+
+    function verbose($message, $status = null, $newline = true) 
+    {
+        Console::verboseI($message, $status, $newline);
+    }
+}
+
+
+if(!function_exists("connection")) {
+
+    function connection() {
+        return GlobalConfig::getAppConnection();
     }
 }

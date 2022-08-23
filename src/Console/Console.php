@@ -8,11 +8,11 @@ use Console\Support\Interfaces\ConsoleInterface;
 class Console extends Command implements ConsoleInterface
 {
 
-    public function __construct($server, $argv = null, $verbose = true)
+    public function __construct($server = null, $argv = null, $verbose = true)
     {
         parent::__construct();
         
-        $server->start(true);
+        !is_null($server) ? $server->start(true) : null;
         $this->arguments = $argv;
 
         $this->setVerbose($verbose);

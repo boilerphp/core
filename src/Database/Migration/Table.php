@@ -2,6 +2,7 @@
 
 namespace Boiler\Core\Database\Migration;
 
+use Boiler\Core\Configs\GlobalConfig;
 use Boiler\Core\Database\Schema;
 
 
@@ -28,69 +29,56 @@ class Table implements MigrationInterface
     protected static $dbkey = "default";
 
 
-    /**
-     * Database Connection key
-     *
-     * @var Boiler\Core\Database\Schema
-     *
-     */
-    protected static $schema;
-
-
 
     public function __construct($key = null)
     {
         static::$dbkey = $key;
-
-        static::$schema = static::getSchema();
-    }
-
-
-    public static function getSchema()
-    {
-
-        static::$schema = new Schema();
-        static::$schema->connection(static::$dbkey);
-
-        return static::$schema;
     }
 
 
     public static function connection($name)
     {
+        if (!is_null($name)) {
+            GlobalConfig::setTarget($name);
+        }
+
         return new Table($name);
     }
 
     public static function create($name, $callback)
     {
-        $diagram = new Diagram($name);
+        $driver = GlobalConfig::getAppConnection()->getDriver();
+        $diagram = new Diagram($name, $driver);
+        
         $callback($diagram);
         $tableQuery = $diagram->createTableQuery(
-            $diagram->trimmer($diagram->query),
-            $diagram->trimmer($diagram->primary_keys)
+            $driver,
+            trimmer($diagram->dataTypes()->getQuery(), ","),
+            trimmer($diagram->dataTypes()->getPrimaryKeys(), ",")
         );
 
-        $foreignKeysQuery = $diagram->foreignKeyProccessor($name);
+        $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
         Table::createAlters($foreignKeysQuery);
-        static::getSchema()->query($tableQuery);
+
+        (new Schema)->query($tableQuery);
     }
 
     public static function modify($name, $callback)
     {
 
-        $diagram = new Diagram($name);
+        $diagram = new Diagram($name, GlobalConfig::getAppConnection()->getDriver());
         $diagram->setPkMode(false);
 
         $callback($diagram);
         $query = $diagram->modifyTableQuery(
-            $diagram->trimmer($diagram->query),
-            $diagram->trimmer($diagram->primary_keys)
+            trimmer($diagram->dataTypes()->getQuery(), ","),
+            trimmer($diagram->dataTypes()->getPrimaryKeys(), ",")
         );
 
-        $foreignKeysQuery = $diagram->foreignKeyProccessor($name);
+        $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
         Table::createAlters($foreignKeysQuery);
 
-        static::getSchema()->query($query);
+        (new Schema)->query($query);
     }
 
     private static function createAlters($foreignKeysQuery)
@@ -111,6 +99,6 @@ class Table implements MigrationInterface
             static::$dbkey = "default";
         }
 
-        static::getSchema()->dropDatabaseTable($table);
+        (new Schema)->query("DROP TABLE IF EXISTS $table");
     }
 }

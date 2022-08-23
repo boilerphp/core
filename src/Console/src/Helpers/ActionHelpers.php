@@ -706,6 +706,12 @@ class ActionHelpers implements ActionHelpersInterface
         }
     }
 
+
+    static function verboseI($message = null, $status = null, $breakline = true)
+    {
+        (new self)->verbose($message, $status, $breakline);
+    }
+
     protected function out($text, $color = null, $newLine = true)
     {
         $styles = array(

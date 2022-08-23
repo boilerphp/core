@@ -1,2 +1,5 @@
 /vendor/*
 /tests/*
+index.php
+appsettings.json
+*.cache

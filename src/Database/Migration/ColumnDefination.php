@@ -2,40 +2,58 @@
 
 namespace Boiler\Core\Database\Migration;
 
-use Boiler\Core\Database\DataTypes;
+use Boiler\Core\Database\Migration\DataTypes\MySqlMigrationDataTypes;
+use Boiler\Core\Database\Migration\DataTypes\SqlLiteMigrationDataTypes;
 use Boiler\Core\Database\Schema;
 
-class ColumnDefination extends DataTypes
+class ColumnDefination
 {
 
+    protected $dataTypeClass;
 
-    public function column($name)
+    protected $driverDataTypeMap = [
+        "sqlite" => SqlLiteMigrationDataTypes::class,
+        "pdo_sqlite" => SqlLiteMigrationDataTypes::class,
+        "mysqli" => MySqlMigrationDataTypes::class,
+        "pdo_mysql" => MySqlMigrationDataTypes::class,
+    ]; 
+
+    public function __construct(protected string $driver)
     {
+        $this->dataTypeClass = new $this->driverDataTypeMap[$this->driver];
+        if( in_array($this->driver, $this->driverDataTypeMap) ) {
+            return;
+        } 
 
-        $this->column = "`$name`";
-        $this->key = "$name";
-        return $this;
+        // throw driver not supported error.
+    }
+
+    public function id($name = "id") {
+        $this->dataTypes()->id($name);
+    }
+
+    public function dataTypes() {
+        return $this->dataTypeClass;
     }
 
     /**
      * Declaring the column name
      * 
-     * @param $name 
-     * @deprecated 
+     * @param $name - the name of the column 
      * 
-     * @return $this
+     * @return Boiler\Core\Database\Migration\DataTypes\DataTypesInterface;
      */
-    public function field($name)
+    public function column($name)
     {
 
-        $this->column = "`$name`";
-        $this->key = "$name";
-        return $this;
+        $this->dataTypes()->setColumn($name);
+        $this->dataTypes()->setKeyName($name);
+        return $this->dataTypes();
     }
 
     public function after($column)
     {
-        return $this->query = concat([$this->trimmer($this->query), "AFTER",  "`$column`"]);
+        return $this->query = concat([trimmer($this->query, ","), "AFTER",  "`$column`"]);
     }
 
     public function addColumn($name)
@@ -45,15 +63,14 @@ class ColumnDefination extends DataTypes
 
         if (!empty($this->query)) {
             if (preg_match('/ADD/', $this->query)) {
-                $this->query = $this->trimmer($this->query);
+                $this->query = trimmer($this->query, ",");
                 $mode = ', ADD';
             }
         }
 
-        $this->column = concat([$mode, "`$name`"]);
-
-        $this->key = "$name";
-        return $this;
+        $this->dataTypes()->setColumnWithPreffix(concat([$mode, "`$name`"]));
+        $this->dataTypes()->setKeyName($name);
+        return $this->dataTypes();
     }
 
     public function changeColumnName($current_name, $new_name)
@@ -61,7 +78,7 @@ class ColumnDefination extends DataTypes
 
         $this->column = concat(["CHANGE", "`$current_name`", "`$new_name`"]);
         $this->key = "$new_name";
-        return $this;
+        return $this->dataTypes();
     }
 
     public function dropColumn($columns)
@@ -103,7 +120,7 @@ class ColumnDefination extends DataTypes
     public function timestamps()
     {
 
-        $this->column("created_date")->timestamp()->default("CURRENT_TIMESTAMP()");
-        $this->column("updated_date")->timestamp()->default("CURRENT_TIMESTAMP()");
+        $this->column("created_date")->timestamp()->default("CURRENT_TIMESTAMP");
+        $this->column("updated_date")->timestamp()->default("CURRENT_TIMESTAMP");
     }
 }

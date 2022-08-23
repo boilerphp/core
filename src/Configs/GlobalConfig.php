@@ -101,8 +101,12 @@ class GlobalConfig
      * 
      * 
      */
-    static function getAppConnetion()
+    static function getAppConnection()
     {
+        if(static::$targetDatabase !== null) {
+            return static::$targetDatabase;
+        }
+        
         return static::$CONNECTION;
     }
 

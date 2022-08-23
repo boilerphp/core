@@ -22,25 +22,6 @@ class Diagram extends ColumnDefination {
     */
 
     public $query;
-
-
-    /**
-    * All columns mapping from table contructions
-    *
-    * @var array
-    *
-    */
-    protected $columns = array();
-
-
-    /**
-    * foreign key query
-    *
-    * @var string
-    *
-    */
-
-    protected $foreignKey = "";
     
 
     /**
@@ -52,13 +33,24 @@ class Diagram extends ColumnDefination {
     public $primary_keys;
 
 
-    public function __construct($table)
+    public function __construct(protected string $table, protected string $driver)
     {
-        $this->table = $table;
+        parent::__construct($driver);
     }
     
-    public function createTableQuery($columns, $primary_keys) 
+    public function createTableQuery($driver, $columns, $primary_keys) 
     {
+
+        if($driver == "sqlite" || "pdo_sqlite") {
+
+            $this->TableQuery = "CREATE TABLE $this->table ($columns";
+            if($primary_keys != "") {
+                $this->TableQuery .= ", PRIMARY KEY ($primary_keys)";
+            }
+
+            $this->TableQuery .= " )";
+            return $this->TableQuery;
+        }
 
         $this->TableQuery = "CREATE TABLE IF NOT EXISTS `$this->table` ($columns";
         if($primary_keys != "") {

@@ -118,12 +118,12 @@ class QueryBuilder extends DataTypes
 		$this->columns = "";
 		foreach ($data as $column => $value) {
 			$this->columns .= "`$column` = :$column, ";
+			$this->whereData[":$column"] = $value;
 		}
 
 		$this->cleanQueryStrings();
 
 		$this->queryString = "UPDATE $this->table SET $this->columns ";
-		$this->whereData = array_merge($this->whereData, $data);
 		return $this->queryString;
 	}
 
@@ -134,12 +134,12 @@ class QueryBuilder extends DataTypes
 
 		foreach ($data as $column => $value) {
 			$this->columns .= "`$column` = :$column, ";
+			$this->whereData[":$column"] = $value;
 		}
 
 		$this->cleanQueryStrings();
 
 		$this->queryString = "SET FOREIGN_KEY_CHECKS = 0; DELETE FROM $this->table WHERE $this->columns";
-		$this->whereData = array_merge($this->whereData, $data);
 		return $this->queryString;
 	}
 
@@ -186,7 +186,7 @@ class QueryBuilder extends DataTypes
 					}
 				} else {
 					$this->whereQuery .= " `$column` = :$column AND ";
-					$this->whereData = array_merge($this->whereData, $key);
+					$this->whereData[":$column"] = $key;
 				}
 
 				$index++;
@@ -198,7 +198,7 @@ class QueryBuilder extends DataTypes
 			} else {
 
 				$this->whereQuery .= "`$key` = :$key AND ";
-				$this->whereData = array_merge($this->whereData, array($key => $value));
+				$this->whereData[":$key"] =  $value;
 			}
 		}
 	}
@@ -219,7 +219,7 @@ class QueryBuilder extends DataTypes
 					}
 				} else {
 					$this->whereQuery .= " `$column` = :$column OR ";
-					$this->whereData = array_merge($this->whereData, $key);
+					$this->whereData[":$column"] = $key;
 				}
 
 				$index++;
@@ -231,7 +231,7 @@ class QueryBuilder extends DataTypes
 			} else {
 
 				$this->whereQuery .= "`$key` = :$key OR ";
-				$this->whereData = array_merge($this->whereData, array($key => $value));
+				$this->whereData[":$key"] = $value;
 			}
 		}
 	}

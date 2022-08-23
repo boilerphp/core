@@ -15,7 +15,7 @@ class Connection
      * @var string
      *
      */
-    private $driver = "mysql";
+    private $driver = "pdo_mysql";
 
 
     /**
@@ -123,17 +123,18 @@ class Connection
                 }
 
 
-                $this->connection = new PDO($this->dataSource, $this->username, $this->password);
+                $connParams = [
+                    'dbname' => $this->dbname,
+                    'user' => $this->username,
+                    'password' => $this->password,
+                    'host' => $this->host,
+                    'driver' => $this->driver,
+                ];
+                
+                $this->connection = DriverManager::getConnection($connParams);
 
-                // Set all attributes
-                $this->connection->setAttribute(PDO::ATTR_TIMEOUT, 5);
-                $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $this->connection->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-                $this->connection->setAttribute(PDO::ATTR_PERSISTENT, true);
-                $this->connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, true);
-                $this->connection->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
-            } catch (\PDOException $pd) {
-                throw $pd;
+            } catch (\Exception $ex) {
+                throw $ex;
                 exit;
             }
         }

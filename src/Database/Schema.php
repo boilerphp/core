@@ -5,9 +5,8 @@ namespace Boiler\Core\Database;
 use ReflectionClass;
 use ReflectionMethod;
 use Boiler\Core\Configs\GlobalConfig;
-use Doctrine\DBAL\DriverManager;
 
-class Schema extends QueryBuilder
+class Schema extends QueryConstructor
 {
 
     /**
@@ -82,29 +81,36 @@ class Schema extends QueryBuilder
     protected $socket;
 
 
-    public function __construct()
+    public function __construct(Connection $connection = null)
     {
-        $this->clearInitalQuery();
+        $this->connection = $connection ?? connection();
+        parent::__construct($this->connection);
+
     }
 
 
-    public function connection(string | null $key = null)
+    public function connection(string|null $name = null)
     {
         $this->clearInitalQuery();
 
-        if (!is_null($key)) {
+        if (!is_null($name)) {
             $this->useTable();
-            return GlobalConfig::setTarget($key);
+            return GlobalConfig::setTarget($name);
         }
 
-        return GlobalConfig::getAppConnetion();
+        return GlobalConfig::getAppConnection();
+    }
+
+
+    public function setConnection(Connection $connection) {
+        $this->connection = $connection;
     }
 
 
     public function attachClass($all = false, $fields = null)
     {
         if ($all == true) {
-            $this->allQuery();
+            $this->allQuery($this->table);
             $data = $this->fetch(false);
 
             return is_null($data)
@@ -113,7 +119,7 @@ class Schema extends QueryBuilder
         } else {
 
             if ($this->fieldFormatChecker($fields)) {
-                $this->selectQuery($this->fields);
+                $this->selectQuery($this->fields, $this->table);
                 return $this->fetch(false);
             }
         }
@@ -137,7 +143,7 @@ class Schema extends QueryBuilder
 
     public function all()
     {
-        $this->allQuery();
+        $this->allQuery($this->table);
         $data = $this->fetch();
 
         if (is_null($data)) {
@@ -189,18 +195,15 @@ class Schema extends QueryBuilder
 
     public function count()
     {
-        (empty($this->queryString)) ? $this->allQuery() : null;
+        (empty($this->queryString)) ? $this->allQuery($this->table) : null;
         return $this->counter();
     }
 
 
     public function clearInitalQuery()
     {
-        $this->queryString = "";
-        $this->whereQuery = "";
-        $this->whereData = [];
-        $this->orderQuery = "";
-        $this->groupQuery = "";
+        $this->parameters = [];
+        $this->resetBuilder();
     }
 
 
@@ -270,16 +273,17 @@ class Schema extends QueryBuilder
     public function sum($column)
     {
         $data = function () {
-
-            if ($this->whereData) {
-                return $this->whereData;
+            if ($this->parameters) {
+                return $this->parameters;
             } else {
                 return null;
             }
         };
+        
+        $this->sumQuery($column, $this->table);
 
-        $statement = $this->query($this->sumQuery($column), $data());
-        return ($statement->fetch()->$column ?? 0);
+        $result = $this->fetch();
+        return $result;
     }
 
 
@@ -298,12 +302,8 @@ class Schema extends QueryBuilder
 
         $limits = $start . ", " . $number;
 
-        $this->allQuery();
-        if ($this->orderQuery == "") {
-            $this->orderQuery("id", "asc", $limits);
-        } else {
-            $this->limits($start, $number);
-        }
+        $this->allQuery($this->table); 
+        $this->orderQuery("id", "asc", $limits);
 
         $result = $this->fetch(false, false);
 
@@ -313,7 +313,7 @@ class Schema extends QueryBuilder
             $result = $result;
         }
 
-        $total_result = 0; //$this->counter(true);
+        $total_result = 0;
 
         $total_pages = floor($total_result / $number);
         $rem = ($total_result % $number);
@@ -394,24 +394,14 @@ class Schema extends QueryBuilder
         return null;
     }
 
-    public static function createDatabase($name) {
-        
-        // getSocket()->executeQuery("CREATE DATABASE `$name`");
-    }
-
-    protected function insert(array $data)
+    public function insert(array $data)
     {
         if ($data) {
-            if ($this->insertQuery($data)) {
+            if ($this->insertQuery($data, $this->table)) {
 
-                $statement = $this->getSocket()->prepare($this->queryString);
-                if ($statement->execute($data)) {
-                    $exec = $this->query("SELECT * FROM $this->table WHERE id = LAST_INSERT_ID()");
-                    if ($exec) {
-                        if ($exec->rowCount() > 0) {
-                            return $this->resultFormatter($exec->fetch(), false, false);
-                        }
-                    }
+                $statement = $this->builder->executeQuery();
+                if ($statement) {
+                    return $this->last_inserted_row();
                 }
             }
         }
@@ -419,35 +409,43 @@ class Schema extends QueryBuilder
         return null;
     }
 
+    protected function last_inserted_row() {
 
-    public function select($fields = null)
-    {
+        $driver = $this->connection->getDriver();
 
-        if ($this->fieldFormatChecker($fields)) {
-            $this->selectQuery($this->fields);
+        if($driver === "sqlite" || $driver === "pdo_sqlite") {
+            $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = last_insert_rowid()");
+        } else {
+            $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = LAST_INSERT_ID()");
         }
 
+        return $this->resultFormatter($last_inserted->fetchAllAssociative(), false, false);
+    }
+
+    public function select(array|string $fields)
+    {
+        $this->selectQuery($fields, $this->table);
         return $this;
     }
 
 
     public function update($data, $value = null)
     {
-        if ($this->dataFormatChecker($data, $value)) {
-            if ($this->updateQuery($this->data)) {
+        $data = $this->dataFormatChecker($data, $value);
+        $this->updateQuery($data, $this->table);
 
-                if (empty($this->whereQuery)) {
-                    return $this->where("id", $this->id)->update($this->data);
-                } else {
-                    if ($this->save()) {
-                        
-                        foreach ($this->data as $key => $value) {
-                            $this->$key = $value;
-                        }
+        if (!preg_match('/WHERE/', $this->builder->getSql())) {
 
-                        return true;
-                    }
+            return $this->where("id", $this->id)->update($this->data);
+        } else {
+
+            if ($this->save()) {
+
+                foreach ($this->data as $key => $value) {
+                    $this->$key = $value;
                 }
+
+                return true;
             }
         }
 
@@ -484,7 +482,8 @@ class Schema extends QueryBuilder
     }
 
 
-    public function truncate() {
+    public function truncate()
+    {
         $this->run("TRUNCATE $this->table");
     }
 
@@ -524,7 +523,7 @@ class Schema extends QueryBuilder
 
     public function get()
     {
-        return $this->select()->fetch();
+        return $this->select("*")->fetch();
     }
 
 
@@ -599,27 +598,29 @@ class Schema extends QueryBuilder
                 GlobalConfig::setAppConnetion();
             }
 
-            return GlobalConfig::getAppConnetion()->getConnection();
+            return GlobalConfig::getAppConnection()->getConnection();
         }
     }
 
     protected function fetch($relations = true, $clear = true)
     {
-        if ($this->queryString()) {
+        if ($this->builder) {
+            verbose($this->builder->getSql());
+            $statement = $this->getSocket()->prepare($this->builder->getSql());
+            
+            (count($this->parameters))
+            ? $result = $statement->executeQuery($this->parameters)
+            : $result = $statement->executeQuery();
+            
 
-            $statement = $this->getSocket()->prepare($this->queryString);
-
-            (count($this->whereData))
-                ? $exec = $statement->execute($this->whereData)
-                : $exec = $statement->execute();
-
-            if ($exec) {
+            if ($result) {
+                $data = $result->fetchAllAssociative();
                 ($clear === true ? $this->clearInitalQuery() : null);
-                if ($statement->rowCount() > 0) {
+                if (count($data) > 0) {
 
-                    return ($statement->rowCount() > 1)
-                        ? $this->resultFormatter($statement->fetchAll(), true, $relations)
-                        : $this->resultFormatter($statement->fetch(), false, $relations);
+                    return (count($data) > 1)
+                        ? $this->resultFormatter($data, true, $relations)
+                        : $this->resultFormatter($data[0], false, $relations);
                 }
             }
         }
@@ -631,7 +632,7 @@ class Schema extends QueryBuilder
     protected function counter($direct = false)
     {
 
-        ($direct === false) ? $this->queryString() : null;
+        ($direct === false) ? $this->builder : null;
         $statement = $this->getSocket()->prepare($this->queryString);
 
         (isset($this->whereData))
@@ -664,13 +665,17 @@ class Schema extends QueryBuilder
     protected function save()
     {
 
-        if ($this->queryString()) {
+        if (!is_null($this->builder)) {
 
-            $statement = $this->getSocket()->prepare($this->queryString);
+            if (count($this->parameters)) {
 
-            (count($this->whereData))
-                ? $exec = $statement->execute($this->whereData)
-                : $exec = $statement->execute();
+                foreach ($this->parameters as $key => $value) {
+
+                    $this->builder->setParameters($key, $value);
+                }
+            }
+
+            $exec = $this->builder->execute();
 
             if ($exec) {
                 $this->clearInitalQuery();
@@ -734,21 +739,14 @@ class Schema extends QueryBuilder
             $statement = $this->getSocket()->prepare($querystring);
 
             ($data !== null)
-                ? $statement->execute($data)
-                : $statement->execute();
+                ? $result = $statement->executeQuery($data)
+                : $result =$statement->executeQuery();
 
             $this->clearInitalQuery();
-            return $statement;
+            return $result;
         }
 
         return null;
-    }
-
-
-    public function dropDatabaseTable($table)
-    {
-
-        $this->query($this->dropDatabaseTableQuery($table));
     }
 
 
