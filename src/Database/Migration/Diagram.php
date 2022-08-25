@@ -6,15 +6,6 @@ namespace Boiler\Core\Database\Migration;
 class Diagram extends ColumnDefination {
 
     /**
-    * primary key mode
-    *
-    * @var string
-    *
-    */
-    protected $pk_mode = true;
-
-
-    /**
     * App formatted query
     *
     * @var string
@@ -55,8 +46,4 @@ class Diagram extends ColumnDefination {
         if($primary_keys != "") { $this->TableQuery .= ", ADD PRIMARY KEY ($primary_keys)"; }
         return $this->TableQuery;
     } 
-
-    public function setPkMode($mode) {
-        $this->pk_mode = $mode;
-    }
 }

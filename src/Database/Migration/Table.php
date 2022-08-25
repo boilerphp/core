@@ -93,7 +93,7 @@ class Table implements MigrationInterface
     {
 
         $diagram = new Diagram($name, GlobalConfig::getAppConnection()->getDriver());
-        $diagram->setPkMode(false);
+        $diagram->dataTypes()->setPkMode(false);
 
         $callback($diagram);
         $query = $diagram->modifyTableQuery(
