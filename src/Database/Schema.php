@@ -76,6 +76,7 @@ class Schema extends QueryConstructor
     public function __construct(Connection $connection = null)
     {
         $this->connection = $connection ?? $this->getSocket();
+        $this->driver = $this->connection->getDriver();
         parent::__construct($this->connection);
     }
 
@@ -416,10 +417,7 @@ class Schema extends QueryConstructor
 
     protected function last_inserted_row()
     {
-
-        $driver = $this->connection->getDriver();
-
-        if ($driver === "sqlite" || $driver === "pdo_sqlite") {
+        if ($this->driver === "sqlite" || $this->driver === "pdo_sqlite") {
             $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = last_insert_rowid()");
         } else {
             $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = LAST_INSERT_ID()");
@@ -736,6 +734,24 @@ class Schema extends QueryConstructor
         }
 
         return null;
+    }
+
+
+    public function dropTable($name = null) {
+
+        if($name !== null) {
+            $this->table($name);
+        }
+
+        if(in_array($this->driver, ["sqlite", "pdo_sqlite"])) {
+
+            $this->query("DROP TABLE IF EXISTS $this->table;");
+            $this->query("DROP TABLE IF EXISTS $this->table;");
+            return;
+        }
+
+        $this->query("SET FOREIGN_KEY_CHECKS = 1; DROP TABLE IF EXISTS $this->table;");
+        $this->query("SET FOREIGN_KEY_CHECKS = 0; DROP TABLE IF EXISTS $this->table;");
     }
 
 

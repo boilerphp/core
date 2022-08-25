@@ -63,7 +63,6 @@ class MigrationReflection extends Migration {
         if(env('APP_ENV') == 'testing' && env('DB_CONNECTION') == 'sqlite') {
             $tables = $this->query("SELECT name FROM sqlite_schema WHERE type ='table' AND name NOT LIKE 'sqlite_%'");
         } else {
-            # code...
             $tables = $this->query('show tables');
         }
 
@@ -84,8 +83,8 @@ class MigrationReflection extends Migration {
                         continue;
                     }
                     // Drop
-                    $this->query("SET FOREIGN_KEY_CHECKS = 1; DROP TABLE IF EXISTS $name;");
-                    $this->query("SET FOREIGN_KEY_CHECKS = 0; DROP TABLE IF EXISTS $name;");
+                    Table::dropIfExists($name);
+                    Table::dropIfExists($name);
 
                 }
             }

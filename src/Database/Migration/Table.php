@@ -121,6 +121,6 @@ class Table implements MigrationInterface
 
     public static function dropIfExists($table)
     {
-        (new Schema(static::$connection))->query("DROP TABLE IF EXISTS $table");
+        (new Schema(static::$connection))->dropTable($table);
     }
 }
