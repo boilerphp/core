@@ -40,18 +40,6 @@ class Diagram extends ColumnDefination {
     
     public function createTableQuery($driver, $columns, $primary_keys) 
     {
-
-        if($driver == "sqlite" || "pdo_sqlite") {
-
-            $this->TableQuery = "CREATE TABLE $this->table ($columns";
-            if($primary_keys != "") {
-                $this->TableQuery .= ", PRIMARY KEY ($primary_keys)";
-            }
-
-            $this->TableQuery .= " )";
-            return $this->TableQuery;
-        }
-
         $this->TableQuery = "CREATE TABLE IF NOT EXISTS `$this->table` ($columns";
         if($primary_keys != "") {
             $this->TableQuery .= ", PRIMARY KEY ($primary_keys)";

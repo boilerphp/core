@@ -119,8 +119,15 @@ class Server extends App
 
     public function setEnv()
     {
-        if (file_exists(__DIR__ . "/../../../../.env")) {
-            $get_env_file = fopen(__DIR__ . "/../../../../.env", "r");
+        if(env("APP_ENV") === "testing")
+            $envFile = file_exists(__DIR__ . "/../../../../.env.testing") 
+                ? __DIR__ . "/../../../../.env.testing" : null;
+        else
+            $envFile = file_exists(__DIR__ . "/../../../../.env") 
+            ? __DIR__ . "/../../../../.env" : null;
+
+        if ($envFile !== null) {
+            $get_env_file = fopen($envFile, "r");
             if ($get_env_file) {
                 while (!feof($get_env_file)) {
 
