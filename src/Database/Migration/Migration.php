@@ -8,7 +8,7 @@ class Migration extends Schema
 {
 
     protected $table = "migrations";
-    
+
 
     public function registerMigration(array $data)
     {
@@ -16,7 +16,7 @@ class Migration extends Schema
         if ($data) {
             if ($this->insertQuery($data, $this->table)) {
 
-                $statement = $this->getSocket()->prepare($this->getSql());
+                $statement = $this->connection()->prepare($this->getSql());
                 if ($statement->executeQuery($this->parameters)) {
                     return true;
                 }
@@ -34,7 +34,7 @@ class Migration extends Schema
         if ($data) {
             if ($this->insertQuery($data, $this->table)) {
 
-                $statement = $this->getSocket()->prepare($this->getSql());
+                $statement = $this->connection()->prepare($this->getSql());
                 if ($statement->executeQuery($this->parameters)) {
                     return true;
                 }
