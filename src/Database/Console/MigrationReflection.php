@@ -2,7 +2,9 @@
 
 namespace Boiler\Core\Database\Console;
 
+use Boiler\Core\Database\Migration\Diagram;
 use Boiler\Core\Database\Migration\Migration;
+use Boiler\Core\Database\Migration\Table;
 
 class MigrationReflection extends Migration {
 
@@ -18,15 +20,12 @@ class MigrationReflection extends Migration {
 
     public function init() {
 
-        $this->query("CREATE TABLE IF NOT EXISTS migrations(
-            `id` INT(9) NOT NULL AUTO_INCREMENT,
-            `migration` VARCHAR(255) DEFAULT NULL,
-            `version` INT(9) DEFAULT NULL,
-            `created_date` DATETIME DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY(`id`)
-            )
-        ");
-
+        Table::create("migrations", function(Diagram $diagram) {
+            $diagram->id();
+            $diagram->column("migration")->string();
+            $diagram->column("version")->integer();
+            $diagram->timestamps();
+        });
     }
 
 
