@@ -55,7 +55,7 @@ class MigrationReflection extends Migration {
 
 
     public function clearTable() {
-        $this->run("TRUNCATE `migrations`");
+        $this->truncate();
     }
 
     public function getTables() {

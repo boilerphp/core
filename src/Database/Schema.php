@@ -488,7 +488,7 @@ class Schema extends QueryConstructor
 
     public function truncate()
     {
-        $this->run("TRUNCATE $this->table");
+        $this->connection()->executeQuery("TRUNCATE $this->table");
     }
 
 
