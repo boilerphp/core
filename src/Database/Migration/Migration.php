@@ -7,14 +7,17 @@ use Boiler\Core\Database\Schema;
 class Migration extends Schema
 {
 
+    protected $table = "migrations";
+    
+
     public function registerMigration(array $data)
     {
 
         if ($data) {
-            if ($this->insertQuery($data)) {
+            if ($this->insertQuery($data, $this->table)) {
 
-                $statement = $this->getSocket()->prepare($this->queryString);
-                if ($statement->execute($data)) {
+                $statement = $this->getSocket()->prepare($this->getSql());
+                if ($statement->executeQuery($this->parameters)) {
                     return true;
                 }
 
@@ -29,10 +32,10 @@ class Migration extends Schema
     {
 
         if ($data) {
-            if ($this->insertQuery($data)) {
+            if ($this->insertQuery($data, $this->table)) {
 
-                $statement = $this->getSocket()->prepare($this->queryString);
-                if ($statement->execute($data)) {
+                $statement = $this->getSocket()->prepare($this->getSql());
+                if ($statement->executeQuery($this->parameters)) {
                     return true;
                 }
 
