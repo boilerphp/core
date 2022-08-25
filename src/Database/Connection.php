@@ -105,10 +105,6 @@ class Connection
 
             try {
 
-                if (env('APP_ENV') != 'testing') {
-                    list($this->host, $this->username, $this->password, $this->dbname, $this->port) = $this->getConnectionVariable();
-                }
-
                 $this->buildConnectionString();
 
                 if($this->driver === "sqlite" || $this->driver === "pdo_sqlite") {
@@ -117,19 +113,16 @@ class Connection
                         'url' => $this->dataSource,
                     ];
 
-                    $this->connection = DriverManager::getConnection($connParams);
+                } else {
 
-                    return;
+                    $connParams = [
+                        'dbname' => $this->dbname,
+                        'user' => $this->username,
+                        'password' => $this->password,
+                        'host' => $this->host,
+                        'driver' => $this->driver,
+                    ];
                 }
-
-
-                $connParams = [
-                    'dbname' => $this->dbname,
-                    'user' => $this->username,
-                    'password' => $this->password,
-                    'host' => $this->host,
-                    'driver' => $this->driver,
-                ];
                 
                 $this->connection = DriverManager::getConnection($connParams);
 
@@ -144,10 +137,11 @@ class Connection
     {
         if (env('APP_ENV') == 'testing' && env('DB_CONNECTION') == 'sqlite') {
             $this->driver = env('DB_CONNECTION');
-            $this->dataSource = env('DB_CONNECTION') . ':///' . (env('DB_DATABASE') == ':memory:' ? env('DB_DATABASE') : __DIR__ . '../../' . env('DB_DATABASE'));
+            $this->dataSource = env('DB_CONNECTION') . ':///' . (env('DB_DATABASE') == ':memory:' ? env('DB_DATABASE') : './' . env('DB_DATABASE'));
             return;
         }
 
+        list($this->host, $this->username, $this->password, $this->dbname, $this->port) = $this->getConnectionVariable();
         $this->dataSource = $this->driver . ":host=" . $this->host . ";port=" . $this->port . ";dbname=" . $this->dbname;
     }
 

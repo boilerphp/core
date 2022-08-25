@@ -102,11 +102,7 @@ class GlobalConfig
      * 
      */
     static function getAppConnection()
-    {
-        if(static::$targetDatabase !== null) {
-            return static::$targetDatabase;
-        }
-        
+    {    
         return static::$CONNECTION;
     }
 
@@ -123,7 +119,7 @@ class GlobalConfig
         static::$IS_CONNECTED = true;
     }
 
-    static public function setTarget($target)
+    static public function getTargetConnection($target)
     {
 
         static::$targetDatabase = (new Connection);

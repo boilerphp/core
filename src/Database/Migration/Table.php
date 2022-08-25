@@ -3,6 +3,7 @@
 namespace Boiler\Core\Database\Migration;
 
 use Boiler\Core\Configs\GlobalConfig;
+use Boiler\Core\Database\Connection;
 use Boiler\Core\Database\Schema;
 
 
@@ -26,23 +27,48 @@ class Table implements MigrationInterface
      * @var string
      *
      */
-    protected static $dbkey = "default";
+    protected static $database;
 
 
+    /**
+     * Database connection 
+     *
+     * @var Boiler\Core\Database\Connection|null
+     *
+     */
+    protected static $connection;
 
-    public function __construct($key = null)
+
+    public function __construct(Connection $connection = null)
     {
-        static::$dbkey = $key;
+        static::$connection = $connection ?? static::getSocket();
+    }
+
+    public static function getSocket()
+    {
+        if (static::$database !== null && static::$database !== 'default') {
+            
+            return GlobalConfig::getTargetConnection(static::$database);
+        } else {
+
+            if (!GlobalConfig::$IS_CONNECTED) {
+                GlobalConfig::setAppConnetion();
+            }
+
+            return GlobalConfig::getAppConnection();
+        }
     }
 
 
     public static function connection($name)
-    {
-        if (!is_null($name)) {
-            GlobalConfig::setTarget($name);
+    {   
+        if(env('APP_ENV')  == 'testing' && env('DB_CONNECTION') == 'sqlite') {
+            setEnv("DB_DATABASE", $name.".sqlite");
         }
 
-        return new Table($name);
+        static::$database = $name;
+        $connection = static::getSocket();
+        return new Table($connection);
     }
 
     public static function create($name, $callback)
@@ -60,7 +86,7 @@ class Table implements MigrationInterface
         $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
         Table::createAlters($foreignKeysQuery);
 
-        (new Schema)->query($tableQuery);
+        (new Schema(static::$connection))->query($tableQuery);
     }
 
     public static function modify($name, $callback)
@@ -78,7 +104,7 @@ class Table implements MigrationInterface
         $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
         Table::createAlters($foreignKeysQuery);
 
-        (new Schema)->query($query);
+        (new Schema(static::$connection))->query($query);
     }
 
     private static function createAlters($foreignKeysQuery)
@@ -95,10 +121,6 @@ class Table implements MigrationInterface
 
     public static function dropIfExists($table)
     {
-        if (static::$dbkey == null) {
-            static::$dbkey = "default";
-        }
-
-        (new Schema)->query("DROP TABLE IF EXISTS $table");
+        (new Schema(static::$connection))->query("DROP TABLE IF EXISTS $table");
     }
 }

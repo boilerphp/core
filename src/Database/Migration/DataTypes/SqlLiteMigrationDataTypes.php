@@ -48,8 +48,7 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
     public function id($name = "id")
     {
         $this->column = "`$name`";
-        $this->primary_keys .= " $this->column,";
-        $this->query .= " $this->column INT NOT NULL,";
+        $this->query .= " $this->column INTEGER PRIMARY KEY AUTOINCREMENT,";
     }
 
 

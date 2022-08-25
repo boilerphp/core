@@ -70,35 +70,40 @@ class Schema extends QueryConstructor
      *
      */
     protected $connection;
-
-
-    /**
-     * Database connection socker 
-     *
-     * @var PDO
-     *
-     */
-    protected $socket;
+    
 
 
     public function __construct(Connection $connection = null)
     {
-        $this->connection = $connection ?? connection();
+        $this->connection = $connection ?? $this->getSocket();
         parent::__construct($this->connection);
 
     }
 
-
-    public function connection(string|null $name = null)
+    public function getSocket()
     {
-        $this->clearInitalQuery();
-
-        if (!is_null($name)) {
-            $this->useTable();
-            return GlobalConfig::setTarget($name);
+        if($this->connection !== null) {
+            return $this->connection;
         }
 
-        return GlobalConfig::getAppConnection();
+        if ($this->database !== null && $this->database !== 'default') {
+
+            return GlobalConfig::getTargetConnection($this->database);
+        } else {
+
+            if (!GlobalConfig::$IS_CONNECTED) {
+
+                GlobalConfig::setAppConnetion();
+            }
+
+            return GlobalConfig::getAppConnection();
+        }
+    }
+
+
+    public function connection()
+    {   
+        return $this->getSocket()->getConnection();
     }
 
 
@@ -468,16 +473,15 @@ class Schema extends QueryConstructor
             $key = "id";
         }
 
-        if ($this->dataFormatChecker($key, $value)) {
-            if ($this->deleteQuery($this->data)) {
+        $data = $this->dataFormatChecker($key, $value);
+        if ($this->deleteQuery($data, $this->table)) {
 
-                $statement = $this->getSocket()->prepare($this->queryString);
-                if ($statement->execute($this->whereData)) {
-                    return true;
-                }
+            $statement = $this->connection()->prepare($this->getSql());
+            if ($statement->executeQuery($this->parameters)) {
+                return true;
             }
         }
-
+            
         return false;
     }
 
@@ -580,33 +584,11 @@ class Schema extends QueryConstructor
         return $class;
     }
 
-
-    public function getSocket()
-    {
-
-        if ($this->database !== null && $this->database !== 'default') {
-
-            return GlobalConfig::setTarget($this->database)->getConnection();
-        } else {
-
-            if (!GlobalConfig::$IS_CONNECTED) {
-                /**
-                 * Connecting app to database
-                 * 
-                 */
-
-                GlobalConfig::setAppConnetion();
-            }
-
-            return GlobalConfig::getAppConnection()->getConnection();
-        }
-    }
-
     protected function fetch($relations = true, $clear = true)
     {
         if ($this->builder) {
-            verbose($this->builder->getSql());
-            $statement = $this->getSocket()->prepare($this->builder->getSql());
+
+            $statement = $this->connection()->prepare($this->builder->getSql());
             
             (count($this->parameters))
             ? $result = $statement->executeQuery($this->parameters)
@@ -633,7 +615,7 @@ class Schema extends QueryConstructor
     {
 
         ($direct === false) ? $this->builder : null;
-        $statement = $this->getSocket()->prepare($this->queryString);
+        $statement = $this->connection()->prepare($this->queryString);
 
         (isset($this->whereData))
             ? $exec = $statement->execute($this->whereData)
@@ -651,9 +633,9 @@ class Schema extends QueryConstructor
     protected function run($queryString)
     {
 
-        $statement = $this->getSocket()->prepare($queryString);
+        $statement = $this->connection()->prepare($queryString);
 
-        if ($statement->execute()) {
+        if ($statement->executeQuery()) {
             $this->clearInitalQuery();
             return true;
         }
@@ -736,11 +718,11 @@ class Schema extends QueryConstructor
 
         if ($querystring !== "") {
 
-            $statement = $this->getSocket()->prepare($querystring);
+            $statement = $this->connection()->prepare($querystring);
 
             ($data !== null)
                 ? $result = $statement->executeQuery($data)
-                : $result =$statement->executeQuery();
+                : $result = $statement->executeQuery();
 
             $this->clearInitalQuery();
             return $result;

@@ -219,7 +219,7 @@ class QueryBuilder extends DataTypes
 					}
 				} else {
 					$this->whereQuery .= " `$column` = :$column OR ";
-					$this->whereData[":$column"] = $key;
+					$this->whereData[":$column"] = $val;
 				}
 
 				$index++;
