@@ -285,9 +285,6 @@ abstract class AbstractMigrationDataTypes
      */
     public function foreign($table, $reference = "id")
     {
-        if ($this->pk_mode) {
-            $this->primary_keys .= " $this->key,";
-        }
         $reference = is_null($reference) ? $this->key : $reference;
 
         $const = $table . "_" . $this->table . "_" . $this->key . "_fk";

@@ -219,7 +219,7 @@ class QueryConstructor
 
     protected function dataFormatChecker($key, $value)
     {
-        $data = null;
+        $data = $key;
 
         if (gettype($key) == "string") {
             if (!is_null($value)) {

@@ -201,7 +201,7 @@ class Schema extends QueryConstructor
 
     public function count()
     {
-        (empty($this->queryString)) ? $this->allQuery($this->table) : null;
+        (empty($this->getSql())) ? $this->allQuery($this->table) : null;
         return $this->counter();
     }
 
@@ -423,7 +423,7 @@ class Schema extends QueryConstructor
             $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = LAST_INSERT_ID()");
         }
 
-        return $this->resultFormatter($last_inserted->fetchAllAssociative(), false, false);
+        return $this->resultFormatter($last_inserted->fetchAssociative(), false, false);
     }
 
     public function select(array|string $fields)
@@ -438,14 +438,14 @@ class Schema extends QueryConstructor
         $data = $this->dataFormatChecker($data, $value);
         $this->updateQuery($data, $this->table);
 
-        if (!preg_match('/WHERE/', $this->builder->getSql())) {
+        if (!strpos(strtolower($this->getSql()), "where")) {
 
-            return $this->where("id", $this->id)->update($this->data);
+            return $this->where("id", $this->id)->update($data);
         } else {
 
             if ($this->save()) {
 
-                foreach ($this->data as $key => $value) {
+                foreach ($data as $key => $value) {
                     $this->$key = $value;
                 }
 
@@ -620,11 +620,11 @@ class Schema extends QueryConstructor
     {
 
         ($direct === false) ? $this->builder : null;
-        $statement = $this->connection()->prepare($this->queryString);
+        $statement = $this->connection()->prepare($this->getSql());
 
         (isset($this->whereData))
-            ? $exec = $statement->execute($this->whereData)
-            : $exec = $statement->execute();
+            ? $exec = $statement->executeQuery($this->parameters)
+            : $exec = $statement->executeQuery();
 
         if ($exec) {
             $this->clearInitalQuery();
@@ -657,14 +657,13 @@ class Schema extends QueryConstructor
             if (count($this->parameters)) {
 
                 foreach ($this->parameters as $key => $value) {
-
-                    $this->builder->setParameters($key, $value);
+                    $this->builder->setParameter($key, $value);
                 }
             }
 
-            $exec = $this->builder->execute();
+            $exec = $this->connection()->prepare($this->getSql());
 
-            if ($exec) {
+            if ($exec->executeQuery()) {
                 $this->clearInitalQuery();
                 return true;
             }
@@ -743,7 +742,7 @@ class Schema extends QueryConstructor
             $this->table($name);
         }
 
-        if(in_array($this->driver, ["sqlite", "pdo_sqlite"])) {
+        if(in_array($this->driver, ["sqlite", "pdo_sqlite", "mysqli"])) {
 
             $this->query("DROP TABLE IF EXISTS $this->table;");
             $this->query("DROP TABLE IF EXISTS $this->table;");
