@@ -5,31 +5,13 @@ namespace Boiler\Core\Database\Migration;
 
 class Diagram extends ColumnDefination {
 
-    /**
-    * App formatted query
-    *
-    * @var string
-    *
-    */
-
-    public $query;
-    
-
-    /**
-    * primary key query
-    *
-    * @var string
-    *
-    */
-    public $primary_keys;
-
 
     public function __construct(protected string $table, protected string $driver)
     {
-        parent::__construct($driver);
+        parent::__construct($table, $driver);
     }
     
-    public function createTableQuery($driver, $columns, $primary_keys) 
+    public function createTableQuery($columns, $primary_keys) 
     {
         $this->TableQuery = "CREATE TABLE IF NOT EXISTS `$this->table` ($columns";
         if($primary_keys != "") {

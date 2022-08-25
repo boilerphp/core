@@ -40,15 +40,18 @@ abstract class AbstractMigrationDataTypes
      */
 
     /**
-    * primary key mode
-    *
-    * @var boolean
-    *
-    */
+     * primary key mode
+     *
+     * @var boolean
+     *
+     */
     protected $pk_mode = true;
 
 
     protected $query = "";
+    
+    
+    private $tabl;
 
 
     /**
@@ -328,7 +331,18 @@ abstract class AbstractMigrationDataTypes
         return $this->primary_keys;
     }
 
-    public function setPkMode($mode) {
+    public function setPkMode($mode)
+    {
         $this->pk_mode = $mode;
+    }
+
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    public function setTable($table)
+    {
+        $this->table = $table;
     }
 }

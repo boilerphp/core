@@ -11,6 +11,7 @@ class ColumnDefination
 
     protected $dataTypeClass;
 
+
     protected $driverDataTypeMap = [
         "sqlite" => SqlLiteMigrationDataTypes::class,
         "pdo_sqlite" => SqlLiteMigrationDataTypes::class,
@@ -18,10 +19,12 @@ class ColumnDefination
         "pdo_mysql" => MySqlMigrationDataTypes::class,
     ]; 
 
-    public function __construct(protected string $driver)
+    public function __construct(protected string $table, protected string $driver)
     {
         $this->dataTypeClass = new $this->driverDataTypeMap[$this->driver];
         if( in_array($this->driver, $this->driverDataTypeMap) ) {
+            
+            $this->dataTypes()->setTable($table);
             return;
         } 
 

@@ -78,7 +78,6 @@ class Table implements MigrationInterface
         
         $callback($diagram);
         $tableQuery = $diagram->createTableQuery(
-            $driver,
             trimmer($diagram->dataTypes()->getQuery(), ","),
             trimmer($diagram->dataTypes()->getPrimaryKeys(), ",")
         );
