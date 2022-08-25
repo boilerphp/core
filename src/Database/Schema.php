@@ -70,19 +70,18 @@ class Schema extends QueryConstructor
      *
      */
     protected $connection;
-    
+
 
 
     public function __construct(Connection $connection = null)
     {
         $this->connection = $connection ?? $this->getSocket();
         parent::__construct($this->connection);
-
     }
 
     public function getSocket()
     {
-        if($this->connection !== null) {
+        if ($this->connection !== null) {
             return $this->connection;
         }
 
@@ -102,12 +101,13 @@ class Schema extends QueryConstructor
 
 
     public function connection()
-    {   
+    {
         return $this->getSocket()->getConnection();
     }
 
 
-    public function setConnection(Connection $connection) {
+    public function setConnection(Connection $connection)
+    {
         $this->connection = $connection;
     }
 
@@ -284,7 +284,7 @@ class Schema extends QueryConstructor
                 return null;
             }
         };
-        
+
         $this->sumQuery($column, $this->table);
 
         $result = $this->fetch();
@@ -307,7 +307,7 @@ class Schema extends QueryConstructor
 
         $limits = $start . ", " . $number;
 
-        $this->allQuery($this->table); 
+        $this->allQuery($this->table);
         $this->orderQuery("id", "asc", $limits);
 
         $result = $this->fetch(false, false);
@@ -414,11 +414,12 @@ class Schema extends QueryConstructor
         return null;
     }
 
-    protected function last_inserted_row() {
+    protected function last_inserted_row()
+    {
 
         $driver = $this->connection->getDriver();
 
-        if($driver === "sqlite" || $driver === "pdo_sqlite") {
+        if ($driver === "sqlite" || $driver === "pdo_sqlite") {
             $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = last_insert_rowid()");
         } else {
             $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = LAST_INSERT_ID()");
@@ -477,17 +478,23 @@ class Schema extends QueryConstructor
         if ($this->deleteQuery($data, $this->table)) {
 
             $statement = $this->connection()->prepare($this->getSql());
-            if ($statement->executeQuery($this->parameters)) {
-                return true;
-            }
+            if (count($this->parameters))
+                if ($statement->executeQuery($this->parameters)) {
+                    return true;
+                }
+
+            return $statement->executeQuery();
         }
-            
+
         return false;
     }
 
 
     public function truncate()
     {
+        if (in_array($this->driver, ["sqlite", "pdo_sqlite"])) {
+            return $this->delete();
+        }
         $this->connection()->executeQuery("TRUNCATE $this->table");
     }
 
@@ -589,11 +596,11 @@ class Schema extends QueryConstructor
         if ($this->builder) {
 
             $statement = $this->connection()->prepare($this->builder->getSql());
-            
+
             (count($this->parameters))
-            ? $result = $statement->executeQuery($this->parameters)
-            : $result = $statement->executeQuery();
-            
+                ? $result = $statement->executeQuery($this->parameters)
+                : $result = $statement->executeQuery();
+
 
             if ($result) {
                 $data = $result->fetchAllAssociative();
