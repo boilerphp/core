@@ -288,7 +288,7 @@ abstract class AbstractMigrationDataTypes
         $reference = is_null($reference) ? $this->key : $reference;
 
         $const = $table . "_" . $this->table . "_" . $this->key . "_fk";
-        $this->foreignKeys .= " ADD CONSTRAINT `$const` FOREIGN KEY ($this->key) REFERENCES `$table` (`$reference`) ,";
+        $this->foreignKeys .= " ADD CONSTRAINT `$const` FOREIGN KEY (`$this->key`) REFERENCES `$table` (`$reference`) ,";
 
         return $this;
     }
@@ -315,7 +315,7 @@ abstract class AbstractMigrationDataTypes
 
     public function setKeyName($name)
     {
-        $this->key = "`$name`";
+        $this->key = $name;
     }
 
     public function getQuery()
