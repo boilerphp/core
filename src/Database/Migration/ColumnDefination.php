@@ -5,6 +5,7 @@ namespace Boiler\Core\Database\Migration;
 use Boiler\Core\Database\Migration\DataTypes\MySqlMigrationDataTypes;
 use Boiler\Core\Database\Migration\DataTypes\SqlLiteMigrationDataTypes;
 use Boiler\Core\Database\Schema;
+use Boiler\Core\Exceptions\DriverNotSupportedException;
 
 class ColumnDefination
 {
@@ -21,14 +22,15 @@ class ColumnDefination
 
     public function __construct(protected string $table, protected string $driver)
     {
-        $this->dataTypeClass = new $this->driverDataTypeMap[$this->driver];
-        if( in_array($this->driver, $this->driverDataTypeMap) ) {
+        if(array_key_exists($this->driver, $this->driverDataTypeMap) ) {
             
+            $this->dataTypeClass = new $this->driverDataTypeMap[$this->driver];
             $this->dataTypes()->setTable($table);
             return;
         } 
 
         // throw driver not supported error.
+        throw new DriverNotSupportedException();
     }
 
     public function id($name = "id") {

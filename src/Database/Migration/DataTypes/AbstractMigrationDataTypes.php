@@ -51,7 +51,7 @@ abstract class AbstractMigrationDataTypes
     protected $query = "";
     
     
-    private $tabl;
+    private $table;
 
 
     /**
