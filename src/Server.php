@@ -53,7 +53,7 @@ class Server extends App
                 return false;
             }
             
-            throw new Exception($errstr, 0, $errno);
+            throw new Exception($errstr, 0);
         });
         
 
