@@ -324,4 +324,9 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
             return $alter_query;
         }
     }
+
+    public function after($column)
+    {
+        $this->query = trimmer($this->query, ","). " AFTER `$column`";
+    }
 }

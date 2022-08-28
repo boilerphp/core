@@ -323,4 +323,9 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
             return $query;
         }
     }
+
+    public function after($column)
+    {
+        return null;
+    }
 }

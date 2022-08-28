@@ -274,6 +274,9 @@ abstract class AbstractMigrationDataTypes
     abstract public function foreignKeyProccessor($table);
 
 
+    abstract public function after($column);
+
+
     public function cascade()
     {
         $this->foreignKeys = trimmer($this->foreignKeys, ",");
@@ -294,11 +297,6 @@ abstract class AbstractMigrationDataTypes
         $this->query .= " DEFAULT {$value},";
 
         return $this;
-    }
-
-    public function after($column)
-    {
-        $this->query = trimmer($this->query, ","). " AFTER `$column`";
     }
 
     public function setColumn($name)
