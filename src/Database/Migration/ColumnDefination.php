@@ -28,6 +28,7 @@ class ColumnDefination
         if (array_key_exists($this->driver, $this->driverDataTypeMap)) {
 
             $this->dataTypeClass = new $this->driverDataTypeMap[$this->driver];
+            $this->schema = new Schema();
             $this->dataTypes()->setTable($table);
             return;
         }
@@ -96,7 +97,7 @@ class ColumnDefination
     public function renameColumn($current_name, $new_name)
     {
         $query = "ALTER TABLE `$this->table` RENAME COLUMN `$current_name` TO `$new_name`";
-        (new Schema)->query($query);
+        $this->schema->query($query);
 
         return $this;
     }
@@ -107,14 +108,15 @@ class ColumnDefination
 
         if (is_array($columns)) {
             foreach ($columns as $column) {
-                $query .= "DROP `$column`, ";
+                $query .= "ALTER TABLE `$this->table` DROP COLUMN `$column`;";
             }
-            $query = trim($query, ', ');
+            
         } else {
-            $query = "DROP COLUMN `$columns`";
+            $query = "ALTER TABLE `$this->table`DROP COLUMN `$columns`";
+            (new Schema)->query($query);
         }
-
-        (new Schema)->query("ALTER TABLE `$this->table` $query");
+        
+        $this->schema->query($query);
     }
 
     public function dropPrimaryKey()
