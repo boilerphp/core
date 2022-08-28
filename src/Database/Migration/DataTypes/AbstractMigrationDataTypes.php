@@ -306,6 +306,10 @@ abstract class AbstractMigrationDataTypes
         $this->column = "`$name`";
     }
 
+    public function getColumn() {
+        return $this->column;
+    }
+
     public function setColumnWithPreffix($name)
     {
         $this->column = $name;
@@ -314,6 +318,11 @@ abstract class AbstractMigrationDataTypes
     public function setKeyName($name)
     {
         $this->key = $name;
+    }
+
+    public function setQuery($query)
+    {
+        $this->query = $query;
     }
 
     public function getQuery()

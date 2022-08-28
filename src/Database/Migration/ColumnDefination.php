@@ -6,6 +6,9 @@ use Boiler\Core\Database\Migration\DataTypes\MySqlMigrationDataTypes;
 use Boiler\Core\Database\Migration\DataTypes\SqlLiteMigrationDataTypes;
 use Boiler\Core\Database\Schema;
 use Boiler\Core\Exceptions\DriverNotSupportedException;
+use Exception;
+use Reflection;
+use ReflectionClass;
 
 class ColumnDefination
 {
@@ -75,10 +78,20 @@ class ColumnDefination
 
     public function changeColumnName($current_name, $new_name)
     {
+        if($this->driver == "sqlite") {
+            return $this->renameColumn($current_name, $new_name);
+        }
 
         $this->dataTypes()->setColumnWithPreffix(concat(["CHANGE", "`$current_name`", "`$new_name`"]));
         $this->dataTypes()->setKeyName($new_name);
         return $this->dataTypes();
+    }
+
+    public function renameColumn($current_name, $new_name) {
+        $this->dataTypes()->setColumnWithPreffix(concat(["RENAME COLUMN", "`$current_name`", "TO" , "`$new_name`"]));
+        $this->dataTypes()->setKeyName($new_name);
+        $this->dataTypes()->setQuery($this->dataTypes()->getColumn());
+        return $this;
     }
 
     public function dropColumn($columns)
@@ -121,5 +134,29 @@ class ColumnDefination
     {
         $this->column("created_date")->timestamp()->default("CURRENT_TIMESTAMP");
         $this->column("updated_date")->timestamp()->default("CURRENT_TIMESTAMP");
+    }
+
+    public function __call($name, $arguments)
+    {
+        
+        $dataTypeClass = get_class($this->dataTypeClass);
+        $clReflection = new ReflectionClass($dataTypeClass);
+
+        $methods = [];
+
+        foreach ($clReflection->getMethods() as $clMethod) {
+            $methods[] = $clMethod->name;
+        }
+
+        if(!in_array($name, $methods)) {
+
+            /** 
+             * This will throe an exception if method not found in the data class.
+            */
+
+            throw new Exception("Undifined method [$name] not in $dataTypeClass of migration file.", 1);
+        }
+
+        return $this->dataTypes();
     }
 }
