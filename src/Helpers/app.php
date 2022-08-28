@@ -455,9 +455,16 @@ if(!function_exists("absolute_view"))
 
 if(!function_exists("trimmer")) {
 
-    function trimmer($str, $chars = " ") 
+    function trimmer($str, $chars = "") 
     {
-        return !is_null($str) ? trim($str, $chars) : null;
+        if(!is_null($str)) {
+
+            return ($chars !== "") 
+                ? trim($str, $chars)
+                : trim($str);
+        } 
+
+        return null;
     }
 }
 

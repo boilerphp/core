@@ -298,7 +298,7 @@ abstract class AbstractMigrationDataTypes
 
     public function after($column)
     {
-        return $this->query = concat([trimmer($this->query, ","), "AFTER",  "`$column`"]);
+        $this->query = trimmer($this->query, ","). " AFTER `$column`";
     }
 
     public function setColumn($name)
@@ -306,7 +306,8 @@ abstract class AbstractMigrationDataTypes
         $this->column = "`$name`";
     }
 
-    public function getColumn() {
+    public function getColumn()
+    {
         return $this->column;
     }
 

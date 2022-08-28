@@ -21,26 +21,28 @@ class ColumnDefination
         "pdo_sqlite" => SqlLiteMigrationDataTypes::class,
         "mysqli" => MySqlMigrationDataTypes::class,
         "pdo_mysql" => MySqlMigrationDataTypes::class,
-    ]; 
+    ];
 
     public function __construct(protected string $table, protected string $driver)
     {
-        if(array_key_exists($this->driver, $this->driverDataTypeMap) ) {
-            
+        if (array_key_exists($this->driver, $this->driverDataTypeMap)) {
+
             $this->dataTypeClass = new $this->driverDataTypeMap[$this->driver];
             $this->dataTypes()->setTable($table);
             return;
-        } 
+        }
 
         // throw driver not supported error.
         throw new DriverNotSupportedException();
     }
 
-    public function id($name = "id") {
+    public function id($name = "id")
+    {
         $this->dataTypes()->id($name);
     }
 
-    public function dataTypes() {
+    public function dataTypes()
+    {
         return $this->dataTypeClass;
     }
 
@@ -61,24 +63,28 @@ class ColumnDefination
 
     public function addColumn($name)
     {
+        $mode = 'ADD ';
+        $query = $this->dataTypes()->getQuery();
 
-        $mode = 'ADD';
+        if (preg_match('/ADD/', $query)) {
 
-        if (!empty($this->query)) {
-            if (preg_match('/ADD/', $this->query)) {
-                $this->query = trimmer($this->query, ",");
-                $mode = ', ADD';
+            $query = trimmer($query, ",");
+
+            if ($this->driver === "sqlite") {
+                $mode = "; ALTER TABLE $this->table ADD ";
+            } else {
+                $mode = ", ADD ";
             }
         }
 
-        $this->dataTypes()->setColumnWithPreffix(concat([$mode, "`$name`"]));
+        $this->dataTypes()->setColumnWithPreffix($mode. "`$name`");
         $this->dataTypes()->setKeyName($name);
         return $this->dataTypes();
     }
 
     public function changeColumnName($current_name, $new_name)
     {
-        if($this->driver == "sqlite") {
+        if ($this->driver == "sqlite") {
             return $this->renameColumn($current_name, $new_name);
         }
 
@@ -87,10 +93,11 @@ class ColumnDefination
         return $this->dataTypes();
     }
 
-    public function renameColumn($current_name, $new_name) {
-        $this->dataTypes()->setColumnWithPreffix(concat(["RENAME COLUMN", "`$current_name`", "TO" , "`$new_name`"]));
-        $this->dataTypes()->setKeyName($new_name);
-        $this->dataTypes()->setQuery($this->dataTypes()->getColumn());
+    public function renameColumn($current_name, $new_name)
+    {
+        $query = concat(["RENAME COLUMN", "`$current_name`", "TO", "`$new_name`"]);
+        (new Schema)->query("ALTER TABLE `$this->table` $query");
+
         return $this;
     }
 
@@ -138,7 +145,7 @@ class ColumnDefination
 
     public function __call($name, $arguments)
     {
-        
+
         $dataTypeClass = get_class($this->dataTypeClass);
         $clReflection = new ReflectionClass($dataTypeClass);
 
@@ -148,11 +155,11 @@ class ColumnDefination
             $methods[] = $clMethod->name;
         }
 
-        if(!in_array($name, $methods)) {
+        if (!in_array($name, $methods)) {
 
             /** 
              * This will throe an exception if method not found in the data class.
-            */
+             */
 
             throw new Exception("Undifined method [$name] not in $dataTypeClass of migration file.", 1);
         }
