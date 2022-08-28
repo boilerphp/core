@@ -110,7 +110,9 @@ class Table implements MigrationInterface
             Table::createAlters($foreignKeysQuery);
         }
 
-        (new Schema(static::getConnection()))->query($query);
+        if($query !== null) {
+            (new Schema(static::getConnection()))->query($query);
+        }
     }
 
     public static function renameTable($old_name, $new_name) {

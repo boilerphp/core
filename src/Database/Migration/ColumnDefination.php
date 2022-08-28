@@ -95,8 +95,8 @@ class ColumnDefination
 
     public function renameColumn($current_name, $new_name)
     {
-        $query = concat(["RENAME COLUMN", "`$current_name`", "TO", "`$new_name`"]);
-        (new Schema)->query("ALTER TABLE `$this->table` $query");
+        $query = "ALTER TABLE `$this->table` RENAME COLUMN `$current_name` TO `$new_name`";
+        (new Schema)->query($query);
 
         return $this;
     }
@@ -164,6 +164,6 @@ class ColumnDefination
             throw new Exception("Undifined method [$name] not in $dataTypeClass of migration file.", 1);
         }
 
-        return $this->dataTypes();
+        return $this;
     }
 }

@@ -29,9 +29,14 @@ class Diagram extends ColumnDefination {
 
     public function modifyTableQuery($columns, $primary_keys) {
 
-        $this->TableQuery = "ALTER TABLE `$this->table` $columns";
-        if($primary_keys != "") { $this->TableQuery .= ", ADD PRIMARY KEY ($primary_keys)"; }
-        return $this->TableQuery;
+        if($columns) {
+            $this->TableQuery = "ALTER TABLE `$this->table` $columns";
+            if($primary_keys != "") { $this->TableQuery .= ", ADD PRIMARY KEY ($primary_keys)"; }
+
+            return $this->TableQuery;
+        }
+
+        return null;
     } 
 
     public function renameTableQuery($new_name) {
