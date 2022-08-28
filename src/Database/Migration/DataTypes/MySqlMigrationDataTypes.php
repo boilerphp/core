@@ -6,6 +6,32 @@ namespace Boiler\Core\Database\Migration\DataTypes;
 class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements DataTypesInterface {
 
     /**
+     * Set column datatype to big integer
+     * 
+     * @param $length 
+     * 
+     * @return self
+     */
+    public function bigInteger($length = 20)
+    {
+        $this->query .= " $this->column BIGINT(" . (string) $length . "),";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to unsigned big integer
+     * 
+     * @param $length 
+     * 
+     * @return self
+     */
+    public function unsignedBigInteger($length = 20)
+    {
+        $this->query .= " $this->column BIGINT(" . (string) $length . ") UNSIGNED,";
+        return $this;
+    }
+    
+    /**
      * Set column datatype to big increments
      * 
      * @return Boiler\Core\Database\DataTypes
