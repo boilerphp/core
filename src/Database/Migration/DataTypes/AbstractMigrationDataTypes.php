@@ -49,8 +49,8 @@ abstract class AbstractMigrationDataTypes
 
 
     protected $query = "";
-    
-    
+
+
     protected $table;
 
 
@@ -213,11 +213,8 @@ abstract class AbstractMigrationDataTypes
      * 
      * @return self
      */
-    public function boolean()
-    {
-        $this->query .= " $this->column TINYINT(1),";
-        return $this;
-    }
+    abstract public function boolean();
+
 
     public function cascade()
     {
@@ -232,10 +229,7 @@ abstract class AbstractMigrationDataTypes
      * 
      * @return self
      */
-    public function date()
-    {
-        $this->query .= " $this->column DATE NOT NULL ,";
-    }
+    abstract public function date();
 
 
     /**
@@ -245,8 +239,11 @@ abstract class AbstractMigrationDataTypes
      */
     public function default($value)
     {
+
         $this->query = trimmer($this->query, ",");
+        $this->query = trimmer($this->query, "NOT NULL");
         $this->query .= " DEFAULT {$value},";
+
         return $this;
     }
 
@@ -259,11 +256,33 @@ abstract class AbstractMigrationDataTypes
      * 
      * @return self
      */
-    public function float($length = 10, $decimal = 2)
-    {
-        $this->query .= " $this->column FLOAT(" . (string) $length . ", " . (string) $decimal . "),";
-        return $this;
-    }
+    abstract public function float($length = 8, $decimal = 2);
+
+    /**
+     * Set column datatype to decimal datatype
+     * 
+     * @param $length
+     * @param $decimal 
+     * 
+     * @return self
+     */
+    abstract public function decimal($length = 8, $decimal = 2);
+
+    /**
+     * Set column datatype to double datatype
+     * 
+     * 
+     * @return self
+     */
+    abstract public function double();
+
+    /**
+     * Set column datatype to double precision datatype
+     * 
+     * 
+     * @return self
+     */
+    abstract public function doublePrecision();
 
 
     /**
@@ -279,6 +298,7 @@ abstract class AbstractMigrationDataTypes
 
 
     abstract public function foreignKeyProccessor($table);
+
 
     public function setColumn($name)
     {

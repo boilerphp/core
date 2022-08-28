@@ -13,7 +13,7 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
      */
     public function bigInteger($length = 20)
     {
-        $this->query .= " $this->column INT(" . (string) $length . "),";
+        $this->query .= " $this->column INTEGER,";
         return $this;
     }
 
@@ -26,7 +26,7 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
      */
     public function unsignedBigInteger($length = 20)
     {
-        $this->query .= " $this->column INT(" . (string) $length . ") UNSIGNED,";
+        $this->query .= " $this->column INTEGER UNSIGNED,";
         return $this;
     }
 
@@ -90,7 +90,7 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
     {
         $this->column = "`$name`";
         $this->primary_keys .= " $this->column,";
-        $this->query .= " $this->column INT NOT NULL UNIQUE,";
+        $this->query .= " $this->column INTEGER NOT NULL UNIQUE,";
         return $this;
     }
 
@@ -119,7 +119,7 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
      */
     public function integer($length = 9) 
     {
-        $this->query .= " $this->column INT($length),";
+        $this->query .= " $this->column INTEGER,";
         return $this;
     }
 
@@ -133,7 +133,7 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
      */
     public function string($length = 100) 
     {
-        $this->query .= " $this->column VARCHAR($length),";
+        $this->query .= " $this->column TEXT,";
         return $this;
     }
 
@@ -158,6 +158,70 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
     public function longtext() 
     {
         $this->query .= " $this->column TEXT,";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to floating datatype
+     * 
+     * @param $length
+     * @param $decimal 
+     * 
+     * @return self
+     */
+    public function float($length = 10, $decimal = 2)
+    {
+        $this->query .= " $this->column REAL,";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to double datatype
+     * 
+     * @param $length
+     * @param $decimal 
+     * 
+     * @return self
+     */
+    public function double($length = 8, $decimal = 2)
+    {
+        $this->query .= " $this->column REAL,";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to double precision datatype
+     * 
+     * @return self
+     */
+    public function doublePrecision()
+    {
+        $this->query .= " $this->column REAL,";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to decimal datatype
+     * 
+     * @param $length
+     * @param $decimal 
+     * 
+     * @return self
+     */
+    public function decimal($length = 8, $decimal = 2) {
+
+        $this->query .= " $this->column NUMERIC,";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to boolean
+     * 
+     * @return self
+     */
+    public function boolean()
+    {
+        $this->query .= " $this->column NUMERIC,";
         return $this;
     }
 
@@ -190,7 +254,7 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
     {
 
         $this->query = trimmer($this->query, ",");
-        $this->query .= ($state) ? " DEFAULT NULL," : "NOT NULL";
+        $this->query .= ($state) ? " DEFAULT NULL," : " NOT NULL";
         return $this;
     }
 
@@ -204,6 +268,15 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
         $this->query .= " $this->column TIME,";
     }
 
+    /**
+     * Set column datatype to date
+     * 
+     * @return self
+     */
+    public function date()
+    {
+        $this->query .= " $this->column NUMERIC NOT NULL ,";
+    }
 
     /**
      * Set column datatype to datetime
@@ -212,7 +285,7 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
      */
     public function timestamp() 
     {
-        $this->query .= " $this->column DATETIME,";
+        $this->query .= " $this->column NUMERIC NOT NULL ,";
         return $this;
     }
 

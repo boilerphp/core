@@ -3,7 +3,8 @@
 namespace Boiler\Core\Database\Migration\DataTypes;
 
 
-class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements DataTypesInterface {
+class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements DataTypesInterface
+{
 
     /**
      * Set column datatype to big integer
@@ -30,15 +31,15 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
         $this->query .= " $this->column BIGINT(" . (string) $length . ") UNSIGNED,";
         return $this;
     }
-    
+
     /**
      * Set column datatype to big increments
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function bigIncrements() 
+    public function bigIncrements()
     {
-        if($this->pk_mode) {
+        if ($this->pk_mode) {
             $this->primary_keys .= " $this->key,";
         }
 
@@ -52,9 +53,9 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function increments() 
+    public function increments()
     {
-        if($this->pk_mode) {
+        if ($this->pk_mode) {
             $this->primary_keys .= " $this->key,";
         }
 
@@ -106,7 +107,7 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
     public function stringId($length = 100)
     {
         $this->primary_keys .= " $this->column,";
-        $this->query .= " $this->column VARCHAR(". (string) $length .") UNIQUE,";
+        $this->query .= " $this->column VARCHAR(" . (string) $length . ") UNIQUE,";
         return $this;
     }
 
@@ -118,9 +119,9 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function integer($length = 9) 
+    public function integer($length = 9)
     {
-        $this->query .= " $this->column INT(". (string) $length ."),";
+        $this->query .= " $this->column INT(" . (string) $length . "),";
         return $this;
     }
 
@@ -132,9 +133,9 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function string($length = 100) 
+    public function string($length = 100)
     {
-        $this->query .= " $this->column VARCHAR(". (string) $length ."),";
+        $this->query .= " $this->column VARCHAR(" . (string) $length . "),";
         return $this;
     }
 
@@ -144,7 +145,7 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function text() 
+    public function text()
     {
         $this->query .= " $this->column TEXT,";
         return $this;
@@ -156,9 +157,73 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function longtext() 
+    public function longtext()
     {
         $this->query .= " $this->column LONGTEXT,";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to floating datatype
+     * 
+     * @param $length
+     * @param $decimal 
+     * 
+     * @return self
+     */
+    public function float($length = 8, $decimal = 2)
+    {
+        $this->query .= " $this->column FLOAT(" . (string) $length . ", " . (string) $decimal . "),";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to double datatype
+     * 
+     * @param $length
+     * @param $decimal 
+     * 
+     * @return self
+     */
+    public function double($length = 8, $decimal = 2)
+    {
+        $this->query .= " $this->column DOUBLE(" . (string) $length . ", " . (string) $decimal . "),";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to double precision datatype
+     * 
+     * @return self
+     */
+    public function doublePrecision()
+    {
+        $this->query .= " $this->column DOUBLE PRECISION,";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to decimal datatype
+     * 
+     * @param $length
+     * @param $decimal 
+     * 
+     * @return self
+     */
+    public function decimal($length = 8, $decimal = 2) {
+
+        $this->query .= " $this->column DECIMAL(" . (string) $length . ", " . (string) $decimal . "),";
+        return $this;
+    }
+
+    /**
+     * Set column datatype to boolean
+     * 
+     * @return self
+     */
+    public function boolean()
+    {
+        $this->query .= " $this->column TINYINT(1),";
         return $this;
     }
 
@@ -169,10 +234,9 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
      */
     public function primary($column = "")
     {
-        if($column != "") {
+        if ($column != "") {
             $this->primary_keys .= " $column,";
-        } else 
-        {
+        } else {
             $this->primary_keys .= " $this->key,";
         }
         return $this;
@@ -187,11 +251,11 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function nullable($state = true) 
+    public function nullable($state = true)
     {
 
         $this->query = trimmer($this->query, ",");
-        $this->query .= ($state) ? " DEFAULT NULL," : "NOT NULL";
+        $this->query .= ($state) ? " DEFAULT NULL," : " NOT NULL";
         return $this;
     }
 
@@ -200,24 +264,33 @@ class MySqlMigrationDataTypes extends AbstractMigrationDataTypes implements Data
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function time() 
+    public function time()
     {
         $this->query .= " $this->column TIME,";
     }
 
+    /**
+     * Set column datatype to date
+     * 
+     * @return self
+     */
+    public function date()
+    {
+        $this->query .= " $this->column DATE NOT NULL ,";
+    }
 
     /**
      * Set column datatype to datetime
      * 
      * @return Boiler\Core\Database\DataTypes
      */
-    public function timestamp() 
+    public function timestamp()
     {
         $this->query .= " $this->column DATETIME,";
         return $this;
     }
 
-    public function unique() 
+    public function unique()
     {
         $this->query = trimmer($this->query, ",");
         $this->query .= " UNIQUE,";
