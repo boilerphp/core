@@ -51,7 +51,7 @@ abstract class AbstractMigrationDataTypes
     protected $query = "";
     
     
-    private $table;
+    protected $table;
 
 
     /**
@@ -283,25 +283,10 @@ abstract class AbstractMigrationDataTypes
      * 
      * @return Boiler\Core\Database\ColumnDefination
      */
-    public function foreign($table, $reference = "id")
-    {
-        $reference = is_null($reference) ? $this->key : $reference;
-
-        $const = $table . "_" . $this->table . "_" . $this->key . "_fk";
-        $this->foreignKeys .= " ADD CONSTRAINT `$const` FOREIGN KEY (`$this->key`) REFERENCES `$table` (`$reference`) ,";
-
-        return $this;
-    }
+    abstract public function foreign($table, $reference = "id");
 
 
-    public function foreignKeyProccessor($table)
-    {
-        if ($this->foreignKeys != "") {
-            $query = trimmer($this->foreignKeys, ",");
-            $alter_query = "ALTER TABLE $table " . $query;
-            return $alter_query;
-        }
-    }
+    abstract public function foreignKeyProccessor($table);
 
     public function setColumn($name)
     {
@@ -320,12 +305,12 @@ abstract class AbstractMigrationDataTypes
 
     public function getQuery()
     {
-        return $this->query;
+        return trimmer($this->query, ",");
     }
 
     public function getPrimaryKeys()
     {
-        return $this->primary_keys;
+        return trimmer($this->primary_keys, ",");
     }
 
     public function setPkMode($mode)

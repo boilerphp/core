@@ -197,4 +197,30 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
         return $this;
     }
 
+    /**
+     * Define a column as a foreign key column
+     * and set the relationship keys.
+     * 
+     * @param $table - name of the foreign table
+     * @param $reference - relating column of the foreign table
+     * 
+     * @return Boiler\Core\Database\ColumnDefination
+     */
+    public function foreign($table, $reference = "id")
+    {
+        $reference = is_null($reference) ? $this->key : $reference;
+
+        $const = $table . "_" . $this->table . "_" . $this->key . "_fk";
+        $this->foreignKeys .= "FOREIGN KEY (`$this->key`) REFERENCES `$table` (`$reference`) ,";
+
+        return $this;
+    }
+
+    public function foreignKeyProccessor($table)
+    {
+        if ($this->foreignKeys != "") {
+            $query = trimmer($this->foreignKeys, ",");
+            return $query;
+        }
+    }
 }

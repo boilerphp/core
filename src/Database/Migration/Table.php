@@ -18,7 +18,7 @@ class Table implements MigrationInterface
      *
      */
 
-    public static $alters = array();
+    protected static $alters = array();
 
 
     /**
@@ -77,33 +77,49 @@ class Table implements MigrationInterface
         $diagram = new Diagram($name, $driver);
         
         $callback($diagram);
-        $tableQuery = $diagram->createTableQuery(
-            trimmer($diagram->dataTypes()->getQuery(), ","),
-            trimmer($diagram->dataTypes()->getPrimaryKeys(), ",")
+        $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
+
+        $query = $diagram->createTableQuery(
+            $diagram->dataTypes()->getQuery(),
+            $diagram->dataTypes()->getPrimaryKeys(),
+            ($driver === "sqlite") ? $foreignKeysQuery : null
         );
 
-        $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
-        Table::createAlters($foreignKeysQuery);
+        if($driver !== "sqlite") {
+            Table::createAlters($foreignKeysQuery);
+        }
 
-        (new Schema(static::$connection))->query($tableQuery);
+        (new Schema(static::getConnection()))->query($query);
     }
 
     public static function modify($name, $callback)
     {
-
-        $diagram = new Diagram($name, GlobalConfig::getAppConnection()->getDriver());
+        $driver = GlobalConfig::getAppConnection()->getDriver();
+        $diagram = new Diagram($name, $driver);
         $diagram->dataTypes()->setPkMode(false);
 
         $callback($diagram);
+        $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
+
         $query = $diagram->modifyTableQuery(
-            trimmer($diagram->dataTypes()->getQuery(), ","),
-            trimmer($diagram->dataTypes()->getPrimaryKeys(), ",")
+            $diagram->dataTypes()->getQuery(),
+            $diagram->dataTypes()->getPrimaryKeys()
         );
 
-        $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
-        Table::createAlters($foreignKeysQuery);
+        if($foreignKeysQuery) {
+            Table::createAlters($foreignKeysQuery);
+        }
 
-        (new Schema(static::$connection))->query($query);
+        (new Schema(static::getConnection()))->query($query);
+    }
+
+    public static function renameTable($old_name, $new_name) {
+        
+        $driver = GlobalConfig::getAppConnection()->getDriver();
+        $diagram = new Diagram($old_name, $driver);
+
+        $query = $diagram->renameTableQuery($new_name);
+        (new Schema(static::getConnection()))->query($query);
     }
 
     private static function createAlters($foreignKeysQuery)
@@ -116,6 +132,11 @@ class Table implements MigrationInterface
     public static function getAlters()
     {
         return static::$alters;
+    }
+
+    public static function getConnection()
+    {
+        return static::$connection;
     }
 
     public static function dropIfExists($table)
