@@ -113,7 +113,6 @@ class ColumnDefination
             
         } else {
             $query = "ALTER TABLE `$this->table`DROP COLUMN `$columns`";
-            (new Schema)->query($query);
         }
         
         $this->schema->query($query);
