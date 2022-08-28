@@ -110,6 +110,7 @@ class Table implements MigrationInterface
             Table::createAlters($foreignKeysQuery);
         }
 
+        verbose($query, "error");
         if($query !== null) {
             (new Schema(static::getConnection()))->query($query);
         }

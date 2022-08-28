@@ -68,7 +68,7 @@ class ColumnDefination
 
         if (preg_match('/ADD/', $query)) {
 
-            $query = trimmer($query, ",");
+            $this->dataTypes()->trimQuery();
 
             if ($this->driver === "sqlite") {
                 $mode = "; ALTER TABLE $this->table ADD ";

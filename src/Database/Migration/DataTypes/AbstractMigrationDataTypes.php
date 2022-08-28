@@ -348,4 +348,8 @@ abstract class AbstractMigrationDataTypes
     {
         $this->table = $table;
     }
+
+    public function trimQuery() {
+        $this->query = trimmer($this->query, " ,");
+    }
 }
