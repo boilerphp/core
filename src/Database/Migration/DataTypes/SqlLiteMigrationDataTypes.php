@@ -252,9 +252,10 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
      */
     public function nullable($state = true) 
     {
-
-        $this->query = trimmer($this->query, ",");
-        $this->query .= ($state) ? " DEFAULT NULL," : " NOT NULL";
+        if ($state === false) {
+            $this->query = trimmer($this->query, ",");
+            $this->query .= " NOT NULL ,";
+        }
         return $this;
     }
 
