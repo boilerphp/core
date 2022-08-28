@@ -215,38 +215,12 @@ abstract class AbstractMigrationDataTypes
      */
     abstract public function boolean();
 
-
-    public function cascade()
-    {
-        $this->foreignKeys = trimmer($this->foreignKeys, ",");
-        $this->foreignKeys .= "ON DELETE CASCADE ,";
-        return $this;
-    }
-
-
     /**
      * Set column datatype to date
      * 
      * @return self
      */
     abstract public function date();
-
-
-    /**
-     * Set column default value
-     * 
-     * @return self
-     */
-    public function default($value)
-    {
-
-        $this->query = trimmer($this->query, ",");
-        $this->query = trimmer($this->query, "NOT NULL");
-        $this->query .= " DEFAULT {$value},";
-
-        return $this;
-    }
-
 
     /**
      * Set column datatype to floating datatype
@@ -299,6 +273,33 @@ abstract class AbstractMigrationDataTypes
 
     abstract public function foreignKeyProccessor($table);
 
+
+    public function cascade()
+    {
+        $this->foreignKeys = trimmer($this->foreignKeys, ",");
+        $this->foreignKeys .= "ON DELETE CASCADE ,";
+        return $this;
+    }
+
+    /**
+     * Set column default value
+     * 
+     * @return self
+     */
+    public function default($value)
+    {
+
+        $this->query = trimmer($this->query, ",");
+        $this->query = trimmer($this->query, "NOT NULL");
+        $this->query .= " DEFAULT {$value},";
+
+        return $this;
+    }
+
+    public function after($column)
+    {
+        return $this->query = concat([trimmer($this->query, ","), "AFTER",  "`$column`"]);
+    }
 
     public function setColumn($name)
     {

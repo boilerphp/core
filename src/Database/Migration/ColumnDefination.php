@@ -56,11 +56,6 @@ class ColumnDefination
         return $this->dataTypes();
     }
 
-    public function after($column)
-    {
-        return $this->query = concat([trimmer($this->query, ","), "AFTER",  "`$column`"]);
-    }
-
     public function addColumn($name)
     {
 
@@ -81,8 +76,8 @@ class ColumnDefination
     public function changeColumnName($current_name, $new_name)
     {
 
-        $this->column = concat(["CHANGE", "`$current_name`", "`$new_name`"]);
-        $this->key = "$new_name";
+        $this->dataTypes()->setColumnWithPreffix(concat(["CHANGE", "`$current_name`", "`$new_name`"]));
+        $this->dataTypes()->setKeyName($new_name);
         return $this->dataTypes();
     }
 
@@ -124,7 +119,6 @@ class ColumnDefination
 
     public function timestamps()
     {
-
         $this->column("created_date")->timestamp()->default("CURRENT_TIMESTAMP");
         $this->column("updated_date")->timestamp()->default("CURRENT_TIMESTAMP");
     }
