@@ -255,6 +255,8 @@ class SqlLiteMigrationDataTypes extends AbstractMigrationDataTypes implements Da
         if ($state === false) {
             $this->query = trimmer($this->query, ",");
             $this->query .= " NOT NULL ,";
+        } else {
+            $this->query = trimmer($this->query, "NOT NULL ,")." ,";
         }
         return $this;
     }
