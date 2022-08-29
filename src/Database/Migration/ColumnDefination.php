@@ -104,18 +104,16 @@ class ColumnDefination
 
     public function dropColumn($columns)
     {
-        $query = "";
-
         if (is_array($columns)) {
             foreach ($columns as $column) {
-                $query .= "ALTER TABLE `$this->table` DROP COLUMN `$column`;";
+                $query = "ALTER TABLE `$this->table` DROP COLUMN `$column`;";
+                $this->schema->query($query);
             }
-            
+            return;
         } else {
             $query = "ALTER TABLE `$this->table`DROP COLUMN `$columns`";
+            $this->schema->query($query);
         }
-        
-        $this->schema->query($query);
     }
 
     public function dropPrimaryKey()

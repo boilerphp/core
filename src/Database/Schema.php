@@ -482,7 +482,7 @@ class Schema extends QueryConstructor
     public function truncate()
     {
         if (in_array($this->driver, ["sqlite", "pdo_sqlite"])) {
-            return $this->delete();
+            return $this->query("DELETE FROM $this->table");
         }
         $this->connection()->executeQuery("TRUNCATE $this->table");
     }
