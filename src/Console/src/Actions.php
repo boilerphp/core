@@ -246,4 +246,31 @@ class Actions extends ActionHelpers
 
         $this->verbose("Database seeding completed!", "success");
     }
+
+    public function test($name, $flag = null)
+    {
+
+        $unit_test = false;
+
+        if (!is_null($flag)) {
+            if ($flag == "--unit") {
+                $unit_test = true;
+            }
+        }
+
+
+        $path = $this->path("tests") . ($unit_test ? 'Unit/' : 'Integration/') . $name . ".php";
+
+        if ($this->checkExistent($path)) {
+            $this->verbose("Test $name already exists");
+            exit;
+        }
+
+        if ($this->configureTest($name, $path, $unit_test)) {
+            return true;
+        }
+
+        verbose("Unable to create test file " . $name, "info");
+        return false;
+    }
 }

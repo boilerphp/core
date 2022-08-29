@@ -125,7 +125,7 @@ class Command extends Actions {
             return true;
         }
 
-        $this->verbose("No new migrations");
+        verbose("No new migrations", "success");
     }
 
 

@@ -51,7 +51,8 @@ class ActionHelpers implements ActionHelpersInterface
         "controller" => "./app/Controllers/",
         "migration" => "./database/Migrations/",
         "notification" => "./app/Notifications/",
-        "seeder" => "./database/Seeders/"
+        "seeder" => "./database/Seeders/",
+        "tests" => "./tests/"
     );
 
     protected $specialTableChars = ["boy"];
@@ -428,6 +429,31 @@ class ActionHelpers implements ActionHelpersInterface
         }
     }
 
+    /**
+     * usage: configures seeder structure and inital setup
+     * @param string $seeder_name
+     * 
+     * @param string $seeder_path
+     * 
+     * @return void;
+     */
+
+    public function configureTest($test_name, $test_path, $unit = false)
+    {
+        $component_path = __DIR__."/../../components/test.component";
+
+        if ($this->readComponent($component_path)) {
+            $this->module = preg_replace("/\[ClassName\]/", $test_name, $this->component);
+            if($unit === true) {
+                $this->module = preg_replace("/\\Integration/", "Unit", $this->module);
+            }
+            if ($this->writeModule($test_path)) {
+                $this->verbose("$test_name successfully created!");
+                return true;
+            }
+            return false;
+        }
+    }
 
     /**
      * reads the component file and get the components structure

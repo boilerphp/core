@@ -1,0 +1,16 @@
+<?php
+
+namespace Tests\Integration;
+
+use Tests\TestCase;
+
+class [ClassName\] extends TestCase
+{
+    /**
+    * test example.
+    */
+    public function testExample()
+    {
+        $this->assertTrue(true);
+    }
+}
