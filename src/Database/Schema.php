@@ -423,7 +423,8 @@ class Schema extends QueryConstructor
             $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = LAST_INSERT_ID()");
         }
 
-        return $this->resultFormatter($last_inserted->fetchAssociative(), false, false);
+        $instance = $last_inserted->fetchAssociative();
+        return $this->resultFormatter($instance, false, false);
     }
 
     public function select(array|string $fields)
@@ -433,58 +434,48 @@ class Schema extends QueryConstructor
     }
 
 
-    public function update($data, $value = null)
+    public function update($data = [], $value = null)
     {
-        $data = $this->dataFormatChecker($data, $value);
-        $this->updateQuery($data, $this->table);
+        $newdata = $this->dataFormatChecker($data, $value);
+        $this->updateQuery($newdata, $this->table);
 
         if (!strpos(strtolower($this->getSql()), "where")) {
+            $this->where("id", $this->id);
+        }
 
-            return $this->where("id", $this->id)->update($data);
-        } else {
-
-            if ($this->save()) {
-
-                foreach ($data as $key => $value) {
-                    $this->$key = $value;
-                }
-
-                return true;
+        if ($this->save()) {
+            foreach ($data as $key => $value) {
+                $this->$key = $value;
             }
+
+            return true;
         }
 
         return false;
     }
 
 
-    public function delete($key = null, $value = null)
+    public function delete($key = null)
     {
-
-        if (is_null($key) && is_null($value)) {
-            if (isset($this->id)) {
-                $key = "id";
-                $value = $this->id;
-            } else {
-                // throwable error for parameter expected
+        if (!is_null($key)) {
+            if (isset($this->$key)) {
+                $value = $this->$key;
             }
-        } elseif (is_null($value)) {
-            $value = $key;
+        } else {
+            $value = $this->id;
             $key = "id";
         }
 
         $data = $this->dataFormatChecker($key, $value);
-        if ($this->deleteQuery($data, $this->table)) {
+        $this->deleteQuery($data, $this->table);
 
-            $statement = $this->connection()->prepare($this->getSql());
-            if (count($this->parameters))
-                if ($statement->executeQuery($this->parameters)) {
-                    return true;
-                }
+        $statement = $this->connection()->prepare($this->getSql());
+        if (count($this->parameters))
+            if ($statement->executeQuery($this->parameters)) {
+                return true;
+            }
 
-            return $statement->executeQuery();
-        }
-
-        return false;
+        return $statement->executeQuery();
     }
 
 
@@ -654,16 +645,12 @@ class Schema extends QueryConstructor
 
         if (!is_null($this->builder)) {
 
-            if (count($this->parameters)) {
-
-                foreach ($this->parameters as $key => $value) {
-                    $this->builder->setParameter($key, $value);
-                }
-            }
-
             $exec = $this->connection()->prepare($this->getSql());
+            $result = (count($this->parameters))
+                ? $exec->executeQuery($this->parameters)
+                : $exec->executeQuery();
 
-            if ($exec->executeQuery()) {
+            if ($result) {
                 $this->clearInitalQuery();
                 return true;
             }
@@ -736,13 +723,14 @@ class Schema extends QueryConstructor
     }
 
 
-    public function dropTable($name = null) {
+    public function dropTable($name = null)
+    {
 
-        if($name !== null) {
+        if ($name !== null) {
             $this->table($name);
         }
 
-        if(in_array($this->driver, ["sqlite", "pdo_sqlite", "mysqli"])) {
+        if (in_array($this->driver, ["sqlite", "pdo_sqlite", "mysqli"])) {
 
             $this->query("DROP TABLE IF EXISTS $this->table;");
             $this->query("DROP TABLE IF EXISTS $this->table;");

@@ -63,8 +63,8 @@ class QueryConstructor
 
     public function updateQuery($data, $table)
     {
-
         $this->builder->update($table);
+        
         foreach ($data as $column => $val) {
             $this->builder->set($column, '?');
             array_push($this->parameters, $val);
