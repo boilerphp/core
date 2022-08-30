@@ -16,19 +16,8 @@ class TemplateEngine
         self::$ext = $ext;
     }
 
-    public function render($fileContent, $content = null)
+    public function content($fileContent, $content = null)
     {
-
-        self::$content = $content;
-        $fcontent = static::editFile($fileContent, $content);
-
-        $fcontent = eval("?>" . $fcontent);
-        return $fcontent;
-    }
-
-    public function content($fileContent, $content)
-    {
-
         self::$content = $content;
         $fcontent = static::editFile($fileContent, $content);
 

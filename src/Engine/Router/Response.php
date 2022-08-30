@@ -77,9 +77,11 @@ class Response
 
             $template = new TemplateEngine($extension);
             $fcontent = $template->extendLayout($fcontent, $view_path, $extension);
-            $fcontent = $template->render($fcontent, $content);
-            return $template;
+            $fcontent = $template->content($fcontent, $content);
+            
+            return $fcontent;
         } else {
+
             throw new Exception($view_file . " does not exists");
         }
     }
@@ -87,13 +89,13 @@ class Response
     public static function content($text, $status = 200)
     {
         Response::setResponseHeader($status);
-        echo $text;
+        return $text;
     }
 
     public static function json($data, $status = 200)
     {
         Response::setResponseHeader($status, true);
-        echo json_encode($data);
+        return json_encode($data);
     }
 
     public static function redirect($location)

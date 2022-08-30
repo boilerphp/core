@@ -346,10 +346,10 @@ class Route extends RoutesConfig
                     ];
                 }
 
-                Response::json($response, 401);
+                echo Response::json($response, 401);
             } else {
                 // throw new UnAuthorizedRequestException("Unauthorized request detected!");
-                Response::content('Invalid auth credentials', 401);
+                echo Response::content('Invalid auth credentials', 401);
             }
 
             return false;
@@ -390,7 +390,7 @@ class Route extends RoutesConfig
 
             if ($handler_controller instanceof Controller) {
 
-                $handler_controller->$handler_method($request);
+                return $handler_controller->$handler_method($request);
             } else {
 
                 /**
@@ -400,7 +400,7 @@ class Route extends RoutesConfig
             }
         } else {
             $action = $path["action"];
-            call_user_func($action, $request);
+            return call_user_func($action, $request);
         }
     }
 
@@ -441,7 +441,7 @@ class Route extends RoutesConfig
          * if uri is registered in domain lookup method list
          */
         if (array_key_exists($uri, static::$route_lookup_list) && !isset($wild_card_enabled)) {
-            static::listenHandler(static::$route_lookup_list, $uri, new Request($method));
+            echo static::listenHandler(static::$route_lookup_list, $uri, new Request($method));
         }
         /**
          * Checking wildcard domains if they are allowed
@@ -456,8 +456,7 @@ class Route extends RoutesConfig
 
                 static::$route_lookup_list = static::$domains[$wildcard][$method];
                 if (array_key_exists($uri, static::$route_lookup_list)) {
-                    static::listenHandler(static::$route_lookup_list, $uri, $request);
-                } else {
+                    echo static::listenHandler(static::$route_lookup_list, $uri, $request);
                 }
             }
         } else {
@@ -467,7 +466,7 @@ class Route extends RoutesConfig
 
             # checking it pattern exists
             if (array_key_exists($pattern, static::$route_lookup_list)) {
-                static::patternHandler(static::$route_lookup_list, $pattern, $uri, $method);
+                echo static::patternHandler(static::$route_lookup_list, $pattern, $uri, $method);
                 return;
             }
 
@@ -478,7 +477,7 @@ class Route extends RoutesConfig
 
                 if (($headers['Accept'] ?? null) == 'application/json') {
 
-                    return Response::json([
+                    echo Response::json([
                         "status" => 500,
                         "message" => "Invalied post request, this request is not handled by this app!!",
                         "error" => (new \Exception('Unhandled Post Request has been initiated!!')),
@@ -490,7 +489,7 @@ class Route extends RoutesConfig
                 return;
             }
 
-            return Response::error404();
+            echo Response::error404();
         }
     }
 
@@ -502,7 +501,6 @@ class Route extends RoutesConfig
         if (static::$enable_subdomains) {
             $registerer = static::$domains;
         }
-        echo 111;
         echo json_encode($registerer);
     }
 
