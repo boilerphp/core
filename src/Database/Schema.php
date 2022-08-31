@@ -424,7 +424,9 @@ class Schema extends QueryConstructor
         }
 
         $instance = $last_inserted->fetchAssociative();
-        return $this->resultFormatter($instance, false, false);
+        if($instance) {
+            return $this->resultFormatter($instance, false, false);
+        }
     }
 
     public function select(array|string $fields)
