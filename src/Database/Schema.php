@@ -588,7 +588,10 @@ class Schema extends QueryConstructor
 
             if (count($this->parameters)) {
                 $statement = $this->connection()->prepare($this->getSql());
-                $result = $statement->executeQuery($this->parameters);
+                foreach ($this->parameters as $key => $value) {
+                    $statement->bindValue(($key+1), $value);
+                }
+                $result = $statement->executeQuery();
             } else {
 
                 $result = $this->builder->executeQuery();

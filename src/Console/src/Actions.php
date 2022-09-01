@@ -207,6 +207,15 @@ class Actions extends ActionHelpers
 
     public function seed($flag = null)
     {
+
+        $all_seeder_file = glob("./database/Seeders/*.php");
+
+        if ($all_seeder_file) {
+            foreach ($all_seeder_file as $seeder_file) {
+                $this->requireOnce($seeder_file);
+            }
+        }
+
         if ($flag !== null) 
         {
             $seeders = explode('|', $flag);
