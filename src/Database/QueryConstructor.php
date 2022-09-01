@@ -2,6 +2,7 @@
 
 namespace Boiler\Core\Database;
 
+use Exception;
 
 class QueryConstructor
 {
@@ -64,7 +65,7 @@ class QueryConstructor
     public function updateQuery($data, $table)
     {
         $this->builder->update($table);
-        
+
         foreach ($data as $column => $val) {
             $this->builder->set($column, '?');
             array_push($this->parameters, $val);
@@ -76,23 +77,20 @@ class QueryConstructor
         $this->columns = "";
         $this->builder->delete($table);
 
-        if($data !== null) {
+        if ($data !== null) {
             foreach ($data as $column => $value) {
-                $this->builder->where($column." = ?");
+                $this->builder->where($column . " = ?");
                 array_push($this->parameters, $value);
             }
-        }
-
-        else {
-            if(!strpos(strtolower($this->getSql()), "where")) {
+        } else {
+            if (!strpos(strtolower($this->getSql()), "where")) {
                 $id = $this->id ?? null;
-                if($id) {
+                if ($id) {
                     $this->builder->where('id = ?');
                     array_push($this->parameters, $id);
                 }
             }
         }
-
     }
 
     public function whereQuery(array|string $key,  array|string|null $value = null)
@@ -102,7 +100,11 @@ class QueryConstructor
 
             $index = 0;
             foreach ($key as $column => $val) {
-                $this->builder->where($column . ' = ?');
+                if (strpos(strtolower($this->getSql()), "where")) {
+                    $this->builder->andWhere($column . ' = ?');
+                } else {
+                    $this->builder->where($column . ' = ?');
+                }
                 array_push($this->parameters, $val);
 
                 $index++;
@@ -111,12 +113,17 @@ class QueryConstructor
 
             if (is_string($key)) {
 
-                if (is_null($value)) {
+                if (!is_null($value)) {
 
-                    $this->builder->where($key);
-                } else {
-                    $this->builder->where($key . ' = ?');
+                    if (strpos(strtolower($this->getSql()), "where")) {
+                        $this->builder->andWhere($key . ' = ?');
+                    } else {
+                        $this->builder->where($key . ' = ?');
+                    }
                     array_push($this->parameters, $value);
+                } else {
+
+                    throw new Exception("Value cannot be empty on where query builder", 1);
                 }
             }
         }
@@ -153,36 +160,36 @@ class QueryConstructor
     }
 
     protected function orWhereQuery($key, $value, $operation = null)
-	{
+    {
 
-		if (is_array($key)) {
-			$index = 0;
-			foreach ($key as $column => $val) {
-				if ($operation != null) {
-					if (is_array($operation)) {
-						$op = $operation[$index];
-						$this->builder->orWhere("`$column` $op '$val'");
-					} else {
-						$this->builder->orWhere("`$column` $operation '$val'");
-					}
-				} else {
-					$this->builder->orWhere("`$column` = ?");
+        if (is_array($key)) {
+            $index = 0;
+            foreach ($key as $column => $val) {
+                if ($operation != null) {
+                    if (is_array($operation)) {
+                        $op = $operation[$index];
+                        $this->builder->orWhere("`$column` $op '$val'");
+                    } else {
+                        $this->builder->orWhere("`$column` $operation '$val'");
+                    }
+                } else {
+                    $this->builder->orWhere("`$column` = ?");
                     array_push($this->parameters, $val);
-				}
+                }
 
-				$index++;
-			}
-		} else if (!is_array($key)) {
-			if ($operation != null) {
+                $index++;
+            }
+        } else if (!is_array($key)) {
+            if ($operation != null) {
 
-				$this->builder->orWhere("`$key` $operation '$value'");
-			} else {
+                $this->builder->orWhere("`$key` $operation '$value'");
+            } else {
 
-				$this->builder->orWhere("`$key` = ?");
+                $this->builder->orWhere("`$key` = ?");
                 array_push($this->parameters, $value);
-			}
-		}
-	}
+            }
+        }
+    }
 
     public function orderQuery(string $key, string $order = "ASC", string|array $limit = null)
     {
@@ -202,7 +209,7 @@ class QueryConstructor
     {
         $this->builder->groupBy($option);
 
-        if(!in_array($this->driver, ["sqlite", "pdo_sqlite"])) {
+        if (!in_array($this->driver, ["sqlite", "pdo_sqlite"])) {
             $this->conn->getConnection()->executeQuery('SET sql_mode=(SELECT REPLACE(@@sql_mode, "ONLY_FULL_GROUP_BY", ""))');
         }
     }
