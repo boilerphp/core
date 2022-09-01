@@ -100,7 +100,7 @@ class QueryConstructor
 
             $index = 0;
             foreach ($key as $column => $val) {
-                if (strpos(strtolower($this->getSql()), "where")) {
+                if (count($this->parameters) > 0) {
                     $this->builder->andWhere($column . ' = ?');
                 } else {
                     $this->builder->where($column . ' = ?');
@@ -115,7 +115,7 @@ class QueryConstructor
 
                 if (!is_null($value)) {
 
-                    if (strpos(strtolower($this->getSql()), "where")) {
+                    if (count($this->parameters) > 0) {
                         $this->builder->andWhere($key . ' = ?');
                     } else {
                         $this->builder->where($key . ' = ?');
