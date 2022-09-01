@@ -209,6 +209,7 @@ class Schema extends QueryConstructor
     public function clearInitalQuery()
     {
         $this->parameters = [];
+        $this->searchIndex = 0;
         $this->resetBuilder();
     }
 

@@ -13,6 +13,8 @@ class QueryConstructor
 
     protected $schemaManager;
 
+    protected $searchIndex = 0;
+
     protected array $parameters = [];
 
     public function __construct(protected Connection $conn)
@@ -128,25 +130,27 @@ class QueryConstructor
 
         if (is_array($key)) {
 
-            $index = 0;
             foreach ($key as $column => $val) {
 
                 $val = $operation[0] . $val . $operation[1];
                 $search = "`$column` LIKE '$val'";
-                $this->builder->where($search);
 
-                $index++;
+                if ($this->searchIndex > 0) {
+                    $this->builder->andWhere($search);
+                } else {
+                    $this->builder->where($search);
+                }
+
+                $this->searchIndex++;
             }
         } else {
 
             if (is_string($key)) {
 
-                if (is_null($value)) {
-
-                    $this->builder->where($key);
+                $value = $operation[0] . $value . $operation[1];
+                if ($this->searchIndex > 0) {
+                    $this->builder->andWhere("`$key` LIKE '$value'");
                 } else {
-
-                    $value = $operation[0] . $value . $operation[1];
                     $this->builder->where("`$key` LIKE '$value'");
                 }
             }
