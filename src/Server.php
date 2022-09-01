@@ -186,14 +186,14 @@ class Server extends App
 
                 if ($response === "application/json") {
 
-                    return Response::json([
+                    echo Response::json([
                         "error" => $ex->getMessage(),
                         "line" => "Line {$ex->getLine()} of {$ex->getFile()}",
                         "trace" => $ex->getTrace()
                     ], 500);
                 }
 
-                return absolute_view(
+                echo absolute_view(
                     path: ["extension" => "php", "fullpath" => __DIR__ . "/errors/debug.php"],
                     data: ["ex" => $ex],
                     status: 500
@@ -202,17 +202,17 @@ class Server extends App
 
                 if ($response === "application/json") {
 
-                    return Response::json([
+                    echo Response::json([
                         'status' => 500,
                         'message' => 'Server Error'
                     ], 500);
                 }
 
                 if (Fs::exists(__DIR__ . '/../' . ViewsConfig::$views_path . '/errors/500.fish.php')) {
-                    return view('errors/500');
+                    echo view('errors/500');
                 }
 
-                return absolute_view(
+                echo absolute_view(
                     path: ["extension" => "php", "fullpath" => __DIR__ . "/errors/500.php"],
                     status: 500
                 );
