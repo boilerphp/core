@@ -424,7 +424,7 @@ class Schema extends QueryConstructor
         }
 
         $instance = $last_inserted->fetchAssociative();
-        if($instance) {
+        if ($instance) {
             return $this->resultFormatter($instance, false, false);
         }
     }
@@ -586,21 +586,21 @@ class Schema extends QueryConstructor
     {
         if ($this->builder) {
 
-            $statement = $this->connection()->prepare($this->builder->getSql());
+            if (count($this->parameters)) {
+                $statement = $this->connection()->prepare($this->getSql());
+                $result = $statement->executeQuery($this->parameters);
+            } else {
 
-            (count($this->parameters))
-                ? $result = $statement->executeQuery($this->parameters)
-                : $result = $statement->executeQuery();
-
+                $result = $this->builder->executeQuery();
+            }
 
             if ($result) {
-                $data = $result->fetchAllAssociative();
                 ($clear === true ? $this->clearInitalQuery() : null);
-                if (count($data) > 0) {
+                if ($result->rowCount() > 0) {
 
-                    return (count($data) > 1)
-                        ? $this->resultFormatter($data, true, $relations)
-                        : $this->resultFormatter($data[0], false, $relations);
+                    return ($result->rowCount() > 1)
+                        ? $this->resultFormatter($result->fetchAllAssociative(), true, $relations)
+                        : $this->resultFormatter($result->fetchAssociative(), false, $relations);
                 }
             }
         }
