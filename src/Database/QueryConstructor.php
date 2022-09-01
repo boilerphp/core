@@ -93,7 +93,7 @@ class QueryConstructor
         }
     }
 
-    public function whereQuery(array|string $key,  array|string|null $value = null)
+    public function whereQuery(array|string $key,  array|string $value = null)
     {
 
         if (is_array($key)) {
@@ -113,18 +113,12 @@ class QueryConstructor
 
             if (is_string($key)) {
 
-                if (!is_null($value)) {
-
-                    if (count($this->parameters) > 0) {
-                        $this->builder->andWhere($key . ' = ?');
-                    } else {
-                        $this->builder->where($key . ' = ?');
-                    }
-                    array_push($this->parameters, $value);
+                if (count($this->parameters) > 0) {
+                    $this->builder->andWhere($key . ' = ?');
                 } else {
-
-                    throw new Exception("Value cannot be empty on where query builder", 1);
+                    $this->builder->where($key . ' = ?');
                 }
+                array_push($this->parameters, $value);
             }
         }
     }
