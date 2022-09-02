@@ -201,8 +201,11 @@ class Schema extends QueryConstructor
 
     public function count()
     {
-        (empty($this->getSql())) ? $this->allQuery($this->table) : null;
-        return $this->counter();
+        $count = $this->select("COUNT(*) as count")->fetch(false);
+        if($count) {
+            return $count->count;
+        }
+        return 0;
     }
 
 
