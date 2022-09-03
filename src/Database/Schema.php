@@ -72,6 +72,8 @@ class Schema extends QueryConstructor
     protected $connection;
 
 
+    protected $relations = true;
+
 
     public function __construct(Connection $connection = null)
     {
@@ -115,6 +117,8 @@ class Schema extends QueryConstructor
 
     public function attachClass($all = false, $fields = null)
     {
+        $this->relations = false;
+
         if ($all == true) {
             $this->allQuery($this->table);
             $data = $this->fetch(false);
@@ -201,7 +205,8 @@ class Schema extends QueryConstructor
 
     public function count()
     {
-        $count = $this->select("COUNT(*) as count")->fetch(false);
+        $this->relations = false;
+        $count = $this->select("COUNT(*) as count")->fetch();
         if($count) {
             return $count->count;
         }
@@ -539,7 +544,7 @@ class Schema extends QueryConstructor
     }
 
 
-    protected function resultFormatter($result, $multiple = false, $relations = false)
+    protected function resultFormatter($result, $multiple = false)
     {
         $data = [];
         $class = get_class($this);
@@ -547,46 +552,46 @@ class Schema extends QueryConstructor
         if ($this->result_data_format == "object") {
             if ($multiple == true) {
                 foreach ($result as $instance) {
-                    $class = $this->newObject($class, $instance, $relations);
+                    $class = $this->newObject($class, $instance);
                     array_push($data, $class);
                 }
                 return $data;
             }
 
-            return $this->selfObject($result, $relations);
+            return $this->selfObject($result);
         } else if ($this->result_data_format == "arrays") {
             return $result;
         }
     }
 
-    protected function selfObject($instance, $relations = false)
+    protected function selfObject($instance)
     {
         foreach ($instance as $key => $value) {
             $this->$key = $value;
         }
 
-        if ($this instanceof Model && $relations == true) {
-            $this->bootRelations($this);
-        }
+        // if ($this instanceof Model && $this->relations === true) {
+        //     $this->bootRelations($this);
+        // }
 
         return $this;
     }
 
-    protected function newObject($name, $instance, $relations = false)
+    protected function newObject($name, $instance)
     {
         $class = new $name;
         foreach ($instance as $key => $value) {
             $class->$key = $value;
         }
 
-        if ($this instanceof Model && $relations == true) {
-            $this->bootRelations($class);
-        }
+        // if ($this instanceof Model && $this->relations === true) {
+        //     $this->bootRelations($class);
+        // }
 
         return $class;
     }
 
-    protected function fetch($relations = true, $clear = true)
+    protected function fetch($clear = true)
     {
         if ($this->builder) {
 
@@ -606,8 +611,8 @@ class Schema extends QueryConstructor
                 if ($result->rowCount() > 0) {
 
                     return ($result->rowCount() > 1)
-                        ? $this->resultFormatter($result->fetchAllAssociative(), true, $relations)
-                        : $this->resultFormatter($result->fetchAssociative(), false, $relations);
+                        ? $this->resultFormatter($result->fetchAllAssociative(), true)
+                        : $this->resultFormatter($result->fetchAssociative(), false);
                 }
             }
         }
