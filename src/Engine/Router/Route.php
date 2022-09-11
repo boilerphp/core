@@ -410,6 +410,10 @@ class Route extends RoutesConfig
         $method = strtolower($_SERVER["REQUEST_METHOD"]);
         $domain = $_SERVER['HTTP_HOST'];
 
+        if($method == "options") {
+            return header("HTTP/1.1 200 Ok");
+        }
+
         static::$route_lookup_list = static::$routes[$method];
 
         if (static::$enable_subdomains) {
