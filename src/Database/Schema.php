@@ -298,7 +298,7 @@ class Schema extends QueryConstructor
         $this->sumQuery($column, $this->table);
 
         $result = $this->fetch();
-        return $result;
+        return $result->$column ?? 0;
     }
 
 
