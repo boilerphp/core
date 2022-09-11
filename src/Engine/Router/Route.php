@@ -262,7 +262,7 @@ class Route extends RoutesConfig
         $request = new Request($method);
         $request->setParams($lookup[$pattern]["params"]);
 
-        static::listenHandler($lookup, $pattern, $request);
+        return static::listenHandler($lookup, $pattern, $request);
     }
 
 
