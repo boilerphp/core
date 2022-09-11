@@ -187,7 +187,7 @@ class Server extends App
 
                 if ($response === "application/json") {
 
-                    echo Response::json([
+                    echo json([
                         "error" => $first["args"][1],
                         "line" => "Line {$first["line"]} of {$first["file"]}",
                         "trace" => $ex->getTrace()
@@ -215,13 +215,14 @@ class Server extends App
                 }
 
                 if (Fs::exists(__DIR__ . '/../' . ViewsConfig::$views_path . '/errors/500.fish.php')) {
-                    echo view('errors/500');
+                    echo view('errors/500', ["error" => $ex]);
 
                     exit;
                 }
 
                 echo absolute_view(
                     path: ["extension" => "php", "fullpath" => __DIR__ . "/errors/500.php"],
+                    data: ["error" => $ex],
                     status: 500
                 );
             }

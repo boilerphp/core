@@ -435,6 +435,24 @@ if(!function_exists("view"))
     }
 }
 
+if(!function_exists("json"))
+{
+    /**
+     * Renders view components 
+     * 
+     * @param array $data
+     * 
+     * @param string $status
+     * 
+     * @return Boiler\Core\Engine\Router\Response
+     */
+
+    function json($data = [], $status = 200) {
+
+        return Response::json($data, $status);
+    }
+}
+
 if(!function_exists("absolute_view"))
 {
     /**
