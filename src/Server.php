@@ -47,15 +47,15 @@ class Server extends App
 
     public function boot()
     {
-        set_error_handler(function($errno, $errstr, $errfile, $errline) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             // error was suppressed with the @-operator
             if (0 === error_reporting()) {
                 return false;
             }
-            
+
             throw new Exception($errstr, 0);
         });
-        
+
 
         if (env('APP_ENV') !== 'testing') {
 
@@ -114,17 +114,16 @@ class Server extends App
                 header($header);
             }
         }
-
     }
 
     public function setEnv()
     {
-        if(env("APP_ENV") === "testing")
-            $envFile = file_exists(__DIR__ . "/../../../../.env.testing") 
+        if (env("APP_ENV") === "testing")
+            $envFile = file_exists(__DIR__ . "/../../../../.env.testing")
                 ? __DIR__ . "/../../../../.env.testing" : null;
         else
-            $envFile = file_exists(__DIR__ . "/../../../../.env") 
-            ? __DIR__ . "/../../../../.env" : null;
+            $envFile = file_exists(__DIR__ . "/../../../../.env")
+                ? __DIR__ . "/../../../../.env" : null;
 
         if ($envFile !== null) {
             $get_env_file = fopen($envFile, "r");
@@ -180,6 +179,8 @@ class Server extends App
             }
         } catch (\Exception $ex) {
 
+            $first = $ex->getTrace()[0];
+
             $response = Response::responseFormat();
 
             if ($this->debug === true) {
@@ -187,10 +188,12 @@ class Server extends App
                 if ($response === "application/json") {
 
                     echo Response::json([
-                        "error" => $ex->getMessage(),
-                        "line" => "Line {$ex->getLine()} of {$ex->getFile()}",
+                        "error" => $first["args"][1],
+                        "line" => "Line {$first["line"]} of {$first["file"]}",
                         "trace" => $ex->getTrace()
                     ], 500);
+
+                    exit;
                 }
 
                 echo absolute_view(
@@ -198,6 +201,7 @@ class Server extends App
                     data: ["ex" => $ex],
                     status: 500
                 );
+
             } else {
 
                 if ($response === "application/json") {
@@ -206,10 +210,14 @@ class Server extends App
                         'status' => 500,
                         'message' => 'Server Error'
                     ], 500);
+
+                    exit;
                 }
 
                 if (Fs::exists(__DIR__ . '/../' . ViewsConfig::$views_path . '/errors/500.fish.php')) {
                     echo view('errors/500');
+
+                    exit;
                 }
 
                 echo absolute_view(
