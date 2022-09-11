@@ -7,6 +7,6 @@
     <title>500 Server Error</title>
 </head>
 <body>
-    
+    <h4>Server Error</h4>
 </body>
 </html>
