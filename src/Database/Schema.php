@@ -591,15 +591,22 @@ class Schema extends QueryConstructor
         return $class;
     }
 
+
+    protected function bind($statement, $params) {
+
+        foreach ($params as $key => $value) {
+            $statement->bindValue(($key+1), $value);
+        }
+        return $statement;
+    }
+
     protected function fetch($clear = true)
     {
         if ($this->builder) {
 
             if (count($this->parameters)) {
                 $statement = $this->connection()->prepare($this->getSql());
-                foreach ($this->parameters as $key => $value) {
-                    $statement->bindValue(($key+1), $value);
-                }
+                $this->bind($statement, $this->parameters);
                 $result = $statement->executeQuery();
             } else {
 
@@ -659,10 +666,14 @@ class Schema extends QueryConstructor
 
         if (!is_null($this->builder)) {
 
-            $exec = $this->connection()->prepare($this->getSql());
-            $result = (count($this->parameters))
-                ? $exec->executeQuery($this->parameters)
-                : $exec->executeQuery();
+            if (count($this->parameters)) {
+                $statement = $this->connection()->prepare($this->getSql());
+                $this->bind($statement, $this->parameters);
+                $result = $statement->executeQuery();
+            } else {
+
+                $result = $this->builder->executeQuery();
+            }
 
             if ($result) {
                 $this->clearInitalQuery();
