@@ -95,17 +95,19 @@ class QueryConstructor
         }
     }
 
-    public function whereQuery(array|string $key,  array|string $value = null)
+    public function whereQuery(array|string $key,  array|string $value = null, string $operation = null)
     {
+
+        $op = $operation ? $operation : '=';
 
         if (is_array($key)) {
 
             $index = 0;
             foreach ($key as $column => $val) {
                 if (count($this->parameters) > 0) {
-                    $this->builder->andWhere($column . ' = ?');
+                    $this->builder->andWhere($column . " $op ?");
                 } else {
-                    $this->builder->where($column . ' = ?');
+                    $this->builder->where($column . " $op ?");
                 }
                 array_push($this->parameters, $val);
 
@@ -116,9 +118,9 @@ class QueryConstructor
             if (is_string($key)) {
 
                 if (count($this->parameters) > 0) {
-                    $this->builder->andWhere($key . ' = ?');
+                    $this->builder->andWhere($key . " $op ?");
                 } else {
-                    $this->builder->where($key . ' = ?');
+                    $this->builder->where($key . " $op ?");
                 }
                 array_push($this->parameters, $value);
             }
