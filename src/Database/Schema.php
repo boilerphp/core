@@ -664,11 +664,11 @@ class Schema extends QueryConstructor
     protected function save()
     {
 
-        if (!is_null($this->builder)) {
+        if ($this->builder) {
 
             if (count($this->parameters)) {
                 $statement = $this->connection()->prepare($this->getSql());
-                $this->bind($statement, $this->parameters);
+                $statement = $this->bind($statement, $this->parameters);
                 $result = $statement->executeQuery();
             } else {
 
