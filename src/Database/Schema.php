@@ -5,6 +5,7 @@ namespace Boiler\Core\Database;
 use ReflectionClass;
 use ReflectionMethod;
 use Boiler\Core\Configs\GlobalConfig;
+use DateTime;
 
 class Schema extends QueryConstructor
 {
@@ -207,7 +208,7 @@ class Schema extends QueryConstructor
     {
         $this->relations = false;
         $count = $this->select("COUNT(*) as count")->fetch();
-        if($count) {
+        if ($count) {
             return $count->count;
         }
         return 0;
@@ -592,10 +593,18 @@ class Schema extends QueryConstructor
     }
 
 
-    protected function bind($statement, $params) {
+    protected function bind($statement, $params)
+    {
 
         foreach ($params as $key => $value) {
-            $statement->bindValue(($key+1), $value);
+            if (DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false) {
+
+                $value = new DateTime(date('m/d/Y H:i:s', strtotime($value)));
+                $statement->bindValue(($key + 1), $value, 'datetime');
+            } else {
+
+                $statement->bindValue(($key + 1), $value);
+            }
         }
         return $statement;
     }
