@@ -597,14 +597,19 @@ class Schema extends QueryConstructor
     {
 
         foreach ($params as $key => $value) {
-            if (DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false) {
+            
+            if($value != null) {
 
-                $value = new DateTime(date('m/d/Y H:i:s', strtotime($value)));
-                $statement->bindValue(($key + 1), $value, 'datetime');
-            } else {
+                if (DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false) {
+    
+                    $value = new DateTime(date('m/d/Y H:i:s', strtotime($value)));
+                    $statement->bindValue(($key + 1), $value, 'datetime');
 
-                $statement->bindValue(($key + 1), $value);
+                    continue;
+                }
             }
+            
+            $statement->bindValue(($key + 1), $value);
         }
         return $statement;
     }
