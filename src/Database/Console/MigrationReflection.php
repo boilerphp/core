@@ -29,14 +29,20 @@ class MigrationReflection extends Migration {
     }
 
 
-    public function checkMigration($migration) {
+    public function checkMigration($migration)
+    {
 
-        $checker = $this->query("SELECT migration FROM migrations WHERE migration = '$migration'");
-        if($checker->rowCount() > 0) {
+        $checker = $this->find("migration", $migration);
+        if ($checker) {
             return true;
         }
 
         return false;
+    }
+
+    public function registerMigration($migration)
+    {
+        $this->create($migration);
     }
 
 
