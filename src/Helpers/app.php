@@ -426,7 +426,6 @@ if(!function_exists("view"))
      * 
      * @param array $data
      * 
-     * @return Boiler\Core\Engine\Router\Response
      */
 
     function view($view, $data = [], $status = 200) {
@@ -444,7 +443,6 @@ if(!function_exists("json"))
      * 
      * @param string $status
      * 
-     * @return Boiler\Core\Engine\Router\Response
      */
 
     function json($data = [], $status = 200) {
@@ -462,7 +460,6 @@ if(!function_exists("absolute_view"))
      * 
      * @param array $data
      * 
-     * @return Boiler\Core\Engine\Router\Response
      */
 
     function absolute_view($path, $data = [], $status = 200) {

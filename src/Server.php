@@ -179,53 +179,62 @@ class Server extends App
             }
         } catch (\Exception $ex) {
 
-            $first = $ex->getTrace()[0];
+            try {
+                
 
-            $response = Response::responseFormat();
-
-            if ($this->debug === true) {
-
-                if ($response === "application/json") {
-
-                    echo json([
-                        "error" => $first["args"][1],
-                        "line" => "Line {$first["line"]} of {$first["file"]}",
-                        "trace" => $ex->getTrace()
-                    ], 500);
-
-                    exit;
+                $first = $ex->getTrace()[0];
+    
+                $response = Response::responseFormat();
+    
+                if ($this->debug === true) {
+    
+                    if ($response === "application/json") {
+    
+                        echo json([
+                            "error" => $first["args"][1],
+                            "line" => "Line {$first["line"]} of {$first["file"]}",
+                            "trace" => $ex->getTrace()
+                        ], 500);
+    
+                        exit;
+                    }
+    
+                    echo absolute_view(
+                        path: ["extension" => "php", "fullpath" => __DIR__ . "/errors/debug.php"],
+                        data: ["ex" => $ex],
+                        status: 500
+                    );
+    
+                } else {
+    
+                    if ($response === "application/json") {
+    
+                        echo json([
+                            'status' => 500,
+                            'message' => 'Server Error'
+                        ], 500);
+    
+                        exit;
+                    }
+    
+                    if (Fs::exists(__DIR__ . '/../' . ViewsConfig::$views_path . '/errors/500.fish.php')) {
+                        echo view('errors/500', ["error" => $ex]);
+    
+                        exit;
+                    }
+    
+                    echo absolute_view(
+                        path: ["extension" => "php", "fullpath" => __DIR__ . "/errors/500.php"],
+                        data: ["error" => $ex],
+                        status: 500
+                    );
                 }
 
-                echo absolute_view(
-                    path: ["extension" => "php", "fullpath" => __DIR__ . "/errors/debug.php"],
-                    data: ["ex" => $ex],
-                    status: 500
-                );
-
-            } else {
-
-                if ($response === "application/json") {
-
-                    echo Response::json([
-                        'status' => 500,
-                        'message' => 'Server Error'
-                    ], 500);
-
-                    exit;
-                }
-
-                if (Fs::exists(__DIR__ . '/../' . ViewsConfig::$views_path . '/errors/500.fish.php')) {
-                    echo view('errors/500', ["error" => $ex]);
-
-                    exit;
-                }
-
-                echo absolute_view(
-                    path: ["extension" => "php", "fullpath" => __DIR__ . "/errors/500.php"],
-                    data: ["error" => $ex],
-                    status: 500
-                );
+            } catch (\Exception $ex) {
+                
+                echo $ex->getMessage();
             }
+
         }
     }
 }
