@@ -602,7 +602,7 @@ class Schema extends QueryConstructor
 
                 if (DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false) {
     
-                    $value = new DateTime(date('m/d/Y H:i:s', strtotime($value)));
+                    $value = new DateTime(date('m/d/y H:i:s', strtotime($value)));
                     $statement->bindValue(($key + 1), $value, 'datetime');
 
                     continue;

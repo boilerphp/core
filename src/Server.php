@@ -207,7 +207,6 @@ class Server extends App
                 if ($response === "application/json") {
 
                     echo json([
-                        'status' => 500,
                         'message' => 'Server Error'
                     ], 500);
 
