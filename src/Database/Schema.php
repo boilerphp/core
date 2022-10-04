@@ -571,10 +571,6 @@ class Schema extends QueryConstructor
             $this->$key = $value;
         }
 
-        // if ($this instanceof Model && $this->relations === true) {
-        //     $this->bootRelations($this);
-        // }
-
         return $this;
     }
 
@@ -585,10 +581,6 @@ class Schema extends QueryConstructor
             $class->$key = $value;
         }
 
-        // if ($this instanceof Model && $this->relations === true) {
-        //     $this->bootRelations($class);
-        // }
-
         return $class;
     }
 
@@ -598,16 +590,16 @@ class Schema extends QueryConstructor
 
         foreach ($params as $key => $value) {
             
-            if($value != null) {
+            // if($value != null) {
 
-                if (DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false) {
+            //     if (DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false) {
     
-                    $value = new DateTime(date('m/d/y H:i:s', strtotime($value)));
-                    $statement->bindValue(($key + 1), $value, 'datetime');
+            //         $value = new DateTime(date('m/d/y H:i:s', strtotime($value)));
+            //         $statement->bindValue(($key + 1), $value, 'datetime');
 
-                    continue;
-                }
-            }
+            //         continue;
+            //     }
+            // }
             
             $statement->bindValue(($key + 1), $value);
         }
