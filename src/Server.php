@@ -179,8 +179,6 @@ class Server extends App
             }
         } catch (\Exception $ex) {
 
-            $first = $ex->getTrace()[0];
-
             $response = Response::responseFormat();
 
             if ($this->debug === true) {
@@ -188,8 +186,8 @@ class Server extends App
                 if ($response === "application/json") {
 
                     echo json([
-                        "error" => $first["args"][1],
-                        "line" => "Line {$first["line"]} of {$first["file"]}",
+                        "error" => $ex->getMessage(),
+                        "line" => "Line ".$ex->getLine()." of ".$ex->getFile(),
                         "trace" => $ex->getTrace()
                     ], 500);
 
