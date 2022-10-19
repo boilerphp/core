@@ -122,7 +122,7 @@ class Schema extends QueryConstructor
 
         if ($all == true) {
             $this->allQuery($this->table);
-            $data = $this->fetch(false);
+            $data = $this->fetch(true);
 
             return is_null($data)
                 ? $data
@@ -131,7 +131,7 @@ class Schema extends QueryConstructor
 
             if ($this->fieldFormatChecker($fields)) {
                 $this->selectQuery($this->fields, $this->table);
-                return $this->fetch(false);
+                return $this->fetch(true);
             }
         }
     }
@@ -487,7 +487,10 @@ class Schema extends QueryConstructor
                 return true;
             }
 
-        return $statement->executeQuery();
+        $exec = $statement->executeQuery();
+        $this->clearInitalQuery();
+
+        return $exec;
     }
 
 
@@ -589,7 +592,7 @@ class Schema extends QueryConstructor
     {
 
         foreach ($params as $key => $value) {
-            
+
             $statement->bindValue(($key + 1), $value);
         }
         return $statement;
@@ -670,13 +673,14 @@ class Schema extends QueryConstructor
                 $result = $this->builder->executeQuery();
             }
 
+            $this->clearInitalQuery();
+
             if ($result) {
-                $this->clearInitalQuery();
                 return true;
             }
-
-            return false;
         }
+
+        return false;
     }
 
 

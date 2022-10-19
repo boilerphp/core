@@ -229,9 +229,7 @@ class QueryConstructor
         $data = $key;
 
         if (gettype($key) == "string") {
-            if (!is_null($value)) {
-                return $data = array($key => $value);
-            }
+            $data = array($key => $value);
         }
 
         return $data;
