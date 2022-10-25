@@ -319,9 +319,10 @@ class Schema extends QueryConstructor
         $limits = $start . ", " . $number;
 
         $this->allQuery($this->table);
+        $clone = clone $this;
+        
         $this->orderQuery("id", "asc", $limits);
-
-        $result = $this->fetch(false, false);
+        $result = $this->fetch();
 
         if (!is_null($result) && !is_array($result)) {
             $result = array($result);
@@ -329,19 +330,20 @@ class Schema extends QueryConstructor
             $result = $result;
         }
 
-        $total_result = 0;
+        $total_result = $clone->count();
+        if($total_result > $number) {
+            $total_pages = floor($total_result / $number);
 
-        $total_pages = floor($total_result / $number);
-        $rem = ($total_result % $number);
-        if ($rem > 0) {
-            $total_pages += 1;
+            if (($total_result % $number) !== 0) {
+                $total_pages += 1;
+            }
+
+        } else {
+            $total_pages = 1;
         }
 
         if ($to > $total_result) {
             $to = $total_result;
-        }
-        if ($total_result == 0) {
-            $from  = 0;
         }
 
         $data = [
