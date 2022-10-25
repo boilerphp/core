@@ -347,7 +347,6 @@ class Schema extends QueryConstructor
         }
 
         $data = [
-            "current_page" => $page,
             "page" => $page,
             "start_at" => $from,
             "end_at" => $to,
