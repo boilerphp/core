@@ -468,15 +468,16 @@ class Schema extends QueryConstructor
     }
 
 
-    public function delete($key = null)
+    public function delete($key = null, $value = null)
     {
-        if (!is_null($key)) {
+        if ($key !== null && $value === null) {
             if (isset($this->$key)) {
                 $value = $this->$key;
             }
-        } else {
-            $value = $this->id;
+        } 
+        else if($key === null && $value === null) {
             $key = "id";
+            $value = $this->id;
         }
 
         $data = $this->dataFormatChecker($key, $value);
