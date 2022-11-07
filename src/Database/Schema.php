@@ -363,6 +363,10 @@ class Schema extends QueryConstructor
 
     public function create(array $data, callable|null $callback = null)
     {
+        if(!array_key_exists('created_date', $data)) {
+            $data['created_date'] = time();
+        }
+
         $instance = $this->insert($data);
         if ($callback !== null) {
             return $callback($instance);
@@ -450,6 +454,11 @@ class Schema extends QueryConstructor
     public function update($data = [], $value = null)
     {
         $newdata = $this->dataFormatChecker($data, $value);
+
+        if(!array_key_exists('updated_date', $newdata)) {
+            $newdata['updated_date'] = time();
+        }
+
         $this->updateQuery($newdata, $this->table);
 
         if (!strpos(strtolower($this->getSql()), "where")) {
