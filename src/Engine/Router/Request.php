@@ -104,6 +104,7 @@ class Request extends Validator
     public function json($key = null)
     {
         $data = json_decode(file_get_contents("php://input"), true);
+        
         if (!is_null($key)) {
             if (isset($data[$key])) {
                 return $data[$key];
@@ -112,8 +113,10 @@ class Request extends Validator
             }
         }
 
-        foreach ($data as $key => $value) {
-            $this->$key = $value;
+        if(is_array($data)) {
+            foreach ($data as $key => $value) {
+                $this->$key = $value;
+            }
         }
 
         return $data;
