@@ -111,6 +111,11 @@ class Request extends Validator
                 return null;
             }
         }
+
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+
         return $data;
     }
 
@@ -122,6 +127,10 @@ class Request extends Validator
             $data = $_GET;
         } else if ($this->method == 'POST') {
             $data = $_POST;
+        }
+
+        if(!$data && $this->json()) {
+            $data = $this->json();
         }
 
         return $data;
@@ -244,7 +253,6 @@ class Request extends Validator
 
     protected function map($data)
     {
-
         foreach ($data as $key => $value) {
             $this->$key = $value;
         }
