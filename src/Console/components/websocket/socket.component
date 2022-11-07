@@ -1,14 +1,22 @@
 #!/usr/bin/env php
 <?php
 
-require __DIR__."/core/app_loader.php";
+/*
+* ------------------------------------
+* Load all third party modules
+* install buy composer package manager
+* ------------------------------------
+*/ 
+require __DIR__."/vendor/autoload.php";
+
 
 /*
-* -----------------------------
-* Load socket manager file
-* -----------------------------
+* -----------------------------------------------------
+* Include App class
+* -----------------------------------------------------
 */ 
-require __DIR__."/core/Engine/Socket/SocketManager.php";
+require __DIR__."/configs/App.php";
+
 
 /*
 * -----------------------------------------------------
