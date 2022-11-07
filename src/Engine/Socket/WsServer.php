@@ -123,7 +123,7 @@ class WsServer implements WebSocketEventsInterface {
                 }
                 else {
                     $params = explode("=", $params);
-                    $this->setGetData($params[0], $params[1]);
+                    $this->setGetData($params[0], $params[1] ?? null);
                 }
             }
         }
