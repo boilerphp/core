@@ -138,8 +138,8 @@ class ColumnDefination
 
     public function timestamps()
     {
-        $this->column("created_date")->timestamp()->default("CURRENT_TIMESTAMP");
-        $this->column("updated_date")->timestamp()->default("CURRENT_TIMESTAMP");
+        $this->column("created_date")->timestamp()->nullable();
+        $this->column("updated_date")->timestamp()->nullable();
     }
 
     public function __call($name, $arguments)
