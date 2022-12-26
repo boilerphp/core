@@ -75,6 +75,7 @@ class Schema extends QueryConstructor
 
     protected $relations = true;
 
+    protected $countOnly = false;
 
     public function __construct(Connection $connection = null)
     {
@@ -206,12 +207,13 @@ class Schema extends QueryConstructor
 
     public function count()
     {
+        $this->countOnly = true;
         $this->relations = false;
+
         $count = $this->select("COUNT(*) as count")->fetch();
-        if ($count) {
-            return $count->count;
-        }
-        return 0;
+
+        $this->countOnly = false;
+        return $count->count;
     }
 
 
@@ -623,9 +625,15 @@ class Schema extends QueryConstructor
             }
 
             if ($result) {
-                ($clear === true ? $this->clearInitalQuery() : null);
-                if ($result->rowCount() > 0) {
+                $this->result = $result;
 
+                ($clear === true ? $this->clearInitalQuery() : null);
+
+                if($this->countOnly) {
+                    return $result->rowCount();
+                }
+
+                if ($result->rowCount() > 0) {
                     return ($result->rowCount() > 1)
                         ? $this->resultFormatter($result->fetchAllAssociative(), true)
                         : $this->resultFormatter($result->fetchAssociative(), false);
