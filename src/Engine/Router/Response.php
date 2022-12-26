@@ -119,7 +119,7 @@ class Response
     {
         if (Response::responseFormat() == "application/json") {
 
-            return Response::json(['success' => false, 'error' => ['message' => '404 | Page Not Found!']], 404);
+            return Response::json(['success' => false, 'message' => '404 | Page Not Found!'], 404);
         }
 
         return Response::view("errors/404");
