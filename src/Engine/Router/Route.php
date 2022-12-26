@@ -159,6 +159,10 @@ class Route extends RoutesConfig
     static protected function create_map($path, $method, $controller)
     {
 
+        if(empty($path)) {
+            throw new Exception("Path cannot be empty", 1);
+        }
+
         $path = "/" . trim($path, "/");
 
         # check group path
