@@ -213,7 +213,7 @@ class Schema extends QueryConstructor
         $count = $this->select("COUNT(*) as count")->fetch();
 
         $this->countOnly = false;
-        return $count->count;
+        return $count;
     }
 
 
