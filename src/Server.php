@@ -136,7 +136,7 @@ class Server extends App
 
                         if (isset($key_value[0]) && isset($key_value[1])) {
                             $key = trim($key_value[0], " ");
-                            $_ENV[$key] = trim($key_value[1], " ");
+                            $_ENV[$key] = !empty($key_value[1]) ? trim($key_value[1], " ") : null;
                         }
                     }
                 }
