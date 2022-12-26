@@ -158,7 +158,7 @@ class Route extends RoutesConfig
 
     static protected function create_map($path, $method, $controller)
     {
-        if($path !== "/") {
+        if($path != "/") {
             $path = "/" . trim($path, "/");
         }
 
@@ -309,9 +309,12 @@ class Route extends RoutesConfig
 
                     $authToken = $headers['Authorization'] ?? $headers['authorization'];
 
-                    $authToken = trim(preg_replace("/Bearer/", '', $authToken));
-                    $authToken = trim(preg_replace("/bearer/", '', $authToken));
-                    $authToken = (new Hash)->getDecodedBase($authToken);
+                    if(!empty($authToken)) {
+
+                        $authToken = trim(preg_replace("/Bearer/", '', $authToken));
+                        $authToken = trim(preg_replace("/bearer/", '', $authToken));
+                        $authToken = (new Hash)->getDecodedBase($authToken);
+                    }
 
                     $authUser = $schema->table('auth_access_tokens')->find('token', $authToken);
 
@@ -407,7 +410,8 @@ class Route extends RoutesConfig
 
     static public function listen()
     {
-        $uri = trim($_SERVER["REQUEST_URI"], "/");
+        
+        $uri = !empty($_SERVER["REQUEST_URI"]) ? trim($_SERVER["REQUEST_URI"], "/") : "";
         $method = strtolower($_SERVER["REQUEST_METHOD"]);
         $domain = $_SERVER['HTTP_HOST'];
 
