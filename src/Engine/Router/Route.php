@@ -100,7 +100,9 @@ class Route extends RoutesConfig
 
     static public function group($name, $callback)
     {
-        static::$group_path = "/" . trim($name, "/");
+        $name = !empty($name) ? trim($name, "/") : $name;
+
+        static::$group_path = "/" . $name;
         $callback();
         static::$group_path = "";
     }
@@ -158,9 +160,7 @@ class Route extends RoutesConfig
 
     static protected function create_map($path, $method, $controller)
     {
-        if($path != "/") {
-            $path = "/" . trim($path, "/");
-        }
+        $path = !empty($path) ? "/" . trim($path, "/") : $path;
 
         # check group path
         if (static::$group_path != "") {
@@ -438,7 +438,7 @@ class Route extends RoutesConfig
             $uri = preg_replace("/\?(.*)/", "", $uri);
         }
 
-        # if uri is empty after trim
+        # if uri is emty
         if (empty($uri)) {
             $uri = "index";
         } else {
@@ -516,7 +516,7 @@ class Route extends RoutesConfig
     static private function interogate($url)
     {
         # cleaning the url
-        $clean = trim($url, "/");
+        $clean = !empty($url) ? trim($url, "/") : $url;
 
         # if empty url [key will be 'index']
         if (empty($clean)) {
@@ -600,7 +600,7 @@ class Route extends RoutesConfig
 
 
             # merge base and sub path together
-            $pattern = trim($base, "/") . $sub;
+            $pattern = !empty($base) ? trim($base, "/") . $sub : $base.$sub;
 
             # check if pattern exists
             if (array_key_exists($pattern, static::$route_lookup_list)) {
