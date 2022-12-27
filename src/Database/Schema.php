@@ -210,7 +210,7 @@ class Schema extends QueryConstructor
         $this->countOnly = true;
         $this->relations = false;
 
-        $count = $this->select("COUNT(*) as count")->fetch();
+        $count = $this->select("*")->fetch();
 
         $this->countOnly = false;
         return $count;
