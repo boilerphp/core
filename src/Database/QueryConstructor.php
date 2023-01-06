@@ -197,12 +197,25 @@ class QueryConstructor
         $this->builder->orderBy($key, $order);
 
         if (!is_null($limit)) {
+            $this->setLimit($limit);
+        }
+    }
 
-            if (is_string($limit) && stripos($limit, ',')) {
-                list($first, $max) = explode(',', $limit);
-                $this->builder->setFirstResult($first)->setMaxResults($max);
+    public function setLimit(string|array $limit) {
+
+        if (is_string($limit) && stripos($limit, ',')) {
+            list($first, $max) = explode(',', $limit);
+            $this->builder->setFirstResult($first)->setMaxResults($max);
+
+            return;
+        }
+
+        if(is_array($limit)) {
+            if(isset($limit[0]) && isset($limit[1])) {
+                $this->builder->setFirstResult($limit[0])->setMaxResults($limit[1]);
             }
         }
+
     }
 
     public function groupQuery($option)

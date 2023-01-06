@@ -323,7 +323,7 @@ class Schema extends QueryConstructor
         $this->allQuery($this->table);
         $clone = clone $this;
         
-        $this->orderQuery("id", "asc", $limits);
+        $this->setLimit($limits);
         $result = $this->fetch();
 
         if (!is_null($result) && !is_array($result)) {
@@ -336,7 +336,7 @@ class Schema extends QueryConstructor
         if($total_result > $number) {
             $total_pages = floor($total_result / $number);
 
-            if (($total_result % $number) !== 0) {
+            if (($total_result % $number) > 0) {
                 $total_pages += 1;
             }
 
