@@ -138,8 +138,15 @@ class ColumnDefination
 
     public function timestamps()
     {
-        $this->column("created_date")->timestamp()->nullable();
-        $this->column("updated_date")->timestamp()->nullable();
+        if ($this->driver === "sqlite") {
+            $this->column("created_date")->timestamp()->nullable();
+            $this->column("updated_date")->timestamp()->nullable();
+
+            return;
+        }
+
+        $this->column("created_date")->timestamp()->default('CURRENT_TIMESTAMP()');
+        $this->column("updated_date")->timestamp()->default('CURRENT_TIMESTAMP()');
     }
 
     public function __call($name, $arguments)
