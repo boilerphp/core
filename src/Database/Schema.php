@@ -159,14 +159,14 @@ class Schema extends QueryConstructor
         $data = $this->fetch();
 
         if (is_null($data)) {
-            return $data;
+            return [];
         }
 
         if (!is_array($data)) {
             return array($data);
-        } else {
-            return $data;
         }
+        
+        return $data;
     }
 
 
