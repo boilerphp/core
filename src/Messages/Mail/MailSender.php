@@ -28,6 +28,7 @@ class MailSender extends MailBuilder
             $app_config->mailAttributes->smtp
         );
 
+        $this->smtpDebug = $app_config->mailAttributes->smtp->smtpDebug;
         $this->smtpHost = $app_config->mailAttributes->smtp->smtpHost;
         $this->smtpUsername = $app_config->mailAttributes->smtp->smtpUsername;
         $this->smtpPassword = $app_config->mailAttributes->smtp->smtpPassword;
@@ -78,7 +79,7 @@ class MailSender extends MailBuilder
 
         try {
             //Server settings
-            // $mail->SMTPDebug = 1; // SMTP::DEBUG_SERVER;                   // Enable verbose debug output
+            $mail->SMTPDebug = $this->smtpDebug;                // Enable verbose debug output
             $mail->isSMTP();                                         // Send using SMTP
             $mail->Host       = $this->smtpHost;                    // Set the SMTP server to send through
             $mail->SMTPAuth   = true;                      // Enable SMTP authentication
