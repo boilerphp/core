@@ -34,7 +34,7 @@ trait AccessTokens
 
 
     public function revokeLastToken() {
-        (new Schema)->query("DELETE FROM `$this->_table` WHERE token_id = '$this->id' ORDER BY DESC LIMIT 1");
+        (new Schema)->query("DELETE FROM `$this->_table` WHERE token_id = '$this->id' ORDER BY id DESC LIMIT 1");
     }
     
 
