@@ -29,7 +29,7 @@ trait AccessTokens
 
 
     public function revokeAllToken() {
-        (new Schema)->table($this->_table)->where('token_id', $this->id)->delete();
+        (new Schema)->table($this->_table)->delete('token_id', $this->id);
     }
 
 
