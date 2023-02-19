@@ -488,7 +488,9 @@ class Schema extends QueryConstructor
         } 
         else if($key === null && $value === null) {
             $key = "id";
-            $value = $this->id;
+            if(isset($this->id)) {
+                $value = $this->id;
+            }
         }
 
         $data = $this->dataFormatChecker($key, $value);
