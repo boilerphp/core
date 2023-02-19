@@ -9,6 +9,7 @@ use Boiler\Core\Actions\Urls\Controller;
 use Boiler\Core\Database\Schema;
 use Boiler\Core\Hashing\Hash;
 use Boiler\Core\Admin\Auth;
+use Carbon\Carbon;
 
 class Route extends RoutesConfig
 {
@@ -309,7 +310,7 @@ class Route extends RoutesConfig
 
                     $authToken = $headers['Authorization'] ?? $headers['authorization'];
 
-                    if(!empty($authToken)) {
+                    if (!empty($authToken)) {
 
                         $authToken = trim(preg_replace("/Bearer/", '', $authToken));
                         $authToken = trim(preg_replace("/bearer/", '', $authToken));
@@ -320,13 +321,24 @@ class Route extends RoutesConfig
 
                     if ($authUser) {
 
+                        $last_used_date = $authUser->last_used_date ?? $authUser->created_date;
+                        $last_date = Carbon::parse($last_used_date);
+                        $current_date = Carbon::now();
+
+                        $seconds = $last_date->diffInSeconds($current_date);
+
+                        if ($seconds > \App\Config\App::$token_expiration) {
+                            $failed = $expired = true;
+                        }
+
                         $user = (new $authUser->token_type)->find($authUser->token_id);
 
-                        if ($user) {
-                            Auth::login($user);
-                        } else {
+                        if (!$user) {
                             $failed = true;
+                            break;
                         }
+
+                        Auth::login($user);
 
                         $schema->table('auth_access_tokens')->where('id', $authUser->id)->first()->update([
                             'last_used_date' => $request->timestamp()
@@ -347,6 +359,14 @@ class Route extends RoutesConfig
                     $response = [
                         'success' => false,
                         'message' => 'Invalid auth credentials'
+                    ];
+                }
+
+                if (isset($expired)) {
+
+                    $response = [
+                        'success' => false,
+                        'message' => 'Token expired!'
                     ];
                 }
 
@@ -410,12 +430,12 @@ class Route extends RoutesConfig
 
     static public function listen()
     {
-        
+
         $uri = !empty($_SERVER["REQUEST_URI"]) ? trim($_SERVER["REQUEST_URI"], "/") : "";
         $method = strtolower($_SERVER["REQUEST_METHOD"]);
         $domain = $_SERVER['HTTP_HOST'];
 
-        if($method == "options") {
+        if ($method == "options") {
             return header("HTTP/1.1 200 Ok");
         }
 
@@ -600,7 +620,7 @@ class Route extends RoutesConfig
 
 
             # merge base and sub path together
-            $pattern = !empty($base) ? trim($base, "/") . $sub : $base.$sub;
+            $pattern = !empty($base) ? trim($base, "/") . $sub : $base . $sub;
 
             # check if pattern exists
             if (array_key_exists($pattern, static::$route_lookup_list)) {
