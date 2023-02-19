@@ -27,28 +27,15 @@ trait AccessTokens
         return $encode;
     }
 
-    // public function getToken() {
-        
-    //     $token_id = $this->id;
-    //     $type = get_class($this);
 
-    //     return (new Schema)->table($this->_table)->where([
-    //         'token_id' => $token_id,
-    //         'token_type' => $type
-    //     ])->last();
-    // }
+    public function revokeAllToken() {
+        (new Schema)->table($this->_table)->where('token_id', $this->id)->delete();
+    }
 
 
-    // public function getTokens() {
-        
-    //     $token_id = $this->id;
-    //     $type = get_class($this);
-
-    //     return (new Schema)->table($this->_table)->where([
-    //         'token_id' => $token_id,
-    //         'token_type' => $type
-    //     ])->all();
-    // }
+    public function revokeLastToken() {
+        (new Schema)->table($this->_table)->where('token_id', $this->id)->last()->delete();
+    }
     
 
     protected function genenrateToken($length = 16) {

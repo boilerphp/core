@@ -76,7 +76,7 @@ class QueryConstructor
 
     protected function deleteQuery($data = null, $table = null)
     {
-        $this->columns = "";
+
         $this->builder->delete($table);
 
         if ($data !== null) {
@@ -85,11 +85,10 @@ class QueryConstructor
                 array_push($this->parameters, $value);
             }
         } else {
-            if (!strpos(strtolower($this->getSql()), "where")) {
-                $id = $this->id ?? null;
-                if ($id) {
+            if (strpos(strtolower($this->getSql()), "where") === false) {
+                if (isset($this->id)) {
                     $this->builder->where('id = ?');
-                    array_push($this->parameters, $id);
+                    array_push($this->parameters, $this->id);
                 }
             }
         }
@@ -201,7 +200,8 @@ class QueryConstructor
         }
     }
 
-    public function setLimit(string|array $limit) {
+    public function setLimit(string|array $limit)
+    {
 
         if (is_string($limit) && stripos($limit, ',')) {
             list($first, $max) = explode(',', $limit);
@@ -210,12 +210,11 @@ class QueryConstructor
             return;
         }
 
-        if(is_array($limit)) {
-            if(isset($limit[0]) && isset($limit[1])) {
+        if (is_array($limit)) {
+            if (isset($limit[0]) && isset($limit[1])) {
                 $this->builder->setFirstResult($limit[0])->setMaxResults($limit[1]);
             }
         }
-
     }
 
     public function groupQuery($option)

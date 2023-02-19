@@ -328,7 +328,7 @@ class Route extends RoutesConfig
                             $failed = true;
                         }
 
-                        $schema->table('auth_access_tokens')->where('id', $authUser->id)->update([
+                        $schema->table('auth_access_tokens')->where('id', $authUser->id)->first()->update([
                             'last_used_date' => $request->timestamp()
                         ]);
                     } else {
