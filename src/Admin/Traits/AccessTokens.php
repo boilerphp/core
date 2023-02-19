@@ -29,12 +29,12 @@ trait AccessTokens
 
 
     public function revokeAllToken() {
-        (new Schema)->table($this->_table)->delete('token_id', $this->id);
+        (new Schema)->query("DELETE FROM `$this->_table` WHERE token_id = '$this->id'");
     }
 
 
     public function revokeLastToken() {
-        (new Schema)->table($this->_table)->where('token_id', $this->id)->last()->delete();
+        (new Schema)->query("DELETE FROM `$this->_table` WHERE token_id = '$this->id' ORDER BY DESC LIMIT 1");
     }
     
 
