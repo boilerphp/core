@@ -20,8 +20,6 @@ class Relations extends Schema {
     
     protected $success;
 
-    protected $_table;
-
 
     public function __construct()
     {
