@@ -4,7 +4,7 @@ namespace Boiler\Core\Database;
 
 class Relations extends Schema {
 
-    protected $name;
+    protected $_relation_name;
 
     protected $useKey;
 
@@ -18,7 +18,7 @@ class Relations extends Schema {
     
     protected $class;
     
-    protected $success;
+    protected $_success;
 
 
     public function __construct()
@@ -31,7 +31,7 @@ class Relations extends Schema {
         $data[$this->useKey] = $this->extractValue($this->props, $this->useKey);
         if($this->insert($data))
         {
-            $this->success = true;
+            $this->_success = true;
         }
 
         return $this;
@@ -79,7 +79,7 @@ class Relations extends Schema {
 
     protected function getRelationsName() 
     {
-        return $this->name;
+        return $this->_relation_name;
     }
 
     protected function setModelProperties($model) 
