@@ -5,7 +5,6 @@ namespace Boiler\Core\Database;
 use ReflectionClass;
 use ReflectionMethod;
 use Boiler\Core\Configs\GlobalConfig;
-use DateTime;
 
 class Schema extends QueryConstructor
 {
@@ -73,14 +72,21 @@ class Schema extends QueryConstructor
     protected $connection;
 
 
+
     protected $relations = true;
+
+
 
     protected $countOnly = false;
 
-    public function __construct(Connection $connection = null)
+
+
+    public function __construct(string $connection = null)
     {
-        $this->connection = $connection ?? $this->getSocket();
+        $this->database = $connection;
+        $this->connection =  $this->getSocket();
         $this->driver = $this->connection->getDriver();
+
         parent::__construct($this->connection);
     }
 
@@ -138,17 +144,20 @@ class Schema extends QueryConstructor
     }
 
 
-    protected function positionCollection($key, $value)
+    protected function positionCollection($position, $key, $value)
     {
 
         if (!is_null($key) && !is_null($value)) {
-
-            $result =  $this->where($key, $value)->get();
-        } else {
-
-            $result = $this->get();
+            $this->where($key, $value);
         }
 
+        if ($position === 'first') {
+            $this->orderBy('id', 'ASC')->limit(1);
+        } else if ($position === 'last') {
+            $this->orderBy('id', 'DESC')->limit(1);
+        }
+
+        $result = $this->get();
         return $result;
     }
 
@@ -165,7 +174,7 @@ class Schema extends QueryConstructor
         if (!is_array($data)) {
             return array($data);
         }
-        
+
         return $data;
     }
 
@@ -227,34 +236,13 @@ class Schema extends QueryConstructor
 
     public function first($key = null, $value = null)
     {
-        $result = $this->positionCollection($key, $value);
-
-        if ($this->resultTypeChecker($result) == "object") {
-            return $result;
-        }
-
-        if ($result != null && is_array($result)) {
-
-            return array_shift($result);
-        }
-
-        return null;
+        return $this->positionCollection('first', $key, $value);
     }
 
 
     public function last($key = null, $value = null)
     {
-        $result = $this->positionCollection($key, $value);
-
-        if ($this->resultTypeChecker($result) == "object") {
-            return $result;
-        }
-
-        if ($result != null && is_array($result)) {
-            return array_pop($result);
-        }
-
-        return null;
+        return $this->positionCollection('last', $key, $value);
     }
 
 
@@ -287,17 +275,13 @@ class Schema extends QueryConstructor
         return $this;
     }
 
+    public function limit($value)
+    {
+        $this->setLimit($value);
+    }
 
     public function sum($column)
     {
-        $data = function () {
-            if ($this->parameters) {
-                return $this->parameters;
-            } else {
-                return null;
-            }
-        };
-
         $this->sumQuery($column, $this->table);
 
         $result = $this->fetch();
@@ -322,7 +306,7 @@ class Schema extends QueryConstructor
 
         $this->allQuery($this->table);
         $clone = clone $this;
-        
+
         $this->setLimit($limits);
         $result = $this->fetch();
 
@@ -333,13 +317,12 @@ class Schema extends QueryConstructor
         }
 
         $total_result = $clone->count();
-        if($total_result > $number) {
+        if ($total_result > $number) {
             $total_pages = floor($total_result / $number);
 
             if (($total_result % $number) > 0) {
                 $total_pages += 1;
             }
-
         } else {
             $total_pages = 1;
         }
@@ -485,10 +468,9 @@ class Schema extends QueryConstructor
             if (isset($this->$key)) {
                 $value = $this->$key;
             }
-        } 
-        else if($key === null && $value === null) {
+        } else if ($key === null && $value === null) {
             $key = "id";
-            if(isset($this->id)) {
+            if (isset($this->id)) {
                 $value = $this->id;
             }
         }
@@ -577,24 +559,17 @@ class Schema extends QueryConstructor
                 return $data;
             }
 
-            return $this->selfObject($result);
+            return $this->newObject($class, $result);
         } else if ($this->result_data_format == "arrays") {
             return $result;
         }
     }
 
-    protected function selfObject($instance)
-    {
-        foreach ($instance as $key => $value) {
-            $this->$key = $value;
-        }
-
-        return $this;
-    }
-
     protected function newObject($name, $instance)
     {
         $class = new $name;
+        $class->table($this->table);
+
         foreach ($instance as $key => $value) {
             $class->$key = $value;
         }
@@ -631,7 +606,7 @@ class Schema extends QueryConstructor
 
                 ($clear === true ? $this->clearInitalQuery() : null);
 
-                if($this->countOnly) {
+                if ($this->countOnly) {
                     return $result->rowCount();
                 }
 
@@ -644,25 +619,6 @@ class Schema extends QueryConstructor
         }
 
         return null;
-    }
-
-
-    protected function counter($direct = false)
-    {
-
-        ($direct === false) ? $this->builder : null;
-        $statement = $this->connection()->prepare($this->getSql());
-
-        (isset($this->whereData))
-            ? $exec = $statement->executeQuery($this->parameters)
-            : $exec = $statement->executeQuery();
-
-        if ($exec) {
-            $this->clearInitalQuery();
-            return ($statement->rowCount());
-        }
-
-        return 0;
     }
 
 

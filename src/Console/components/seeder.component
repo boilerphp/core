@@ -1,9 +1,7 @@
 <?php
 
-use Boiler\Core\Database\Seeder;
 
-
-class [ClassName] extends Seeder {
+class [ClassName] {
 
     /**
      * seeds database table

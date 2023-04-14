@@ -7,6 +7,8 @@ use Exception;
 class QueryConstructor
 {
 
+    public $id;
+
     protected $driver;
 
     protected $builder;
@@ -16,6 +18,8 @@ class QueryConstructor
     protected $searchIndex = 0;
 
     protected array $parameters = [];
+
+    protected $fields;
 
     public function __construct(protected Connection $conn)
     {
@@ -200,7 +204,13 @@ class QueryConstructor
         }
     }
 
-    public function setLimit(string|array $limit)
+    public function addOrderBy($column, $mode = 'ASC') {
+        $this->builder->addOrderBy($column, $mode);
+
+        return $this;
+    }
+
+    public function setLimit(int|string|array $limit)
     {
 
         if (is_string($limit) && stripos($limit, ',')) {
@@ -214,6 +224,14 @@ class QueryConstructor
             if (isset($limit[0]) && isset($limit[1])) {
                 $this->builder->setFirstResult($limit[0])->setMaxResults($limit[1]);
             }
+
+            return;
+        }
+
+        if (is_integer($limit)) {
+            $this->builder->setMaxResults($limit);
+
+            return;
         }
     }
 

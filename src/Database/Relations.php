@@ -4,6 +4,8 @@ namespace Boiler\Core\Database;
 
 class Relations extends Schema {
 
+    protected $name;
+
     protected $useKey;
 
     protected $value_key;
@@ -17,6 +19,9 @@ class Relations extends Schema {
     protected $class;
     
     protected $success;
+
+    protected $_table;
+
 
     public function __construct()
     {
@@ -67,18 +72,6 @@ class Relations extends Schema {
                 return $class->where($this->foreign_key, $this->$value_key)->attachClass(true);
             }
         }
-    }
-
-    public function append($data) 
-    {
-        $this->table = $this->_table;
-
-        $key = $this->useKey;
-        $data[$this->class_id_field] = $this->$key;
-
-        $this->insert($data);
-
-        return $this;
     }
 
     protected function extractValue($object, $foreign_key) 
@@ -136,34 +129,6 @@ class Relations extends Schema {
 
         return true;
 
-    }
-
-    protected function pickAll() {
-
-        $this->table = $this->_table;
-
-        $key = $this->useKey;
-        $result = $this->where($this->class_id_field, $this->$key)->get();
-
-        $lower_case_class_name = $this->lower_case_class_name;
-        $new_result = [];
-
-        foreach ($result as $value) 
-        {
-            # code...
-            $value->$lower_case_class_name = new $this->model_name;
-            $key = $this->useKey;
-
-            $row = $this->query("SELECT * FROM ". $this->model_table ." WHERE ".$key." = ".$value->$key);
-            foreach ($row as $field => $dt) 
-            {
-                $value->$lower_case_class_name->$field = $dt;
-            }
-
-            array_push($new_result, $value);
-        }
-
-        return $new_result;
     }
 
 }
