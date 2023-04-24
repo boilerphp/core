@@ -10,9 +10,12 @@ class AuthenticableUser extends Model
 
     protected $table = "users";
 
-    public $id = null;
+    public function __construct(public int|null $id = null)
+    {
+    }
 
-    public function user() {
+    public function user()
+    {
         return (new User)->find($this->id);
     }
 }
