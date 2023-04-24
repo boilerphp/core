@@ -16,6 +16,9 @@ class ColumnDefination
     protected $dataTypeClass;
 
 
+    protected $schema;
+    
+
     protected $driverDataTypeMap = [
         "sqlite" => SqlLiteMigrationDataTypes::class,
         "pdo_sqlite" => SqlLiteMigrationDataTypes::class,

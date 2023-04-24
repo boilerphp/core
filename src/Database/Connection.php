@@ -88,6 +88,13 @@ class Connection
      */
     protected $connection;
 
+    /**
+     * selected database connection variables
+     *   
+     * @var mixed
+     *
+     */
+    protected $selectedConnectionVariables;
 
     public function getConnection()
     {

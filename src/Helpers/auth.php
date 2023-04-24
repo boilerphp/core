@@ -3,17 +3,16 @@
 use Boiler\Core\Admin\Door;
 use Boiler\Core\Admin\Auth;
 
-if(!function_exists("auth")) 
-{
+if (!function_exists("auth")) {
     /** 
      * 
      * @return Auth::user|null
-    */
-    function auth() {
+     */
+    function auth()
+    {
 
         $auth = Auth::user();
-        if($auth != null)
-         {
+        if ($auth != null) {
             return $auth;
         }
 
@@ -21,18 +20,16 @@ if(!function_exists("auth"))
     }
 }
 
-if(!function_exists("access")) 
-{
+if (!function_exists("access")) {
     /** 
      * gives access with permission
      * 
      * @param string $lock
      * @return bool
-    */
+     */
 
     function access($lock)
     {
         return Door::hasLock($lock);
     }
-
 }

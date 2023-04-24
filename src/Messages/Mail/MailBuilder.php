@@ -78,7 +78,7 @@ class MailBuilder extends MailConfig
     }
 
 
-    public function setHeaders( $keys, $value = null)
+    public function setHeaders($keys, $value = null)
     {
         if(is_array($keys))
         {

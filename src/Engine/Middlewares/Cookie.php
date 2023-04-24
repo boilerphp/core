@@ -39,7 +39,6 @@ class Cookie extends App
     public static function expire($name, $time = 172800,$domain = "")
     {
         setcookie($name, "", time() - $time, "/", $domain);
-        // unset($_COOKIE[$name]);
     }
 
     public static function update($name, $value)

@@ -6,6 +6,13 @@ class Request extends Validator
 {
 
     /**
+     * URL 
+     *
+     * @var array
+     */
+    protected $_url;
+
+    /**
      * URL parameters 
      *
      * @var array
@@ -41,7 +48,6 @@ class Request extends Validator
      */
     public function __construct($method)
     {
-
         $this->method = strtoupper($method);
         $this->init($method);
     }
@@ -52,23 +58,23 @@ class Request extends Validator
 
         switch ($method) {
             case 'get':
-                $this->get();
+                $this->map($_GET);
                 break;
 
             case 'post':
-                $this->post();
+                $this->map($_POST);
                 break;
 
             case 'patch':
-                $this->patch();
+                $this->map($_POST);
                 break;
 
             case 'put':
-                $this->put();
+                $this->map($_POST);
                 break;
 
             case 'delete':
-                $this->delete();
+                $this->map($_POST);
                 break;
         }
 
@@ -78,18 +84,7 @@ class Request extends Validator
     }
 
 
-    public function headers()
-    {
-        return $this->setHeaders();
-    }
-
-
     public function getHeaders()
-    {
-        return $this->setHeaders();
-    }
-
-    protected function setHeaders()
     {
         $headers = [];
 
@@ -104,7 +99,7 @@ class Request extends Validator
     public function json($key = null)
     {
         $data = json_decode(file_get_contents("php://input"), true);
-        
+
         if (!is_null($key)) {
             if (isset($data[$key])) {
                 return $data[$key];
@@ -113,7 +108,7 @@ class Request extends Validator
             }
         }
 
-        if(is_array($data)) {
+        if (is_array($data)) {
             foreach ($data as $key => $value) {
                 $this->$key = $value;
             }
@@ -132,12 +127,13 @@ class Request extends Validator
             $data = $_POST;
         }
 
-        if(!$data && $this->json()) {
+        if (!$data && $this->json()) {
             $data = $this->json();
         }
 
         return $data;
     }
+
 
     public function exist($key)
     {
@@ -148,6 +144,7 @@ class Request extends Validator
         return false;
     }
 
+
     public function hasKey($key)
     {
         if (isset($this->$key)) {
@@ -156,6 +153,7 @@ class Request extends Validator
 
         return false;
     }
+
 
     public function hasParam($key)
     {
@@ -191,31 +189,27 @@ class Request extends Validator
     }
 
 
-    protected function get()
+    public function getData($name)
     {
-        $this->map($_GET);
+        return $this->input($name);
     }
 
 
-    protected function post()
+    public function input($name)
     {
-        $this->map($_POST);
+        return $this->entry($name);
     }
 
-    protected function put()
+
+    protected function entry($key)
     {
-        $this->map($_POST);
+        if (isset($this->$key) || $this->json($key)) {
+            return $this->$key;
+        }
+
+        return null;
     }
 
-    protected function patch()
-    {
-        $this->map($_POST);
-    }
-
-    protected function delete()
-    {
-        $this->map($_POST);
-    }
 
     public function file($name)
     {
@@ -291,6 +285,7 @@ class Request extends Validator
         }
     }
 
+
     /**
      * gets the ip address of the request browser.
      *
@@ -309,6 +304,7 @@ class Request extends Validator
         }
         return $ip;
     }
+
 
     public function setParams($params)
     {

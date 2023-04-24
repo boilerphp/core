@@ -21,6 +21,13 @@ class Validator extends HttpRequest
      */
     protected $validation_messages = array();
 
+    /**
+     * json fields
+     *
+     * @var array
+     */
+    protected $json = array();
+
 
     public function json($key)
     {
@@ -72,7 +79,6 @@ class Validator extends HttpRequest
         return $this->validation;
     }
 
-
     /**
      * validates all required json fields that are supplied
      *  
@@ -119,7 +125,6 @@ class Validator extends HttpRequest
 
         $_SESSION["request_validation_message"] = $this->validation_messages;
     }
-
 
     /**
      * validates field data types
@@ -253,7 +258,6 @@ class Validator extends HttpRequest
         }
     }
 
-
     /**
      * creates validation messages
      *  
@@ -266,7 +270,6 @@ class Validator extends HttpRequest
     {
         $this->validation_messages[$field] = $message;
     }
-
 
     /**
      * process validation properties

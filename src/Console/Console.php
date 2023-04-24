@@ -8,6 +8,8 @@ use Console\Support\Interfaces\ConsoleInterface;
 class Console extends Command implements ConsoleInterface
 {
 
+    protected $arguments;
+
     public function __construct($server = null, $argv = null, $verbose = true)
     {
         parent::__construct();

@@ -44,13 +44,13 @@ class Route extends RoutesConfig
     static private $group_path = "";
 
 
-    static private $uri_;
-
-
     static private $middleware = "";
 
 
     public $names_ = [];
+
+
+    public $map;
 
 
 
@@ -111,8 +111,6 @@ class Route extends RoutesConfig
 
     static public function all($path, $controller)
     {
-        static::$uri_ = $path;
-
         static::post($path, $controller);
         static::delete($path, $controller);
         static::put($path, $controller);
@@ -275,7 +273,7 @@ class Route extends RoutesConfig
 
         $protections = $path['protection'];
 
-        $headers = $request->headers();
+        $headers = $request->getHeaders();
         $responseFormat = $headers["Accept"] ?? null;
 
         foreach ($protections as $protection) {
@@ -502,7 +500,7 @@ class Route extends RoutesConfig
 
             if ($method === "post") {
 
-                $headers = (new Request($method))->headers();
+                $headers = (new Request($method))->getHeaders();
 
                 if (($headers['Accept'] ?? null) == 'application/json') {
 

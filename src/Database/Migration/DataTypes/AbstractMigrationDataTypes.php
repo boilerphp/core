@@ -33,11 +33,12 @@ abstract class AbstractMigrationDataTypes
     protected $primary_keys = "";
 
     /**
-     * query map string
+     * query string
      *
      * @var string
      *
      */
+    protected $query = "";
 
     /**
      * primary key mode
@@ -47,10 +48,20 @@ abstract class AbstractMigrationDataTypes
      */
     protected $pk_mode = true;
 
+    /**
+     * active key 
+     *
+     * @var string
+     *
+     */
+    protected $key;
 
-    protected $query = "";
-
-
+    /**
+     * table name
+     *
+     * @var string
+     *
+     */
     protected $table;
 
 

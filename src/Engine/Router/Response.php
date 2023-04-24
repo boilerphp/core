@@ -27,7 +27,7 @@ class Response
         $method = strtolower($_SERVER["REQUEST_METHOD"]);
 
         $request = new Request($method);
-        $headers = $request->headers();
+        $headers = $request->getHeaders();
 
         if (isset($headers["Accept"])) {
             return $headers["Accept"];

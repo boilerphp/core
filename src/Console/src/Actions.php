@@ -8,6 +8,15 @@ use Console\Support\Helpers\ActionHelpers;
 class Actions extends ActionHelpers
 {
 
+    protected $path;
+    protected $fresh;
+    protected $force;
+    protected $rollback;
+    protected $run_flag;
+    protected $hasRollbackSteps;
+    protected $hasRollbackTarget;
+
+
     /**
      * Create new app using command line manager
      * @param $name

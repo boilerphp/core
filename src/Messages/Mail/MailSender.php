@@ -3,18 +3,32 @@
 namespace Boiler\Core\Messages\Mail;
 
 use Boiler\Core\Configs\GlobalConfig;
-use Swift_SendmailTransport;
 use Swift_SmtpTransport;
 use Swift_Mailer;
 use Swift_Message;
 use ErrorException;
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 
 class MailSender extends MailBuilder
 {
+
+    protected $mail;
+    protected $mailer;
+
+    protected $driver;
+    protected $response;
+    protected $transport;
+
+    protected $smtpHost;
+    protected $smtpPort;
+    protected $smtpDebug;
+    protected $smtpUsername;
+    protected $smtpPassword;
+    protected $smtpEncryption;
+
+
 
 
     public function getMailAttributes()
@@ -54,7 +68,7 @@ class MailSender extends MailBuilder
     }
 
 
-    public function createMailer() 
+    public function createMailer()
     {
         // Create the Mailer using your created Transport
         return $this->mailer = new Swift_Mailer($this->transport);
@@ -70,10 +84,10 @@ class MailSender extends MailBuilder
             ->setCharset($this->charset)
             ->setBody($this->message);
 
-            return $this->mail;
+        return $this->mail;
     }
 
-    public function PHPMailer() 
+    public function PHPMailer()
     {
         $mail = new PHPMailer(true);
 
@@ -109,23 +123,20 @@ class MailSender extends MailBuilder
             $mail->send();
             $this->response = 'sent';
             return true;
-        } 
-        catch (Exception $e) 
-        {
+        } catch (Exception $e) {
             $this->response = "Failed: {$mail->ErrorInfo}";
             return false;
         }
-
     }
 
     public function defaultMailer()
     {
         $headers = "MIME-VERSION: $this->mime" . " \r\n";
-        $headers .= "Content-type: $this->contentType; charset=$this->charset "."\r\n";
+        $headers .= "Content-type: $this->contentType; charset=$this->charset " . "\r\n";
         $headers .= "From: $this->fromName $this->from \r\n";
-        $headers .= 'Reply-To: ' .$this->replyTo. "\r\n";
+        $headers .= 'Reply-To: ' . $this->replyTo . "\r\n";
 
-        if(mail($this->to, $this->subject, $this->message, $headers)) {
+        if (mail($this->to, $this->subject, $this->message, $headers)) {
             return true;
         }
 
@@ -137,24 +148,22 @@ class MailSender extends MailBuilder
         // Send the message
         $this->getMailAttributes();
 
-        if($this->driver == "swiftmailer")
-        {
-            if($this->createTransport())
-            {
+        if ($this->driver == "swiftmailer") {
+            if ($this->createTransport()) {
                 $this->createMailer();
                 return $this->mailer->send($this->buildMessage());
             }
-        }
-        else if($this->driver == "phpmailer")
-        {
+        } else if ($this->driver == "phpmailer") {
             return $this->PHPMailer();
-        }
-        else if($this->driver == "default")
-        {
-            return $this->defaultMailer(); 
+        } else if ($this->driver == "default") {
+            return $this->defaultMailer();
         }
 
         return false;
     }
 
+    public function getResponse()
+    {
+        return $this->response;
+    }
 }
