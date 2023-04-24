@@ -189,7 +189,7 @@ class Request extends Validator
     }
 
 
-    public function getData($name)
+    public function getValue($name)
     {
         return $this->input($name);
     }
