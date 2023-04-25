@@ -12,9 +12,14 @@ class ActionHelpers implements ActionHelpersInterface
 
 
     public $arg_string = "";
-
-
     public $verbose = true;
+
+    protected $module;
+    protected $component;
+    protected $use_namespace;
+    protected $new_migrations;
+    protected $controller_name;
+    protected $migrationReflection;
 
 
     public $flags = array(
@@ -384,12 +389,13 @@ class ActionHelpers implements ActionHelpersInterface
 
         if ($this->readComponent($component_path) !== "") {
 
-            $this->component = preg_replace("/\[Controller_Base_Namespace\]/", 'use Boiler\Core\Actions\Urls\Controller;', $this->component);
             if ($this->checkNamaspacePrefix($controller_name)) {
-
+                
+                $this->component = preg_replace("/\[Controller_Base_Namespace\]/", 'use App\Controllers\Controller;', $this->component);
                 $this->component = preg_replace("/\[Namespace\]/", $this->use_namespace, $this->component);
                 $controller_name = $this->controller_name;
             } else {
+                $this->component = preg_replace("/\[Controller_Base_Namespace\]/", '', $this->component);
                 $this->component = preg_replace("/\[Namespace\]/", '', $this->component);
             }
 

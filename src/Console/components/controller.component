@@ -2,7 +2,6 @@
 
 namespace App\Controllers[Namespace];
 
-
 [Controller_Base_Namespace]
 use Boiler\Core\Engine\Router\Request;
 use Boiler\Core\Engine\Router\Response;
