@@ -8,6 +8,9 @@ use Boiler\Core\Admin\Auth;
 class BaseController
 {
 
+	public function load()
+	{
+	}
 
 	public function detectCrossDomain($redirect, $domainSuffix = "*")
 	{
