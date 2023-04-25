@@ -10,9 +10,10 @@ class AuthenticableUser extends Model
 
     protected $table = "users";
 
-    public function user($id)
+    public function user()
     {
         $user = new User();
-        return $user->find($id);
+        $columnName = "id";
+        return $user->find($this->$columnName);
     }
 }
