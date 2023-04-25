@@ -6,12 +6,12 @@ use Boiler\Core\Admin\Auth;
 if (!function_exists("auth")) {
     /** 
      * 
-     * @return Auth::user|null
+     * @return Boiler\Core\Admin\AuthicableUser|null
      */
     function auth()
     {
 
-        $auth = Auth::user();
+        $auth = Auth::get();
         if ($auth != null) {
             return $auth;
         }

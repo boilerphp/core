@@ -7,12 +7,22 @@ use Boiler\Core\Middlewares\Session;
 class Authentication
 {
 
+    static public function get() {
+
+        if (Session::get("auth")) {
+            $id = Session::get("auth");
+            return (new AuthenticableUser)->find($id);
+        }
+
+        return null;
+    }
+
     static public function user()
     {
 
         if (Session::get("auth")) {
             $id = Session::get("auth");
-            return (new AuthenticableUser($id))->user();
+            return (new AuthenticableUser)->user($id);
         }
 
         return null;
