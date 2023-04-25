@@ -17,7 +17,6 @@
         "files": [
             "src/Helpers/app.php",
             "src/Helpers/auth.php",
-            "src/Helpers/forms.php",
             "src/Helpers/routes.php",
             "src/Helpers/views.php"
         ]
