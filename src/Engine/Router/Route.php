@@ -5,7 +5,7 @@ namespace Boiler\Core\Engine\Router;
 
 use Exception;
 use App\Config\RoutesConfig;
-use Boiler\Core\Actions\Urls\Controller;
+use Boiler\Core\Actions\Urls\BaseController;
 use Boiler\Core\Database\Schema;
 use Boiler\Core\Hashing\Hash;
 use Boiler\Core\Admin\Auth;
@@ -410,7 +410,7 @@ class Route extends RoutesConfig
             $handler_controller = new $controller;
             $handler_method = $action_list[1];
 
-            if ($handler_controller instanceof Controller) {
+            if ($handler_controller instanceof BaseController) {
 
                 return $handler_controller->$handler_method($request);
             } else {
@@ -419,6 +419,16 @@ class Route extends RoutesConfig
                  * Throw Bad controller call exception. 
                  * 
                  * */
+                if (($headers['Accept'] ?? null) == 'application/json') {
+
+                    echo Response::json([
+                        "status" => 500,
+                        "message" => "Controller [$handler_controller] is not a valid controller class.",
+                        "error" => (new \Exception("Bad Controller call [$handler_controller] is not a valid controller class.")),
+                    ], 500);
+                } else {
+                    throw new \Exception("Bad Controller call [$handler_controller] is not a valid controller class.");
+                }
             }
         } else {
             $action = $path["action"];

@@ -21,8 +21,7 @@ class Authentication
     {
 
         if (Session::get("auth")) {
-            $id = Session::get("auth");
-            return (new AuthenticableUser)->user($id);
+            return (new AuthenticableUser)->user();
         }
 
         return null;

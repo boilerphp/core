@@ -4,6 +4,7 @@ namespace Boiler\Core\Admin;
 
 use Boiler\Core\Database\Model;
 use App\Models\User;
+use Session;
 
 class AuthenticableUser extends Model
 {
@@ -12,8 +13,7 @@ class AuthenticableUser extends Model
 
     public function user()
     {
-        $user = new User();
-        $columnName = "id";
-        return $user->find($this->$columnName);
+        $id = Session::get("auth");
+        return (new User)->find($id);
     }
 }
