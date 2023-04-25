@@ -2,8 +2,6 @@
 
 namespace Boiler\Core\Middlewares;
 
-use App\Config\App;
-
 class Session
 {
 

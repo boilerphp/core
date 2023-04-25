@@ -4,7 +4,8 @@ namespace Boiler\Core\Admin;
 
 use Boiler\Core\Database\Model;
 use App\Models\User;
-use Session;
+use Boiler\Core\Middlewares\Session;
+
 
 class AuthenticableUser extends Model
 {

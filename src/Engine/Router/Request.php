@@ -13,6 +13,20 @@ class Request extends Validator
     protected $_url;
 
     /**
+     * domain name
+     *
+     * @var string
+     */
+    public $_domain;
+
+    /**
+     * subdomain name
+     *
+     * @var string
+     */
+    public $_subdomain;
+
+    /**
      * URL parameters 
      *
      * @var array

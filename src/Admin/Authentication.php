@@ -7,7 +7,7 @@ use Boiler\Core\Middlewares\Session;
 class Authentication
 {
 
-    static public function get() {
+    static public function getAuth() {
 
         if (Session::get("auth")) {
             $id = Session::get("auth");

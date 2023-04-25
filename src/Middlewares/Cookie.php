@@ -2,10 +2,7 @@
 
 namespace Boiler\Core\Middlewares;
 
-
-use App\Config\App;
-
-class Cookie extends App
+class Cookie
 {
 
     public static function create($name, $value, $duration = 172800, $path = "/", $domain = null)
