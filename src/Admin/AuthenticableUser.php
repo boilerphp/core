@@ -16,6 +16,8 @@ class AuthenticableUser extends Model
 
     public function user()
     {
-        return (new User)->find($this->id);
+        $user = new User();
+        $uniqueColumn = $user->getUniqueColumn();
+        return $user->find($this->$uniqueColumn);
     }
 }

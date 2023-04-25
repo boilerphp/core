@@ -440,14 +440,12 @@ class Schema extends QueryConstructor
     {
         $newdata = $this->dataFormatChecker($data, $value);
 
-        // if(!array_key_exists('updated_date', $newdata)) {
-        //     $newdata['updated_date'] = time();
-        // }
+        $unique_column_name = $this->getUniqueColumn();
 
         $this->updateQuery($newdata, $this->table);
 
         if (!strpos(strtolower($this->getSql()), "where")) {
-            $this->where("id", $this->id);
+            $this->where($unique_column_name, $this->$unique_column_name);
         }
 
         if ($this->save()) {
@@ -464,14 +462,16 @@ class Schema extends QueryConstructor
 
     public function delete($key = null, $value = null)
     {
+        $unique_column_name = $this->getUniqueColumn();
+
         if ($key !== null && $value === null) {
             if (isset($this->$key)) {
                 $value = $this->$key;
             }
         } else if ($key === null && $value === null) {
-            $key = "id";
-            if (isset($this->id)) {
-                $value = $this->id;
+            $key = $unique_column_name;
+            if (isset($this->$unique_column_name)) {
+                $value = $this->$unique_column_name;
             }
         }
 
@@ -740,6 +740,15 @@ class Schema extends QueryConstructor
 
         $this->query("SET FOREIGN_KEY_CHECKS = 1; DROP TABLE IF EXISTS $this->table;");
         $this->query("SET FOREIGN_KEY_CHECKS = 0; DROP TABLE IF EXISTS $this->table;");
+    }
+
+
+    public function getUniqueColumn() {
+        return $this->unique_column_name;
+    }
+
+    public function setUniqueColumn($name) {
+        $this->unique_column_name = $name;
     }
 
 

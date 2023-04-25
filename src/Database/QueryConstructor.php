@@ -7,7 +7,7 @@ use Exception;
 class QueryConstructor
 {
 
-    public $id;
+    protected $unique_column_name = "id";
 
     protected $driver;
 
@@ -83,6 +83,8 @@ class QueryConstructor
 
         $this->builder->delete($table);
 
+        $unique_column_name = $this->unique_column_name;
+
         if ($data !== null) {
             foreach ($data as $column => $value) {
                 $this->builder->where($column . " = ?");
@@ -90,9 +92,9 @@ class QueryConstructor
             }
         } else {
             if (strpos(strtolower($this->getSql()), "where") === false) {
-                if (isset($this->id)) {
-                    $this->builder->where('id = ?');
-                    array_push($this->parameters, $this->id);
+                if (isset($this->$unique_column_name)) {
+                    $this->builder->where($unique_column_name.' = ?');
+                    array_push($this->parameters, $this->$unique_column_name);
                 }
             }
         }
