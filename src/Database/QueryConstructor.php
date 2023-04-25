@@ -2,8 +2,6 @@
 
 namespace Boiler\Core\Database;
 
-use Exception;
-
 class QueryConstructor
 {
 
