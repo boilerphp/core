@@ -91,14 +91,14 @@ class QueryConstructor
         } else {
             if (strpos(strtolower($this->getSql()), "where") === false) {
                 if (isset($this->$unique_column_name)) {
-                    $this->builder->where($unique_column_name.' = ?');
+                    $this->builder->where($unique_column_name . ' = ?');
                     array_push($this->parameters, $this->$unique_column_name);
                 }
             }
         }
     }
 
-    public function whereQuery(array|string $key,  array|string $value = null, string $operation = null)
+    protected function whereQuery(array|string $key,  array|string $value = null, string $operation = null)
     {
 
         $op = $operation ? $operation : '=';
@@ -125,6 +125,38 @@ class QueryConstructor
                 } else {
                     $this->builder->where($key . " $op ?");
                 }
+                array_push($this->parameters, $value);
+            }
+        }
+    }
+
+    protected function orWhereQuery($key, $value, $operation = null)
+    {
+
+        if (is_array($key)) {
+            $index = 0;
+            foreach ($key as $column => $val) {
+                if ($operation != null) {
+                    if (is_array($operation)) {
+                        $op = $operation[$index];
+                        $this->builder->orWhere("`$column` $op '$val'");
+                    } else {
+                        $this->builder->orWhere("`$column` $operation '$val'");
+                    }
+                } else {
+                    $this->builder->orWhere("`$column` = ?");
+                    array_push($this->parameters, $val);
+                }
+
+                $index++;
+            }
+        } else if (!is_array($key)) {
+            if ($operation != null) {
+
+                $this->builder->orWhere("`$key` $operation '$value'");
+            } else {
+
+                $this->builder->orWhere("`$key` = ?");
                 array_push($this->parameters, $value);
             }
         }
@@ -162,34 +194,24 @@ class QueryConstructor
         }
     }
 
-    protected function orWhereQuery($key, $value, $operation = null)
+    protected function orSearchQuery($key, $value, $operation)
     {
 
         if (is_array($key)) {
-            $index = 0;
+
             foreach ($key as $column => $val) {
-                if ($operation != null) {
-                    if (is_array($operation)) {
-                        $op = $operation[$index];
-                        $this->builder->orWhere("`$column` $op '$val'");
-                    } else {
-                        $this->builder->orWhere("`$column` $operation '$val'");
-                    }
-                } else {
-                    $this->builder->orWhere("`$column` = ?");
-                    array_push($this->parameters, $val);
-                }
 
-                $index++;
+                $val = $operation[0] . $val . $operation[1];
+                $search = "`$column` LIKE '$val'";
+
+                $this->builder->orWhere($search);
             }
-        } else if (!is_array($key)) {
-            if ($operation != null) {
+        } else {
 
-                $this->builder->orWhere("`$key` $operation '$value'");
-            } else {
+            if (is_string($key)) {
 
-                $this->builder->orWhere("`$key` = ?");
-                array_push($this->parameters, $value);
+                $value = $operation[0] . $value . $operation[1];
+                $this->builder->orWhere("`$key` LIKE '$value'");
             }
         }
     }
@@ -204,7 +226,8 @@ class QueryConstructor
         }
     }
 
-    public function addOrderBy($column, $mode = 'ASC') {
+    public function addOrderBy($column, $mode = 'ASC')
+    {
         $this->builder->addOrderBy($column, $mode);
 
         return $this;

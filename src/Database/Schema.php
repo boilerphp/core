@@ -512,6 +512,18 @@ class Schema extends QueryConstructor
         return $this;
     }
 
+    public function orSearch($keys, $value = null, $opration = ['%', '%'])
+    {
+        if (is_array($keys)) {
+            if ($value != null && is_array($value)) {
+                $opration = $value;
+            }
+        }
+
+        $this->orSearchQuery($keys, $value, $opration);
+        return $this;
+    }
+
 
     public function where($keys, $value = null)
     {
