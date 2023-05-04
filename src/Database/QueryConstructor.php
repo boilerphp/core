@@ -170,26 +170,28 @@ class QueryConstructor
             foreach ($key as $column => $val) {
 
                 $val = $operation[0] . $val . $operation[1];
-                $search = "`$column` LIKE '$val'";
+                $search = "`$column` LIKE ?";
 
-                if ($this->searchIndex > 0) {
+                if (count($this->parameters) > 0) {
                     $this->builder->andWhere($search);
                 } else {
                     $this->builder->where($search);
                 }
 
-                $this->searchIndex++;
+                array_push($this->parameters, $val);
             }
         } else {
 
             if (is_string($key)) {
 
                 $value = $operation[0] . $value . $operation[1];
-                if ($this->searchIndex > 0) {
-                    $this->builder->andWhere("`$key` LIKE '$value'");
+                if (count($this->parameters) > 0) {
+                    $this->builder->andWhere("`$key` LIKE ?");
                 } else {
-                    $this->builder->where("`$key` LIKE '$value'");
+                    $this->builder->where("`$key` LIKE ?");
                 }
+
+                array_push($this->parameters, $value);
             }
         }
     }
@@ -202,16 +204,19 @@ class QueryConstructor
             foreach ($key as $column => $val) {
 
                 $val = $operation[0] . $val . $operation[1];
-                $search = "`$column` LIKE '$val'";
+                $search = "`$column` LIKE ?";
 
                 $this->builder->orWhere($search);
+                array_push($this->parameters, $val);
             }
         } else {
 
             if (is_string($key)) {
 
                 $value = $operation[0] . $value . $operation[1];
-                $this->builder->orWhere("`$key` LIKE '$value'");
+
+                $this->builder->orWhere("`$key` LIKE ?");
+                array_push($this->parameters, $value);
             }
         }
     }
