@@ -2,7 +2,7 @@
 
 namespace App\Middlewares;
 
-namespace Boiler\Core\Middlewares\Middleware;
+use Boiler\Core\Middlewares\Middleware;
 
 
 class [Middleware] extends Middleware {
