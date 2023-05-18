@@ -54,6 +54,7 @@ class ActionHelpers implements ActionHelpersInterface
         "model" => "./app/Models/",
         "view" => "./app/Views/",
         "controller" => "./app/Controllers/",
+        "middleware" => "./app/Middlewares/",
         "migration" => "./database/Migrations/",
         "notification" => "./app/Notifications/",
         "seeder" => "./database/Seeders/",
@@ -196,21 +197,21 @@ class ActionHelpers implements ActionHelpersInterface
     /**
      * usage: configures notification structure and inital setup
      * 
-     * @param string $notification_name
+     * @param string $name
      * 
-     * @param string $notification_path
+     * @param string $path
      * 
      * @return void
      */
 
-    public function configureNotification($notification_name, $notification_path)
+    public function configureNotification($name, $path)
     {
         $component_path = __DIR__."/../../components/notification.component";
 
         if ($this->readComponent($component_path)) {
-            $this->module = preg_replace("/\[Notification\]/", $notification_name, $this->component);
-            if ($this->writeModule($notification_path)) {
-                $this->verbose("$notification_name successfully created!");
+            $this->module = preg_replace("/\[Notification\]/", $name, $this->component);
+            if ($this->writeModule($path)) {
+                $this->verbose("$name successfully created!");
                 return true;
             }
             return false;
@@ -219,44 +220,65 @@ class ActionHelpers implements ActionHelpersInterface
 
     /**
      * usage: configures model structure and inital setup
-     * @param string $model_name
+     * @param string $name
      * 
-     * @param string $model_path
+     * @param string $path
      * 
-     * @return void;
+     * @return bool
      */
 
-    public function configureModel($model_name, $model_path)
+    public function configureModel($name, $path)
     {
         $component_path = __DIR__."/../../components/model.component";
 
         if ($this->readComponent($component_path)) {
-            $this->module = preg_replace("/\[Model\]/", $model_name, $this->component);
-            if ($this->writeModule($model_path)) {
-                $this->verbose("$model_name model successfully created!");
+            $this->module = preg_replace("/\[Model\]/", $name, $this->component);
+            if ($this->writeModule($path)) {
+                $this->verbose("$name model successfully created!");
                 return true;
             }
             return false;
         }
     }
 
+    /**
+     * usage: configures middleware structure and inital setup
+     * @param string $name
+     * 
+     * @param string $path
+     * 
+     * @return bool
+     */
+
+    public function configureMiddleware($name, $path) {
+        $component_path = __DIR__."/../../components/middleware.component";
+
+        if ($this->readComponent($component_path)) {
+            $this->module = preg_replace("/\[Middleware\]/", $name, $this->component);
+            if ($this->writeModule($path)) {
+                $this->verbose("$name middleware successfully created!");
+                return true;
+            }
+            return false;
+        }
+    }
 
     /**
      * usage: configures migration structure and inital setup
      * 
-     * @param string $migration_name
+     * @param string $name
      * 
-     * @param string $migration_path
+     * @param string $path
      * 
      * @param string $component
      */
-    public function configureMigration($migration_name, $migration_path, $component)
+    public function configureMigration($name, $path, $component)
     {
         $component_path = __DIR__."/../../components/$component.component";
         if ($this->readComponent($component_path)) {
-            $class_name = ucfirst($migration_name);
-            if (strpos($migration_name, "_")) {
-                $e = explode("_", $migration_name);
+            $class_name = ucfirst($name);
+            if (strpos($name, "_")) {
+                $e = explode("_", $name);
                 $new_cl_name = "";
                 foreach ($e as $piece) {
                     $new_cl_name .= ucfirst($piece);
@@ -267,7 +289,7 @@ class ActionHelpers implements ActionHelpersInterface
 
             if ($component !== "migration.alter") {
                 $class_name .= "Table";
-                $table_name = $migration_name;
+                $table_name = $name;
             } else {
                 $arg_explode = explode("|", $this->arg_string);
                 $end_arg = end($arg_explode);
@@ -283,8 +305,8 @@ class ActionHelpers implements ActionHelpersInterface
             $this->module = preg_replace("/\[ClassName\]/", $class_name, $this->component);
             $this->module = preg_replace("/\[TableName\]/", strtolower($table_name), $this->module);
 
-            if ($this->writeModule($migration_path)) {
-                $this->verbose("Created migration: $migration_name");
+            if ($this->writeModule($path)) {
+                $this->verbose("Created migration: $name");
                 return true;
             }
             return false;
@@ -293,21 +315,21 @@ class ActionHelpers implements ActionHelpersInterface
 
     /**
      * usage: configures socket structure and inital setup
-     * @param string $socket_name
+     * @param string $name
      * 
-     * @param string $socket_path
+     * @param string $path
      * 
      * @return void;
      */
 
-    public function configureSocket($socket_name, $socket_path)
+    public function configureSocket($name, $path)
     {
         $component_path = __DIR__."/../../components/websocket/socket-skeleton.component";
 
         if ($this->readComponent($component_path)) {
-            $this->module = preg_replace("/\[SocketName\]/", $socket_name, $this->component);
-            if ($this->writeModule($socket_path)) {
-                $this->verbose("$socket_name socket successfully created!");
+            $this->module = preg_replace("/\[SocketName\]/", $name, $this->component);
+            if ($this->writeModule($path)) {
+                $this->verbose("$name socket successfully created!");
                 return true;
             }
             return false;
@@ -381,31 +403,35 @@ class ActionHelpers implements ActionHelpersInterface
 
     /**
      * usage: configures controller structure and inital setup
-     * @param string $controller_name
+     * @param string $name
+     * 
+     * @param string $path
+     * 
+     * @return bool
      */
-    public function configureController($controller_name, $controller_path)
+    public function configureController($name, $path)
     {
         $component_path = __DIR__."/../../components/controller.component";
 
         if ($this->readComponent($component_path) !== "") {
 
-            if ($this->checkNamaspacePrefix($controller_name)) {
+            if ($this->checkNamaspacePrefix($name)) {
                 
                 $this->component = preg_replace("/\[Controller_Base_Namespace\]/", 'use App\Controllers\Controller;', $this->component);
                 $this->component = preg_replace("/\[Namespace\]/", $this->use_namespace, $this->component);
-                $controller_name = $this->controller_name;
+                $name = $this->controller_name;
             } else {
                 $this->component = preg_replace("/\[Controller_Base_Namespace\]/", '', $this->component);
                 $this->component = preg_replace("/\[Namespace\]/", '', $this->component);
             }
 
 
-            $this->module = preg_replace("/\[Controller\]/", $controller_name, $this->component);
-            $view_folder = str_replace("controller", "", strtolower($controller_name));
+            $this->module = preg_replace("/\[Controller\]/", $name, $this->component);
+            $view_folder = str_replace("controller", "", strtolower($name));
 
             $this->module = preg_replace("/\[View\]/", $view_folder, $this->module);
-            if ($this->writeModule($controller_path)) {
-                $this->verbose("$controller_name successfully created!");
+            if ($this->writeModule($path)) {
+                $this->verbose("$name successfully created!");
                 return true;
             }
             return false;
@@ -485,7 +511,7 @@ class ActionHelpers implements ActionHelpersInterface
     public function checkTableExists($table)
     {
 
-        $connection = $this->migrationReflection->connection();
+        $this->migrationReflection->connection();
         $tables = $this->migrationReflection->getTables();
 
         if ($tables) {
@@ -528,7 +554,7 @@ class ActionHelpers implements ActionHelpersInterface
                     break;
                 }
 
-                // #Check if migration exists 
+                // Check if migration exists 
                 
                 $this->requireOnce($migration_file);
                 

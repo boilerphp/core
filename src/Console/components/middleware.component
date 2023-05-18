@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Middleware;
+
+namespace Boiler\Core\Middlewares\Middleware;
+
+
+class [Middleware] extends Middleware {
+
+    /**
+    * message for middleware response
+    * 
+    **/
+    public $message = "";
+
+
+    /**
+    * status code for middleware response
+    * 
+    **/
+    public $message = "";
+
+
+    public function handle($request, $next) 
+    {
+        
+    }
+
+}
+
+?>

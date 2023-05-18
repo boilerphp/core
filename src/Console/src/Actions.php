@@ -291,4 +291,26 @@ class Actions extends ActionHelpers
         verbose("Unable to create test file " . $name, "info");
         return false;
     }
+
+    /**
+     * Create Middlewares using command line manager
+     * @param $name, $type
+     * @return bool
+     * */
+    public function middleware($name)
+    {
+        $this->path = $this->path("middleware") . $name . ".php";
+
+        if ($this->checkExistent($this->path)) {
+            $this->verbose("$name already exists");
+            return false;
+        }
+
+        if ($this->configureMiddleware($name, $this->path)) {
+            return true;
+        }
+
+        print("Unable to create middleware " . $name);
+        return false;
+    }
 }

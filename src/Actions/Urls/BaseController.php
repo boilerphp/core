@@ -3,7 +3,7 @@
 namespace Boiler\Core\Actions\Urls;
 
 use Boiler\Core\Admin\Auth;
-
+use Boiler\Core\Engine\Router\Response;
 
 class BaseController
 {
@@ -56,5 +56,30 @@ class BaseController
 				return redirect($redirect);
 			}
 		}
+	}
+
+	public function json($data, $status)
+	{
+		return Response::json($data, $status);
+	}
+
+	public function render($view, $content, $status)
+	{
+		return Response::view($view, $content, $status);
+	}
+
+	public function content($text, $status)
+	{
+		return Response::content($text, $status);
+	}
+
+	public function redirectTo($path)
+	{
+		return Response::redirect($path);
+	}
+
+	public function redirectToUrl($url)
+	{
+		return Response::redirectToHost($url);
 	}
 }

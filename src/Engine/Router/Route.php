@@ -44,7 +44,7 @@ class Route extends RoutesConfig
     static private $group_path = "";
 
 
-    static private $middleware = "";
+    static private $middlewares = [];
 
 
     public $names_ = [];
@@ -91,12 +91,24 @@ class Route extends RoutesConfig
         $this->set_route_name($name);
     }
 
+    static public function middleware($middleware, $callback)
+    {
+        static::protected($middleware, $callback);
+    }
 
     static public function protected($middleware, $callback)
     {
-        static::$middleware = $middleware;
+        $middlewares = $middleware;
+
+        if (!is_array($middleware) && strpos($middleware, '|')) {
+            $middlewares = explode('|', $middleware);
+        } else if (is_string($middleware)) {
+            $middlewares = [$middleware];
+        }
+
+        array_push(static::$middlewares, $middlewares);
         $callback();
-        static::$middleware = null;
+        static::$middlewares = [];
     }
 
     static public function group($name, $callback)
@@ -191,15 +203,9 @@ class Route extends RoutesConfig
             $properties["params"] = $params;
         }
 
-        # if middlewere is set
-        if (static::$middleware != null) {
-            if (strpos(static::$middleware, '|')) {
-                $middlewares = explode('|', static::$middleware);
-            } else {
-                $middlewares = [static::$middleware];
-            }
-
-            $properties["protection"] = $middlewares;
+        # if middleware is set
+        if (count(static::$middlewares)) {
+            $properties["middlewares"] = static::$middlewares;
         }
 
         # checking if url has already been registered
@@ -266,115 +272,60 @@ class Route extends RoutesConfig
     }
 
 
-    protected static function authorize($path, Request $request)
+    protected static function authorize($middleware, Request $request, $headers)
     {
 
-        $failed = false;
+        $type = null;
 
-        $protections = $path['protection'];
-
-        $headers = $request->getHeaders();
-        $responseFormat = $headers["Accept"] ?? null;
-
-        foreach ($protections as $protection) {
-
-            $type = null;
-
-            if (strpos($protection, ':')) {
-                $xplode = explode(':', $protection);
-                $protection = $xplode[0];
-                $type = $xplode[1];
-            }
-
-            if (!array_key_exists($protection, $headers)) {
-                $failed = true;
-
-                if ($responseFormat == 'application/json') {
-
-                    $response = [
-                        'success' => false,
-                        'message' => 'Unauthorized Request'
-                    ];
-                }
-
-                break;
-            }
-
-            if ($protection == 'Authorization' || $protection == 'authorization') {
-
-                $schema = new Schema();
-
-                if ($type == 'Bearer' || $type == 'bearer') {
-
-                    $authToken = $headers['Authorization'] ?? $headers['authorization'];
-
-                    if (!empty($authToken)) {
-
-                        $authToken = trim(preg_replace("/Bearer/", '', $authToken));
-                        $authToken = trim(preg_replace("/bearer/", '', $authToken));
-                        $authToken = (new Hash)->getDecodedBase($authToken);
-                    }
-
-                    $authUser = $schema->table('auth_access_tokens')->find('token', $authToken);
-
-                    if ($authUser) {
-
-                        $last_used_date = $authUser->last_used_date ?? $authUser->created_date;
-                        $last_date = Carbon::parse($last_used_date);
-                        $current_date = Carbon::now();
-
-                        $seconds = $last_date->diffInSeconds($current_date);
-
-                        if ($seconds > \App\Config\App::$token_expiration) {
-                            $failed = $expired = true;
-                        }
-
-                        $user = (new $authUser->token_type)->find($authUser->token_id);
-
-                        if (!$user) {
-                            $failed = true;
-                            break;
-                        }
-
-                        Auth::login($user);
-
-                        $schema->table('auth_access_tokens')->where('id', $authUser->id)->first()->update([
-                            'last_used_date' => $request->timestamp()
-                        ]);
-                    } else {
-                        $failed = true;
-                    }
-                }
-            }
+        if (strpos($middleware, ':')) {
+            $xplode = explode(':', $middleware);
+            $middleware = $xplode[0];
+            $type = $xplode[1];
         }
 
-        if ($failed) {
+        if ($middleware == 'Authorization' || $middleware == 'authorization') {
 
-            if ($responseFormat == 'application/json') {
+            $schema = new Schema();
 
-                if (!isset($response)) {
+            if (strtolower($type) == 'bearer') {
 
-                    $response = [
-                        'success' => false,
-                        'message' => 'Invalid auth credentials'
-                    ];
+                $authToken = $headers['Authorization'] ?? $headers['authorization'];
+
+                if (!empty($authToken)) {
+
+                    $authToken = trim(preg_replace("/Bearer/", '', $authToken));
+                    $authToken = trim(preg_replace("/bearer/", '', $authToken));
+                    $authToken = (new Hash)->getDecodedBase($authToken);
                 }
 
-                if (isset($expired)) {
+                $authUser = $schema->table('auth_access_tokens')->find('token', $authToken);
 
-                    $response = [
-                        'success' => false,
-                        'message' => 'Token expired!'
-                    ];
+                if (!$authUser) {
+                    return false;
                 }
 
-                echo Response::json($response, 401);
-            } else {
-                // throw new UnAuthorizedRequestException("Unauthorized request detected!");
-                echo Response::content('Invalid auth credentials', 401);
+                $last_used_date = $authUser->last_used_date ?? $authUser->created_date;
+                $last_date = Carbon::parse($last_used_date);
+                $current_date = Carbon::now();
+
+                $seconds = $last_date->diffInSeconds($current_date);
+
+                if ($seconds > \App\Config\App::$token_expiration) {
+                    return false;
+                }
+
+                $user = (new $authUser->token_type)->find($authUser->token_id);
+
+                if (!$user) {
+                    return false;
+                }
+
+                Auth::login($user);
+
+                $schema->table('auth_access_tokens')->where('id', $authUser->id)->first()->update([
+                    'last_used_date' => $request->timestamp()
+                ]);
             }
-
-            return false;
         }
 
         return true;
@@ -383,12 +334,46 @@ class Route extends RoutesConfig
     protected static function listenHandler($lookup, $uri, $request)
     {
 
+        $message = '';
+        $action = 'next';
+        $code = 200;
+
         $path = $lookup[$uri];
 
-        if (isset($path['protection'])) {
+        if (isset($path['middlewares'])) {
 
-            if (!Route::authorize($path, $request)) {
-                exit;
+            $headers = $request->getHeaders();
+            $middlewares = $path['middlewares'];
+            $responseFormat = $headers["Accept"] ?? null;
+
+            foreach ($middlewares as $middleware) {
+
+                if (preg_match('/authorization:(.*)/', strtolower($middleware))) {
+
+                    if (!Route::authorize($path, $request, $headers)) {
+                        $message = 'Unauthorized Request';
+                        $code = 401;
+                        $action = 'break';
+                        break;
+                    }
+
+                    continue;
+                }
+
+                $middleware = new $middleware;
+                $code = $middleware->status;
+                $message = $middleware->message;
+
+                $action = $middleware->handle($request, 'next');
+            }
+
+            if ($action !== 'next') {
+
+                if ($responseFormat == 'application/json') {
+                    return Response::json(['success' => false, 'message' => $message], $code);
+                }
+
+                return Response::content($message, $code);
             }
         }
 
@@ -421,7 +406,7 @@ class Route extends RoutesConfig
                  * */
                 if (($headers['Accept'] ?? null) == 'application/json') {
 
-                    echo Response::json([
+                    return Response::json([
                         "status" => 500,
                         "message" => "Controller [$handler_controller] is not a valid controller class.",
                         "error" => (new \Exception("Bad Controller call [$handler_controller] is not a valid controller class.")),
@@ -732,13 +717,12 @@ class Route extends RoutesConfig
         return $route;
     }
 
-    public function set_route_name($name)
+    private function set_route_name($name)
     {
 
         if (isset($_ENV['app_route_name_specifier'])) {
             $names = $_ENV["app_route_name_specifier"];
-            if (array_key_exists($name, $names)) {
-            } else {
+            if (!array_key_exists($name, $names)) {
                 $_ENV['app_route_name_specifier'][$name]  = $this->map;
             }
         } else {
