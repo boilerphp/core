@@ -23,7 +23,9 @@ class [Middleware] extends Middleware {
 
     public function handle($request, $next) 
     {
+        // your code here
 
+        return $next;
     }
 
 }
