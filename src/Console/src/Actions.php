@@ -2,6 +2,7 @@
 
 namespace Console\Support;
 
+use Boiler\Core\FileSystem\Fs;
 use Console\Support\Helpers\ActionHelpers;
 
 
@@ -299,6 +300,10 @@ class Actions extends ActionHelpers
      * */
     public function middleware($name)
     {
+        if (!Fs::is_active_directory($this->path("middleware"))) {
+            Fs::create_directory($this->path("middleware"));
+        }
+
         $this->path = $this->path("middleware") . $name . ".php";
 
         if ($this->checkExistent($this->path)) {
