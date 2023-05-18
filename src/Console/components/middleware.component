@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Middleware;
+namespace App\Middlewares;
 
 namespace Boiler\Core\Middlewares\Middleware;
 
@@ -9,21 +9,21 @@ class [Middleware] extends Middleware {
 
     /**
     * message for middleware response
-    * 
+    * @string
     **/
     public $message = "";
 
 
     /**
     * status code for middleware response
-    * 
+    * @integer
     **/
-    public $message = "";
+    public $status = 400;
 
 
     public function handle($request, $next) 
     {
-        
+
     }
 
 }
