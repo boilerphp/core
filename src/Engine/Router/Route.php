@@ -289,7 +289,7 @@ class Route extends RoutesConfig
 
             if (strtolower($type) == 'bearer') {
 
-                $authToken = $headers['Authorization'] ?? $headers['authorization'];
+                $authToken = $headers['Authorization'] ?? $headers['authorization'] ?? '';
 
                 if (!empty($authToken)) {
 
@@ -350,10 +350,10 @@ class Route extends RoutesConfig
 
                 if (preg_match('/authorization:(.*)/', strtolower($middleware))) {
 
-                    if (!Route::authorize($path, $request, $headers)) {
-                        $message = 'Unauthorized Request';
+                    if (!Route::authorize($middleware, $request, $headers)) {
+                        $message = 'Unauthorized request';
                         $code = 401;
-                        $action = 'break';
+                        $action = 'auth-failed';
                         break;
                     }
 
@@ -361,20 +361,18 @@ class Route extends RoutesConfig
                 }
 
                 $middleware = new $middleware;
-                $code = $middleware->status;
-                $message = $middleware->message;
-
                 $action = $middleware->handle($request, 'next');
             }
 
-            if ($action !== 'next') {
-                die();
+            if ($action === 'auth-failed') {
 
                 if ($responseFormat == 'application/json') {
                     return Response::json(['success' => false, 'message' => $message], $code);
                 }
 
                 return Response::content($message, $code);
+            } else if ($action !== 'next') {
+                return $action;
             }
         }
 

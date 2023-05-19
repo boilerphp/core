@@ -5,21 +5,8 @@ namespace App\Middlewares;
 use Boiler\Core\Middlewares\Middleware;
 
 
-class [Middleware] extends Middleware {
-
-    /**
-    * message for middleware response
-    * @var string
-    **/
-    public $message = "";
-
-
-    /**
-    * status code for middleware response
-    * @var integer
-    **/
-    public $status = 400;
-
+class [Middleware] extends Middleware 
+{
 
     public function handle($request, $next) 
     {
