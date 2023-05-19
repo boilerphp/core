@@ -122,7 +122,7 @@ class Response
             return Response::json(['success' => false, 'message' => '404 | Page Not Found!'], 404);
         }
 
-        return Response::view("errors/404");
+        return Response::view("errors/404", 404);
     }
 
     public static function mailPage($view_file, $data = null)

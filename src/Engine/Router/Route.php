@@ -368,6 +368,7 @@ class Route extends RoutesConfig
             }
 
             if ($action !== 'next') {
+                die();
 
                 if ($responseFormat == 'application/json') {
                     return Response::json(['success' => false, 'message' => $message], $code);
