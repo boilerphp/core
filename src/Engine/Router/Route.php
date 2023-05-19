@@ -362,6 +362,9 @@ class Route extends RoutesConfig
 
                 $middleware = new $middleware;
                 $action = $middleware->handle($request, 'next');
+                if ($action !== 'next') {
+                    break;
+                }
             }
 
             if ($action === 'auth-failed') {
