@@ -58,7 +58,7 @@ class BaseController
 		}
 	}
 
-	public function json($data, $status)
+	public function json($data, $status = 200)
 	{
 		return Response::json($data, $status);
 	}

@@ -23,15 +23,6 @@ class MailBuilder extends MailConfig
     public $mime = "1.0";
 
 
-    public function __construct()
-    {
-    }
-
-    public function body()
-    {
-
-    }
-
     public function from($email, $name = '')
     {
 
@@ -40,10 +31,10 @@ class MailBuilder extends MailConfig
         }
 
         $this->from = $email;
-        if($name != '') {
+        if ($name != '') {
             $this->fromName = $name;
         }
-        
+
         return $this;
     }
 
@@ -77,18 +68,20 @@ class MailBuilder extends MailConfig
         return $this;
     }
 
+    public function link($title, $path, $style = null)
+    {
+        $this->message .= "<div><a href='{$path}' target='_blank' class='{$style}'>{$title}</a></div>";
+        return $this;
+    }
+
 
     public function setHeaders($keys, $value = null)
     {
-        if(is_array($keys))
-        {
-            foreach($keys as $key => $value)
-            {
+        if (is_array($keys)) {
+            foreach ($keys as $key => $value) {
                 $this->$key = $value;
             }
-        }
-        else 
-        {
+        } else {
             $this->$keys = $value;
         }
 
@@ -113,6 +106,4 @@ class MailBuilder extends MailConfig
         $this->message = Response::mailPage($view, $data);
         return $this;
     }
-
-
 }
