@@ -335,7 +335,7 @@ class Route extends RoutesConfig
     {
 
         $message = '';
-        $action = 'next';
+        $return = 'next';
         $code = 200;
 
         $path = $lookup[$uri];
@@ -353,7 +353,7 @@ class Route extends RoutesConfig
                     if (!Route::authorize($middleware, $request, $headers)) {
                         $message = 'Unauthorized request';
                         $code = 401;
-                        $action = 'auth-failed';
+                        $return = 'auth-failed';
                         break;
                     }
 
@@ -361,22 +361,24 @@ class Route extends RoutesConfig
                 }
 
                 $middleware = new $middleware;
-                $action = $middleware->handle($request, 'next');
-                if ($action !== 'next') {
+                $return = $middleware->handle($request, 'next');
+                if ($return !== 'next' && !($return instanceof Request)) {
                     break;
                 }
             }
 
-            if ($action === 'auth-failed') {
+            if ($return === 'auth-failed') {
 
                 if ($responseFormat == 'application/json') {
                     return Response::json(['success' => false, 'message' => $message], $code);
                 }
 
                 return Response::content($message, $code);
-            } else if ($action !== 'next') {
-                return $action;
+            } else if ($return !== 'next' && !($return instanceof Request)) {
+                return $return;
             }
+
+            $request = ($return instanceof Request) ? $return : $request;
         }
 
         $controller_type = gettype($path["action"]);
