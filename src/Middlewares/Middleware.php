@@ -3,6 +3,7 @@
 
 namespace Boiler\Core\Middlewares;
 
+use Boiler\Core\Engine\Router\Request;
 
 abstract class Middleware
 {
@@ -11,5 +12,5 @@ abstract class Middleware
 
     public $status = 200;
 
-    abstract public function handle($request, $next);
+    abstract public function handle(Request $request, $next);
 }

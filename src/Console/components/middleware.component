@@ -11,15 +11,15 @@ class [Middleware] extends Middleware
     /**
      * runs on route request
      * 
-     * @param Boiler\Core\Engine\Router\Request $request
+     * @param \Boiler\Core\Engine\Router\Request $request
      * @param $next
      *
-     * @return Boiler\Core\Engine\Router\Request $request|$next
+     * @return \Boiler\Core\Engine\Router\Request $request|$next
      */
-    public function handle($request, $next) 
+    public function handle(Request $request, $next) 
     {
         //...
-        
+
         return $next;
     }
 
