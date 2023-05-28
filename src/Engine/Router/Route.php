@@ -124,7 +124,7 @@ class Route extends RoutesConfig
     static private function optionManagerBeforeMap(array $options = [])
     {
         if (array_key_exists('middlewares', $options)) {
-            static::$middlewares = $options['middlewares'];
+            array_merge(static::$middlewares, $options['middlewares']);
         }
     }
 
@@ -136,7 +136,11 @@ class Route extends RoutesConfig
         }
 
         if (array_key_exists('middlewares', $options)) {
-            static::$middlewares = [];
+            static::$middlewares = array_filter(static::$middlewares, function ($middleware) use ($options) {
+                if (!in_array($middleware, $options['middlewares'])) {
+                    return $middleware;
+                }
+            });
         }
     }
 
