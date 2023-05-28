@@ -41,7 +41,7 @@ class Route extends RoutesConfig
     static private $controller_namespace = 'App\Controllers\\';
 
 
-    static private $group_path = "";
+    static private $group_paths = [];
 
 
     static private $middlewares = [];
@@ -88,7 +88,7 @@ class Route extends RoutesConfig
 
     public function as($name)
     {
-        $this->set_route_name($name);
+        $this->set_route_name($name, $this->map);
     }
 
     static public function middleware($middleware, $callback)
@@ -115,11 +115,30 @@ class Route extends RoutesConfig
     {
         $name = !empty($name) ? trim($name, "/") : $name;
 
-        static::$group_path = "/" . $name;
+        array_push(static::$group_paths, "/" . $name);
         $callback();
-        static::$group_path = "";
+
+        array_splice(static::$group_paths, (count(static::$group_paths) - 1), 1);
     }
 
+    static private function optionManagerBeforeMap(array $options = [])
+    {
+        if (array_key_exists('middlewares', $options)) {
+            static::$middlewares = $options['middlewares'];
+        }
+    }
+
+    static private function optionManagerAfterMap($map, array $options = [])
+    {
+
+        if (array_key_exists('name', $options)) {
+            self::set_route_name($options['name'], $map);
+        }
+
+        if (array_key_exists('middlewares', $options)) {
+            static::$middlewares = [];
+        }
+    }
 
     static public function all($path, $controller)
     {
@@ -130,42 +149,47 @@ class Route extends RoutesConfig
         return static::get($path, $controller);
     }
 
-    static public function get($path, $controller)
+
+    static private function baseMethod($method, $path, $controller, array $options)
     {
-        $map = static::create_map($path, "get", $controller);
+        static::optionManagerBeforeMap($options);
+
+        $map = static::create_map($path, $method, $controller);
         static::mapRoute($map);
+
+        static::optionManagerAfterMap($map, $options);
 
         return static::route_modifier($map);
     }
 
-    static public function post($path, $controller)
+
+    static public function get($path, $controller, array $options = [])
     {
-        $map = static::create_map($path, "post", $controller);
-        static::mapRoute($map);
+        return static::baseMethod("get", $path, $controller, $options);
     }
 
-    static public function put($path, $controller)
-    {
-        $map = static::create_map($path, "put", $controller);
-        static::mapRoute($map);
 
-        return static::route_modifier($map);
+    static public function post($path, $controller, array $options = [])
+    {
+        return static::baseMethod("post", $path, $controller, $options);
     }
 
-    static public function delete($path, $controller)
-    {
-        $map = static::create_map($path, "delete", $controller);
-        static::mapRoute($map);
 
-        return static::route_modifier($map);
+    static public function put($path, $controller, array $options = [])
+    {
+        return static::baseMethod("put", $path, $controller, $options);
     }
 
-    static public function patch($path, $controller)
-    {
-        $map = static::create_map($path, "patch", $controller);
-        static::mapRoute($map);
 
-        return static::route_modifier($map);
+    static public function delete($path, $controller, array $options = [])
+    {
+        return static::baseMethod("delete", $path, $controller, $options);
+    }
+
+
+    static public function patch($path, $controller, array $options = [])
+    {
+        return static::baseMethod("patch", $path, $controller, $options);
     }
 
 
@@ -174,8 +198,8 @@ class Route extends RoutesConfig
         $path = !empty($path) ? "/" . trim($path, "/") : $path;
 
         # check group path
-        if (static::$group_path != "") {
-            $path = static::$group_path . $path;
+        if (count(static::$group_paths)) {
+            $path = implode('', static::$group_paths) . $path;
         }
 
         return array("url" => $path, "method" => $method, "action" => $controller);
@@ -238,7 +262,7 @@ class Route extends RoutesConfig
 
     }
 
-    static protected function patternHandler($lookup, $pattern, $uri, $method)
+    static private function patternHandler($lookup, $pattern, $uri, $method)
     {
         $path = $lookup[$pattern];
 
@@ -272,7 +296,7 @@ class Route extends RoutesConfig
     }
 
 
-    protected static function authorize($middleware, Request $request, $headers)
+    static private function authorize($middleware, Request $request, $headers)
     {
 
         $type = null;
@@ -331,7 +355,7 @@ class Route extends RoutesConfig
         return true;
     }
 
-    protected static function listenHandler($lookup, $uri, $request)
+    static private function listenHandler($lookup, $uri, $request)
     {
 
         $message = '';
@@ -584,7 +608,7 @@ class Route extends RoutesConfig
         return [$base, $params];
     }
 
-    static public function verifyPattern($uri, $method)
+    static private function verifyPattern($uri, $method)
     {
         $split = explode("/", $uri);
         $base = '';
@@ -712,25 +736,24 @@ class Route extends RoutesConfig
         return false;
     }
 
-    static public function route_modifier($map)
+    static private function route_modifier($map)
     {
-
         $route = (new Route);
         $route->map = $map;
 
         return $route;
     }
 
-    private function set_route_name($name)
+    private function set_route_name($name, $map)
     {
 
         if (isset($_ENV['app_route_name_specifier'])) {
             $names = $_ENV["app_route_name_specifier"];
             if (!array_key_exists($name, $names)) {
-                $_ENV['app_route_name_specifier'][$name]  = $this->map;
+                $_ENV['app_route_name_specifier'][$name]  = $map;
             }
         } else {
-            $_ENV['app_route_name_specifier'] = [$name => $this->map];
+            $_ENV['app_route_name_specifier'] = [$name => $map];
         }
     }
 }
