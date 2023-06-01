@@ -105,7 +105,7 @@ class MigrationReflection extends Migration {
     public function deleteMigration($migration_file) {
 
         $migration = $this->mFileFormater($migration_file)['file'];
-        $this->table("migrations")->delete("migration", $migration);
+        $this->run("DELETE FROM migrations WHERE migration = '$migration'");
     }
 
 
