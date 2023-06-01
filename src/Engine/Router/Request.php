@@ -54,23 +54,41 @@ class Request extends Validator
      */
     public $url;
 
+
+    /**
+     * request data bag
+     *
+     * @var array
+     */
+    protected $dataBag = [];
+
+
+    /**
+     * request headers
+     *
+     * @var array
+     */
+    protected $headers = [];
+
+
     /**
      * set the method use in http request
      *
-     * @param string method of http request action
+     * @param string $method
      * @return void
      */
     public function __construct($method)
     {
         $this->method = strtoupper($method);
-        $this->init($method);
+        $this->init();
     }
 
 
-    protected function init($method)
+    protected function init()
     {
+        $this->setHeaders();
 
-        switch ($method) {
+        switch (strtolower($this->method)) {
             case 'get':
                 $this->map($_GET);
                 break;
@@ -97,61 +115,49 @@ class Request extends Validator
         }
     }
 
+    protected function setHeaders()
+    {
+        $this->headers = getallheaders();
+    }
 
     public function getHeaders()
     {
-        $headers = [];
-
-        foreach (getallheaders() as $name => $value) {
-            $headers[$name] = $value;
-        }
-
-        return $headers;
+        return $this->headers;
     }
 
-
-    public function json($key = null)
+    protected function jsonMap()
     {
         $data = json_decode(file_get_contents("php://input"), true);
 
+        if (is_array($data)) {
+            $this->dataBag = $data;
+            foreach ($data as $key => $value) {
+                $this->$key = $value;
+            }
+        }
+    }
+
+    public function json($key = null)
+    {
         if (!is_null($key)) {
-            if (isset($data[$key])) {
-                return $data[$key];
+            if (isset($this->dataBag[$key])) {
+                return $this->dataBag[$key];
             } else {
                 return null;
             }
         }
 
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $this->$key = $value;
-            }
-        }
-
-        return $data;
+        return $this->dataBag;
     }
-
 
     public function all()
     {
-        $data = [];
-        if ($this->method == 'GET') {
-            $data = $_GET;
-        } else if ($this->method == 'POST') {
-            $data = $_POST;
-        }
-
-        if (!$data && $this->json()) {
-            $data = $this->json();
-        }
-
-        return $data;
+        return $this->dataBag;
     }
-
 
     public function exist($key)
     {
-        if (isset($this->$key) || $this->json($key)) {
+        if (isset($this->$key) || array_key_exists($key, $this->dataBag)) {
             return true;
         }
 
@@ -161,11 +167,7 @@ class Request extends Validator
 
     public function hasKey($key)
     {
-        if (isset($this->$key)) {
-            return true;
-        }
-
-        return false;
+        return $this->exist($key);
     }
 
 
@@ -181,7 +183,6 @@ class Request extends Validator
 
     public function param($key)
     {
-
         if ($this->hasParam($key)) {
             return $this->_params[$key];
         }
@@ -192,7 +193,6 @@ class Request extends Validator
 
     public function without($keys)
     {
-
         $all = $this->all();
 
         foreach ($keys as $key) {
@@ -217,11 +217,7 @@ class Request extends Validator
 
     protected function entry($key)
     {
-        if (isset($this->$key) || $this->json($key)) {
-            return $this->$key;
-        }
-
-        return null;
+        return ($this->exist($key)) ? $this->dataBag[$key] : null;
     }
 
 
@@ -261,22 +257,31 @@ class Request extends Validator
         }
     }
 
-
     protected function map($data)
     {
+        $accept = $this->headers['Accept'] ?? null;
+        if ($accept === 'application/json') {
+            return $this->jsonMap();
+        }
+
+        $this->dataBag = $data;
         foreach ($data as $key => $value) {
             $this->$key = $value;
         }
-
-        $this->json();
     }
 
+    public function loadData($data)
+    {
+        $this->dataBag = $data;
+        foreach ($data as $key => $value) {
+            $this->$key = $value;
+        }
+    }
 
     public function timestamp()
     {
         return date("Y-m-d H:i:s");
     }
-
 
     public function location()
     {
