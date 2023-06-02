@@ -137,19 +137,6 @@ class Request extends Validator
         }
     }
 
-    public function json($key = null)
-    {
-        if (!is_null($key)) {
-            if (isset($this->dataBag[$key])) {
-                return $this->dataBag[$key];
-            } else {
-                return null;
-            }
-        }
-
-        return $this->dataBag;
-    }
-
     public function all()
     {
         return $this->dataBag;
@@ -264,7 +251,7 @@ class Request extends Validator
             $this->jsonMap();
         }
 
-        $this->dataBag = $data;
+        array_merge($this->dataBag, $data);
         foreach ($data as $key => $value) {
             $this->$key = $value;
         }
