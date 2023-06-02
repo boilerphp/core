@@ -251,7 +251,7 @@ class Request extends Validator
             $this->jsonMap();
         }
 
-        array_merge($this->dataBag, $data);
+        $this->dataBag = array_merge($this->dataBag, $data);
         foreach ($data as $key => $value) {
             $this->$key = $value;
         }

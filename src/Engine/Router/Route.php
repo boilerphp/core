@@ -404,6 +404,7 @@ class Route extends RoutesConfig
                 return Response::content($message, $code);
             } else if ($return !== 'next' && !($return instanceof Request)) {
                 return $return;
+                die();
             }
 
             $request = ($return instanceof Request) ? $return : $request;
