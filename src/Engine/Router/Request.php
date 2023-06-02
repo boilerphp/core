@@ -130,8 +130,8 @@ class Request extends Validator
         $data = json_decode(file_get_contents("php://input"), true);
 
         if (is_array($data)) {
-            $this->dataBag = $data;
             foreach ($data as $key => $value) {
+                $this->dataBag[$key] = $value;
                 $this->$key = $value;
             }
         }
@@ -261,7 +261,7 @@ class Request extends Validator
     {
         $accept = $this->headers['Accept'] ?? null;
         if ($accept === 'application/json') {
-            return $this->jsonMap();
+            $this->jsonMap();
         }
 
         $this->dataBag = $data;
