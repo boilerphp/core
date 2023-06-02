@@ -4,13 +4,13 @@ namespace Boiler\Core\Engine\Router;
 
 
 
-class Validator extends HttpRequest
+class Validator
 {
 
     /**
      * validation status
      *
-     * @var string
+     * @var bool
      */
     public $validation = false;
 
@@ -44,9 +44,9 @@ class Validator extends HttpRequest
     {
         $this->clearValidationLog();
 
-        foreach ($fields as $key => $validation) {
+        foreach ($fields as $key => $rules) {
             if (isset($this->$key)) {
-                $props = $this->validationProperties($validation);
+                $props = $this->validationProperties($rules);
 
                 foreach ($props as $prop) {
                     $this->validatePropType($prop, $key);
@@ -169,13 +169,13 @@ class Validator extends HttpRequest
      * 
      * @return array|mixed
      * */
-    protected function validationProperties($validation)
+    protected function validationProperties($rules)
     {
 
-        if (strpos($validation, "|")) {
-            $properties = explode("|", $validation);
+        if (strpos($rules, "|")) {
+            $properties = explode("|", $rules);
         } else {
-            $properties = array($validation);
+            $properties = array($rules);
         }
 
         return $properties;
