@@ -136,7 +136,7 @@ class ColumnDefination
 
     public function dropIndex($name)
     {
-        (new Schema)->query(concat(["ALTER TABLE `$this->table` DROP INDEX IF EXISTS", "`$name`"]));
+        (new Schema)->query(concat(["ALTER TABLE `$this->table` DROP INDEX", "`$name`"]));
     }
 
     public function timestamps()
