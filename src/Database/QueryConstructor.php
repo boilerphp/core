@@ -19,13 +19,15 @@ class QueryConstructor
 
     protected $fields;
 
+    protected static $builderStatic;
+
     public function __construct(protected Connection $conn)
     {
         $this->driver = $this->conn->getDriver();
         $this->builder = $conn->getConnection()->createQueryBuilder();
     }
 
-    public function resetBuilder()
+    public function resetQueryBuilder()
     {
         $this->builder = $this->conn->getConnection()->createQueryBuilder();
     }
@@ -85,7 +87,11 @@ class QueryConstructor
 
         if ($data !== null) {
             foreach ($data as $column => $value) {
-                $this->builder->where($column . " = ?");
+                if (count($this->parameters) > 0) {
+                    $this->builder->andWhere($column . " = ?");
+                } else {
+                    $this->builder->where($column . " = ?");
+                }
                 array_push($this->parameters, $value);
             }
         } else {

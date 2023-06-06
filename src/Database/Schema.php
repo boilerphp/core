@@ -81,9 +81,9 @@ class Schema extends QueryConstructor
 
 
 
-    public function __construct(string $connection = null)
+    public function __construct(string $database = null)
     {
-        $this->database = $connection;
+        $this->database = $database;
         $this->connection =  $this->getSocket();
         $this->driver = $this->connection->getDriver();
 
@@ -120,6 +120,14 @@ class Schema extends QueryConstructor
     public function setConnection(Connection $connection)
     {
         $this->connection = $connection;
+    }
+
+
+    public static function queryBuilder()
+    {
+        $instance = new static;
+        $instance->setTableName();
+        return $instance->connection()->createQueryBuilder()->from($instance->getTableName());
     }
 
 
@@ -230,7 +238,7 @@ class Schema extends QueryConstructor
     {
         $this->parameters = [];
         $this->searchIndex = 0;
-        $this->resetBuilder();
+        $this->resetQueryBuilder();
     }
 
 
@@ -305,7 +313,7 @@ class Schema extends QueryConstructor
         $limits = $start . ", " . $number;
 
         $this->allQuery($this->table);
-        
+
         $clone = clone $this;
         $total_result = $clone->count();
 
@@ -317,7 +325,7 @@ class Schema extends QueryConstructor
         } else if (!is_null($result)) {
             $result = $result;
         }
-        
+
         if ($total_result > $number) {
             $total_pages = floor($total_result / $number);
 
@@ -465,7 +473,7 @@ class Schema extends QueryConstructor
     {
         $unique_column_name = $this->getUniqueColumn();
 
-        if ($key !== null && $value === null) {
+        if ($key !== null && is_string($key) && $value === null) {
             if (isset($this->$key)) {
                 $value = $this->$key;
             }
@@ -676,18 +684,22 @@ class Schema extends QueryConstructor
 
     public function table($name)
     {
-        return $this->setTable($name);
-    }
-
-
-    protected function setTable($name)
-    {
-        $this->table = $name;
+        $this->setTableName($name);
         return $this;
     }
 
-    protected function useTable()
+    public function getTableName()
     {
+        return $this->table;
+    }
+
+    protected function setTableName($name = null)
+    {
+        if (!is_null($name)) {
+            $this->table = $name;
+            return;
+        }
+
         if ($this->table == null) {
             $namespace = explode("\\", get_class($this));
             $namespace = str_split(end($namespace));
@@ -756,11 +768,13 @@ class Schema extends QueryConstructor
     }
 
 
-    public function getUniqueColumn() {
+    public function getUniqueColumn()
+    {
         return $this->unique_column_name;
     }
 
-    public function setUniqueColumn($name) {
+    public function setUniqueColumn($name)
+    {
         $this->unique_column_name = $name;
     }
 

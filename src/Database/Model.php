@@ -9,7 +9,7 @@ class Model extends Relations
 
     public function __construct()
     {
-        $this->useTable();
+        $this->setTableName();
         parent::__construct();
     }
 }
