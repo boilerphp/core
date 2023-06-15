@@ -212,7 +212,7 @@ class Command extends Actions
     */
     public function runTest(...$parameters)
     {
-        $flags = array_shift($parameters[0]);
+        $flags = array_shift($parameters);
         $this->runAppTest($flags);
     }
 }

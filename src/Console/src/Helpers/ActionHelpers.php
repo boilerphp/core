@@ -113,10 +113,10 @@ class ActionHelpers implements ActionHelpersInterface
         }
 
         if($target) {
-            return (new Console())->exec("./vendor/bin/phpunit -c {$config} --testsuite={$type} ./tests/{$type}/{$target}.php");
+            return (new Console())->exec("php ./vendor/bin/phpunit -c {$config} --testsuite={$type} ./tests/{$type}/{$target}.php");
         }
 
-        return (new Console())->exec("./vendor/bin/phpunit -c {$config} --testsuite={$type}");
+        return (new Console())->exec("php ./vendor/bin/phpunit -c {$config} --testsuite={$type}");
     }
 
     /**

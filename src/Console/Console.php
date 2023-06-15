@@ -57,8 +57,14 @@ class Console extends Command implements ConsoleInterface
 
     public function exec($command)
     {
+        $output = [];
+        $result_code = [];
 
-        exec($command);
+        exec($command, $output, $result_code);
+
+        foreach ($output as $message) {
+            verbose($message);
+        }
     }
 
     /**
