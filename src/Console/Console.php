@@ -13,7 +13,7 @@ class Console extends Command implements ConsoleInterface
     public function __construct($server = null, $argv = null, $verbose = true)
     {
         parent::__construct();
-        
+
         !is_null($server) ? $server->start(true) : null;
         $this->arguments = $argv;
 
@@ -36,18 +36,28 @@ class Console extends Command implements ConsoleInterface
             // Remove command from arguments 
             array_splice($arguments, 0, 1);
             // Use function to execute commands
+            if (strpos($command, ':')) {
+                $list = explode(':', $command);
+                $command = $list[0];
+                for ($i = 1; $i < count($list); $i++) {
+                    $command .= ucfirst($list[$i]);
+                }
+            }
+
             $this->$command($arguments);
         }
     }
 
-    public function command($command) {
-        
+    public function command($command)
+    {
+
         $arguments = explode(' ', $command);
         $this->parse($arguments);
     }
 
-    public function exec($command) {
-        
+    public function exec($command)
+    {
+
         exec($command);
     }
 
@@ -65,7 +75,7 @@ class Console extends Command implements ConsoleInterface
      * set if console should display command outputs
      * @param bool $verbose
      */
-    public function setVerbose(bool $verbose) 
+    public function setVerbose(bool $verbose)
     {
         $this->verbose = $verbose;
     }

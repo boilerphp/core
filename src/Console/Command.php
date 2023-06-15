@@ -10,7 +10,13 @@ class Command extends Actions
 
 
     public $commands = array(
-        "create", "start", "db", "activate", "disable", "migrate"
+        "create",
+        "start",
+        "db",
+        "activate",
+        "disable",
+        "migrate",
+        "run:test"
     );
 
     public function __construct()
