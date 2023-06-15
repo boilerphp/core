@@ -319,7 +319,6 @@ class ActionHelpers implements ActionHelpersInterface
             }
 
             if ($component !== "migration.alter") {
-                $class_name .= "Table";
                 $table_name = $name;
             } else {
                 $arg_explode = explode("|", $this->arg_string);
