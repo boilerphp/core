@@ -5,14 +5,15 @@ namespace Boiler\Core\Console;
 
 use Console\Support\Actions;
 
-class Command extends Actions {
+class Command extends Actions
+{
 
 
     public $commands = array(
         "create", "start", "db", "activate", "disable", "migrate"
     );
 
-    public function __construct() 
+    public function __construct()
     {
     }
 
@@ -21,17 +22,17 @@ class Command extends Actions {
     * Start Server using command line manager
     * ----------------------------------------
     */
-    public function start(...$parameters) 
+    public function start(...$parameters)
     {
         $flags = $parameters[0];
         $host = '127.0.0.1';
         $port = 8000;
 
-        foreach($flags as $flag) {
-            if(preg_match('/\-\-port\=/', $flag)) {
+        foreach ($flags as $flag) {
+            if (preg_match('/\-\-port\=/', $flag)) {
                 $port = str_replace('--port=', '', $flag);
             }
-            if(preg_match('/\-\-host\=/', $flag)) {
+            if (preg_match('/\-\-host\=/', $flag)) {
                 $host = str_replace('--host=', '', $flag);
             }
         }
@@ -47,14 +48,14 @@ class Command extends Actions {
     public function create(...$parameters)
     {
         $action = isset($parameters[0][0]) ? $parameters[0][0] : null;
-        $name = isset($parameters[0][1]) ? $parameters[0][1] : null; 
+        $name = isset($parameters[0][1]) ? $parameters[0][1] : null;
         $flag = isset($parameters[0][2]) ? $parameters[0][2] : null;
 
         $this->arg_string = implode("|", $parameters[0]);
 
-        if($action != null) {
-            if($flag != null) {
-                if(array_key_exists($flag, $this->flags)) {
+        if ($action != null) {
+            if ($flag != null) {
+                if (array_key_exists($flag, $this->flags)) {
                     $this->{$action}($name, $flag);
                 }
             } else {
@@ -70,18 +71,16 @@ class Command extends Actions {
     * using command line manager.
     * -------------------------------------------------------------
     */
-    public function db(...$parameters) 
+    public function db(...$parameters)
     {
         $action = isset($parameters[0][0]) ? $parameters[0][0] : null;
-        $flag = isset($parameters[0][1]) ? $parameters[0][1] : null; 
+        $flag = isset($parameters[0][1]) ? $parameters[0][1] : null;
 
-        if($action != null) 
-        {
+        if ($action != null) {
             ($flag != null)
-            ? $this->{$action}($flag)
-            : $this->{$action}();
+                ? $this->{$action}($flag)
+                : $this->{$action}();
         }
-
     }
 
     /*
@@ -101,19 +100,24 @@ class Command extends Actions {
 
         $target = null;
         $steps = 1;
-        
-        if($this->hasRollbackSteps) {
+
+        if ($this->hasRollbackSteps) {
             $steps = preg_replace('/(.*)--steps=(.*) (.*)/', '$2', implode(' ', $flags));
         }
-        if($this->hasRollbackTarget) {
+        if ($this->hasRollbackTarget) {
             $target = preg_replace('/(.*)--target=(.*) (.*)/', '$2', implode(' ', $flags));
         }
 
         $this->migrationReflection();
 
-        if($this->fresh) { $this->dropAllExistingTable(); }
-        if($this->rollback) { $this->rollbackMigrations($target, $steps); exit; }
-        
+        if ($this->fresh) {
+            $this->dropAllExistingTable();
+        }
+        if ($this->rollback) {
+            $this->rollbackMigrations($target, $steps);
+            exit;
+        }
+
 
         if ($this->newMigrationsChecker()) {
             if (!$this->checkTableExists("migrations")) {
@@ -138,21 +142,16 @@ class Command extends Actions {
     public function activate(...$parameters)
     {
         $action = isset($parameters[0][0]) ? $parameters[0][0] : null;
-        $flag = isset($parameters[0][1]) ? $parameters[0][1] : null; 
+        $flag = isset($parameters[0][1]) ? $parameters[0][1] : null;
 
-        if($action != null) 
-        {
+        if ($action != null) {
             $action = str_replace("-", "", $action);
 
-            if($flag != null)
-            {
-                if(array_key_exists($flag, $this->db_flags)) 
-                {
+            if ($flag != null) {
+                if (array_key_exists($flag, $this->db_flags)) {
                     $this->$action(true, $flag);
                 }
-            }
-            else
-            {
+            } else {
                 $this->$action(true);
             }
         }
@@ -168,24 +167,46 @@ class Command extends Actions {
     public function disable(...$parameters)
     {
         $action = isset($parameters[0][0]) ? $parameters[0][0] : null;
-        $flag = isset($parameters[0][1]) ? $parameters[0][1] : null; 
+        $flag = isset($parameters[0][1]) ? $parameters[0][1] : null;
 
-        if($action != null) 
-        {
+        if ($action != null) {
             $action = str_replace("-", "", $action);
 
-            if($flag != null)
-            {
-                if(array_key_exists($flag, $this->db_flags)) 
-                {
+            if ($flag != null) {
+                if (array_key_exists($flag, $this->db_flags)) {
                     $this->$action(false, $flag);
                 }
-            }
-            else
-            {
+            } else {
                 $this->$action(false);
             }
         }
     }
-    
+
+
+    /*
+    * --------------------------------------------------------------
+    * disable libraries and activities 
+    * remove unwanted configurations.
+    * -------------------------------------------------------------
+    */
+    public function app(...$parameters)
+    {
+        $action = isset($parameters[0][0]) ? $parameters[0][0] : null;
+        $flags = array_shift($parameters[0]);
+
+        if ($action != null) {
+        }
+    }
+
+    /*
+    * --------------------------------------------------------------
+    * disable libraries and activities 
+    * remove unwanted configurations.
+    * -------------------------------------------------------------
+    */
+    public function runTest(...$parameters)
+    {
+        $flags = array_shift($parameters[0]);
+        $this->runAppTest($flags);
+    }
 }

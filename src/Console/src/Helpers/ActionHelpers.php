@@ -2,6 +2,7 @@
 
 namespace Console\Support\Helpers;
 
+use Boiler\Core\Console\Console;
 use Boiler\Core\FileSystem\Fs;
 use Boiler\Core\Database\Console\MigrationReflection;
 use Boiler\Core\Database\Migration\Table;
@@ -87,6 +88,33 @@ class ActionHelpers implements ActionHelpersInterface
         $server_command = "php -S " . $host . ":" . $port . " -t ./www";
         $this->verbose("Server listening on http://{$host}:{$port}", "success");
         exec($server_command);
+    }
+
+
+    public function runAppTest($flags)
+    {
+        $target = null;
+        $type = 'Unit';
+        $config = './phpunit.xml';
+
+        foreach ($flags as $flag) {
+            
+            list($name, $value) = explode('=', $flag);
+
+            if($name === '--test') {
+                $target = $value;
+            }
+
+            if($name === '--type') {
+                $type = $value;
+            }
+        }
+
+        if($target) {
+            return (new Console())->exec("./vendor/bin/phpunit -c {$config} --testsuite={$type} ./tests/{$type}/{$target}.php");
+        }
+
+        return (new Console())->exec("./vendor/bin/phpunit -c {$config} --testsuite={$type}");
     }
 
     /**
@@ -206,7 +234,7 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureNotification($name, $path)
     {
-        $component_path = __DIR__."/../../components/notification.component";
+        $component_path = __DIR__ . "/../../components/notification.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[Notification\]/", $name, $this->component);
@@ -229,7 +257,7 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureModel($name, $path)
     {
-        $component_path = __DIR__."/../../components/model.component";
+        $component_path = __DIR__ . "/../../components/model.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[Model\]/", $name, $this->component);
@@ -250,8 +278,9 @@ class ActionHelpers implements ActionHelpersInterface
      * @return bool
      */
 
-    public function configureMiddleware($name, $path) {
-        $component_path = __DIR__."/../../components/middleware.component";
+    public function configureMiddleware($name, $path)
+    {
+        $component_path = __DIR__ . "/../../components/middleware.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[Middleware\]/", $name, $this->component);
@@ -274,7 +303,7 @@ class ActionHelpers implements ActionHelpersInterface
      */
     public function configureMigration($name, $path, $component)
     {
-        $component_path = __DIR__."/../../components/$component.component";
+        $component_path = __DIR__ . "/../../components/$component.component";
         if ($this->readComponent($component_path)) {
             $class_name = ucfirst($name);
             if (strpos($name, "_")) {
@@ -324,7 +353,7 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureSocket($name, $path)
     {
-        $component_path = __DIR__."/../../components/websocket/socket-skeleton.component";
+        $component_path = __DIR__ . "/../../components/websocket/socket-skeleton.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[SocketName\]/", $name, $this->component);
@@ -411,12 +440,12 @@ class ActionHelpers implements ActionHelpersInterface
      */
     public function configureController($name, $path)
     {
-        $component_path = __DIR__."/../../components/controller.component";
+        $component_path = __DIR__ . "/../../components/controller.component";
 
         if ($this->readComponent($component_path) !== "") {
 
             if ($this->checkNamaspacePrefix($name)) {
-                
+
                 $this->component = preg_replace("/\[Controller_Base_Namespace\]/", 'use App\Controllers\Controller;', $this->component);
                 $this->component = preg_replace("/\[Namespace\]/", $this->use_namespace, $this->component);
                 $name = $this->controller_name;
@@ -449,7 +478,7 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureSeeder($seeder_name, $seeder_path)
     {
-        $component_path = __DIR__."/../../components/seeder.component";
+        $component_path = __DIR__ . "/../../components/seeder.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[ClassName\]/", $seeder_name, $this->component);
@@ -472,11 +501,11 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function configureTest($test_name, $test_path, $unit = false)
     {
-        $component_path = __DIR__."/../../components/test.component";
+        $component_path = __DIR__ . "/../../components/test.component";
 
         if ($this->readComponent($component_path)) {
             $this->module = preg_replace("/\[ClassName\]/", $test_name, $this->component);
-            if($unit === true) {
+            if ($unit === true) {
                 $this->module = preg_replace("/\\Integration/", "Unit", $this->module);
             }
             if ($this->writeModule($test_path)) {
@@ -548,20 +577,19 @@ class ActionHelpers implements ActionHelpersInterface
 
             $index = 0;
 
-            foreach ($all_migrations_file as $migration_file) 
-            {
-                if($index >= $steps) {
+            foreach ($all_migrations_file as $migration_file) {
+                if ($index >= $steps) {
                     break;
                 }
 
                 // Check if migration exists 
-                
+
                 $this->requireOnce($migration_file);
-                
+
                 $class = $this->migrationReflection->migrationClass($migration_file);
                 $name = $this->migrationReflection->migrationName($migration_file);
-                
-                if(!$this->migrationReflection->checkMigration($name)) {
+
+                if (!$this->migrationReflection->checkMigration($name)) {
                     continue;
                 }
 
@@ -570,7 +598,7 @@ class ActionHelpers implements ActionHelpersInterface
                 $this->verbose("{$name}");
 
                 $class->out();
-                
+
                 $this->migrationReflection->deleteMigration($migration_file);
 
                 $this->verbose("Rolled Back: ", "success", false);
@@ -689,8 +717,8 @@ class ActionHelpers implements ActionHelpersInterface
     public function enableWebSocket($flag = null)
     {
 
-        $component_path = __DIR__."/../../components/websocket/socket-skeleton.component";
-        $manager_path = __DIR__."/../../components/websocket/socket.component";
+        $component_path = __DIR__ . "/../../components/websocket/socket-skeleton.component";
+        $manager_path = __DIR__ . "/../../components/websocket/socket.component";
 
         if (!$this->checkExistent("./socket")) {
 
