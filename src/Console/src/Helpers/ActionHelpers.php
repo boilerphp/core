@@ -97,16 +97,18 @@ class ActionHelpers implements ActionHelpersInterface
         $type = 'Unit';
         $config = './phpunit.xml';
 
-        foreach ($flags as $flag) {
-            
-            list($name, $value) = explode('=', $flag);
-
-            if($name === '--test') {
-                $target = $value;
-            }
-
-            if($name === '--type') {
-                $type = $value;
+        if($flags !== null) {
+            foreach ($flags as $flag) {
+                
+                list($name, $value) = explode('=', $flag);
+    
+                if($name === '--test') {
+                    $target = $value;
+                }
+    
+                if($name === '--type') {
+                    $type = $value;
+                }
             }
         }
 
