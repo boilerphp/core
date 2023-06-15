@@ -52,17 +52,17 @@ class Response
         ];
     }
 
-    public static function view($view_file, $content = null, $status = 200)
+    public static function view($view_file, $data = [], $status = 200)
     {
 
         Response::setResponseHeader($status);
 
         $path = Response::get_view_path($view_file);
 
-        return static::absoluteView($path, $content, $status);
+        return static::absoluteView($path, $data, $status);
     }
 
-    public static function absoluteView($path, $content = null, $status = 200)
+    public static function absoluteView($path, $data = [], $status = 200)
     {
         Response::setResponseHeader($status);
 
@@ -77,7 +77,7 @@ class Response
 
             $template = new TemplateEngine($extension);
             $fcontent = $template->extendLayout($fcontent, $view_path, $extension);
-            $fcontent = $template->content($fcontent, $content);
+            $fcontent = $template->content($fcontent, $data);
             
             return $fcontent;
         } else {

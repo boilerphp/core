@@ -16,7 +16,7 @@ class TemplateEngine
         self::$ext = $ext;
     }
 
-    public function content($fileContent, $content = null)
+    public function content($fileContent, $content = [])
     {
         self::$content = $content;
         $fcontent = static::editFile($fileContent, $content);

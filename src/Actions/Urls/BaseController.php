@@ -63,9 +63,9 @@ class BaseController
 		return Response::json($data, $status);
 	}
 
-	public function render($view, $content, $status)
+	public function render($view, $data = [], $status = 200)
 	{
-		return Response::view($view, $content, $status);
+		return Response::view($view, $data, $status);
 	}
 
 	public function content($text, $status)
