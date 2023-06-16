@@ -31,18 +31,19 @@ class QueryConstructor
 
     public function resetQueryBuilder()
     {
+        $this->selectedColumns = '*';
         $this->builder = $this->conn->getConnection()->createQueryBuilder();
     }
 
     public function allQuery($table)
     {
-
         $this->builder->select($this->selectedColumns)->from($table);
     }
 
     public function selectQuery(array|string $fields, string $table)
     {
         $this->selectedColumns = is_array($fields) ? implode(',', $fields) : $fields;
+        $this->builder->select($this->selectedColumns)->from($table);
         return $this;
     }
 
