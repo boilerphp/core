@@ -21,6 +21,8 @@ class QueryConstructor
 
     protected static $builderStatic;
 
+    protected $selectedColumns = '*';
+
     public function __construct(protected Connection $conn)
     {
         $this->driver = $this->conn->getDriver();
@@ -35,16 +37,12 @@ class QueryConstructor
     public function allQuery($table)
     {
 
-        $this->builder->select("*")->from($table);
+        $this->builder->select($this->selectedColumns)->from($table);
     }
 
     public function selectQuery(array|string $fields, string $table)
     {
-
-        $this->builder->select(
-            is_array($fields) ? implode(',', $fields) : $fields
-        )->from($table);
-
+        $this->selectedColumns = is_array($fields) ? implode(',', $fields) : $fields;
         return $this;
     }
 

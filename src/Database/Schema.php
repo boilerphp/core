@@ -556,7 +556,7 @@ class Schema extends QueryConstructor
 
     public function get()
     {
-        return $this->select("*")->fetch();
+        return $this->select($this->selectedColumns)->fetch();
     }
 
 
