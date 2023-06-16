@@ -137,7 +137,6 @@ class ColumnDefination
     public function dropIndex($name)
     {
         if ($this->driver == "sqlite") {
-            (new Schema)->query(concat(["ALTER TABLE `$this->table` DROP IF EXISTS INDEX", "`$name`"]));
             return null;
         }
 
