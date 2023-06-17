@@ -126,11 +126,14 @@ class QueryConstructor
             if (is_string($key)) {
 
                 if (count($this->parameters) > 0) {
-                    $this->builder->andWhere($key . " $op ?");
+                    $value ? $this->builder->andWhere($key . " $op ?") : $this->builder->andWhere($key);
                 } else {
-                    $this->builder->where($key . " $op ?");
+                    $value ? $this->builder->where($key . " $op ?") : $this->builder->where($key);
                 }
-                array_push($this->parameters, $value);
+
+                if ($value) {
+                    array_push($this->parameters, $value);
+                }
             }
         }
     }
