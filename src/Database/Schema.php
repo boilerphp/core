@@ -540,9 +540,9 @@ class Schema extends QueryConstructor
         return $this;
     }
 
-    public function orWhere($keys, $value = null)
+    public function orWhere($key, $value = null)
     {
-        $this->orWhereQuery($keys, $value);
+        $this->orWhereQuery($key, $value);
         return $this;
     }
 

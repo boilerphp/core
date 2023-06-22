@@ -126,47 +126,25 @@ class QueryConstructor
             if (is_string($key)) {
 
                 if (count($this->parameters) > 0) {
-                    $value ? $this->builder->andWhere($key . " $op ?") : $this->builder->andWhere($key);
+                    !is_null($value) ? $this->builder->andWhere($key . " $op ?") : $this->builder->andWhere($key);
                 } else {
-                    $value ? $this->builder->where($key . " $op ?") : $this->builder->where($key);
+                    !is_null($value) ? $this->builder->where($key . " $op ?") : $this->builder->where($key);
                 }
 
-                if ($value) {
+                if (!is_null($value)) {
                     array_push($this->parameters, $value);
                 }
             }
         }
     }
 
-    protected function orWhereQuery($key, $value, $operation = null)
+    protected function orWhereQuery($key, $value = null)
     {
-
-        if (is_array($key)) {
-            $index = 0;
-            foreach ($key as $column => $val) {
-                if ($operation != null) {
-                    if (is_array($operation)) {
-                        $op = $operation[$index];
-                        $this->builder->orWhere("`$column` $op '$val'");
-                    } else {
-                        $this->builder->orWhere("`$column` $operation '$val'");
-                    }
-                } else {
-                    $this->builder->orWhere("`$column` = ?");
-                    array_push($this->parameters, $val);
-                }
-
-                $index++;
-            }
-        } else if (!is_array($key)) {
-            if ($operation != null) {
-
-                $this->builder->orWhere("`$key` $operation '$value'");
-            } else {
-
-                $this->builder->orWhere("`$key` = ?");
-                array_push($this->parameters, $value);
-            }
+        if (!is_null($value)) {
+            $this->builder->orWhere("`$key` = ?");
+            return array_push($this->parameters, $value);
+        } else {
+            $this->builder->orWhere($key);
         }
     }
 
