@@ -125,13 +125,19 @@ class QueryConstructor
 
             if (is_string($key)) {
 
-                if (count($this->parameters) > 0) {
-                    !is_null($value) ? $this->builder->andWhere($key . " $op ?") : $this->builder->andWhere($key);
-                } else {
-                    !is_null($value) ? $this->builder->where($key . " $op ?") : $this->builder->where($key);
+                $use_value = true;
+
+                if (preg_match('/\s/',$key) && $value == null){
+                    $use_value = false;
                 }
 
-                if (!is_null($value)) {
+                if (count($this->parameters) > 0) {
+                    $use_value ? $this->builder->andWhere($key . " $op ?") : $this->builder->andWhere($key);
+                } else {
+                    $use_value ? $this->builder->where($key . " $op ?") : $this->builder->where($key);
+                }
+
+                if ($use_value) {
                     array_push($this->parameters, $value);
                 }
             }
@@ -140,7 +146,13 @@ class QueryConstructor
 
     protected function orWhereQuery($key, $value = null)
     {
-        if (!is_null($value)) {
+        $use_value = true;
+
+        if (preg_match('/\s/',$key) && $value == null){
+            $use_value = false;
+        }
+
+        if ($use_value) {
             $this->builder->orWhere("`$key` = ?");
             return array_push($this->parameters, $value);
         } else {
