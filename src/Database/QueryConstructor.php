@@ -103,7 +103,7 @@ class QueryConstructor
         }
     }
 
-    protected function whereQuery(array|string $key,  array|string $value = null, string $operation = null)
+    protected function whereQuery(array|string $key, $value = null, $operation = null)
     {
 
         $op = $operation ? $operation : '=';
