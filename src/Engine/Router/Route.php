@@ -348,6 +348,7 @@ class Route extends RoutesConfig
                     return false;
                 }
 
+                $user->setAccessToken($authUser);
                 Auth::login($user);
 
                 $schema->table('auth_access_tokens')->where('id', $authUser->id)->first()->update([

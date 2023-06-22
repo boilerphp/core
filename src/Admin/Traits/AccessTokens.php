@@ -10,6 +10,7 @@ trait AccessTokens
     
     protected $_table = 'auth_access_tokens';
 
+    protected $token;
 
     public function createAccessToken($name, $access = [], $token_user_id = null) {
 
@@ -51,5 +52,13 @@ trait AccessTokens
         }
 
         return $string; 
+    }
+
+    public function setAccessToken($token) {
+        $this->token = $token;
+    }
+
+    public function getAccessToken() {
+        return $this->token;
     }
 }
