@@ -108,7 +108,8 @@ class Response
 
     public static function redirectToHost($location)
     {
-        return header("location:" . $location);
+        header("location:" . $location);
+        exit;
     }
 
     public static function unhandledPost()
