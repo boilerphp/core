@@ -102,7 +102,8 @@ class Response
     {
         $location = trim($location, "/");
         $location = "/" . $location;
-        return header("location:" . $location);
+        header("location:" . $location);
+        exit;
     }
 
     public static function redirectToHost($location)
