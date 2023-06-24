@@ -2,17 +2,18 @@
 
 namespace Boiler\Core\Admin\Traits;
 
+use Boiler\Core\Database\DB;
 use Boiler\Core\Database\Schema;
 use Boiler\Core\Hashing\Hash;
+use Boiler\Core\Middlewares\Session;
 
 trait AccessTokens
-{ 
-    
+{
+
     protected $_table = 'auth_access_tokens';
 
-    protected $token;
-
-    public function createAccessToken($name, $access = [], $token_user_id = null) {
+    public function createAccessToken($name, $access = [], $token_user_id = null)
+    {
 
         $token_type = get_class($this);
         $token = [
@@ -29,17 +30,20 @@ trait AccessTokens
     }
 
 
-    public function revokeAllToken() {
+    public function revokeAllToken()
+    {
         (new Schema)->query("DELETE FROM `$this->_table` WHERE token_id = '$this->id'");
     }
 
 
-    public function revokeLastToken() {
+    public function revokeLastToken()
+    {
         (new Schema)->query("DELETE FROM `$this->_table` WHERE token_id = '$this->id' ORDER BY id DESC LIMIT 1");
     }
-    
 
-    protected function genenrateToken($length = 16) {
+
+    protected function genenrateToken($length = 16)
+    {
 
         $string = '';
 
@@ -51,14 +55,28 @@ trait AccessTokens
             $string .= substr(str_replace(['/', '+', '='], '', base64_encode($bytes)), 0, $size);
         }
 
-        return $string; 
+        return $string;
     }
 
-    public function setAccessToken($token) {
-        $this->token = $token;
+    public function setAccessToken($token)
+    {
+        Session::set('boiler_in_app_access_token', $token->id);
     }
 
-    public function getAccessToken() {
-        return $this->token;
+    public function getAccessToken()
+    {
+        $token = Session::get('boiler_in_app_access_token');
+        return DB::table($this->_table)->find($token);
+    }
+
+    public function getTokenAccess(): array
+    {
+        $token = Session::get('boiler_in_app_access_token');
+        $access_token = DB::table($this->_table)->find($token);
+        if ($access_token) {
+            return json_decode($access_token->access, true);
+        }
+
+        return [];
     }
 }
