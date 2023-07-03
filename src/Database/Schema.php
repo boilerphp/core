@@ -555,7 +555,7 @@ class Schema extends QueryConstructor
 
     public function join(string $table, \Closure $callback)
     {
-        $this->builder->join($table, $table);
+        $this->builder->join($table, $table, 'WITH');
         $callback($this->builder);
 
         return $this;
