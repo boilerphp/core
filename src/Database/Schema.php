@@ -553,6 +553,29 @@ class Schema extends QueryConstructor
         return $this;
     }
 
+    public function join(string $table, \Closure $callback)
+    {
+        $this->builder->join($table, $table);
+        $callback($this->builder);
+
+        return $this;
+    }
+
+    public function leftJoin(string $table, \Closure $callback)
+    {
+        $this->builder->leftJoin($table, $table);
+        $callback($this->builder);
+
+        return $this;
+    }
+
+    public function innerJoin(string $table, \Closure $callback)
+    {
+        $this->builder->innerJoin($table, $table);
+        $callback($this->builder);
+
+        return $this;
+    }
 
     public function get()
     {
