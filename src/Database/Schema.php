@@ -228,7 +228,7 @@ class Schema extends QueryConstructor
         $this->countOnly = true;
         $this->relations = false;
 
-        $count = $this->select("*")->fetch();
+        $count = $this->select($this->selectedColumns)->fetch();
 
         $this->countOnly = false;
         return $count;

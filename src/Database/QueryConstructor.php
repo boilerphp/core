@@ -23,6 +23,8 @@ class QueryConstructor
 
     protected $selectedColumns = '*';
 
+    protected $hasFrom = false;
+
     public function __construct(protected Connection $conn)
     {
         $this->driver = $this->conn->getDriver();
@@ -32,18 +34,31 @@ class QueryConstructor
     public function resetQueryBuilder()
     {
         $this->selectedColumns = '*';
+        $this->hasFrom = false;
         $this->builder = $this->conn->getConnection()->createQueryBuilder();
+    }
+
+    protected function fromQuery($table) {
+
+        if(!$this->hasFrom) {
+            $this->builder->from($table, $table);
+            $this->hasFrom = true;
+        }
     }
 
     public function allQuery($table)
     {
-        $this->builder->select($this->selectedColumns)->from($table, $table);
+        $this->builder->select($this->selectedColumns);
+        $this->fromQuery($table);
     }
 
     public function selectQuery(array|string $fields, string $table)
     {
         $this->selectedColumns = is_array($fields) ? implode(',', $fields) : $fields;
-        $this->builder->select($this->selectedColumns)->from($table, $table);
+        $this->builder->select($this->selectedColumns);
+        
+        $this->fromQuery($table);
+
         return $this;
     }
 
@@ -272,7 +287,8 @@ class QueryConstructor
 
     public function sumQuery($column, $table)
     {
-        $this->builder->select("SUM($column) as $column")->from($table, $table);
+        $this->builder->select("SUM($column) as $column");
+        $this->fromQuery($table);
     }
 
     public function getSql()
