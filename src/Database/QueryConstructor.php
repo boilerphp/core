@@ -37,13 +37,13 @@ class QueryConstructor
 
     public function allQuery($table)
     {
-        $this->builder->select($this->selectedColumns)->from($table);
+        $this->builder->select($this->selectedColumns)->from($table, $table);
     }
 
     public function selectQuery(array|string $fields, string $table)
     {
         $this->selectedColumns = is_array($fields) ? implode(',', $fields) : $fields;
-        $this->builder->select($this->selectedColumns)->from($table);
+        $this->builder->select($this->selectedColumns)->from($table, $table);
         return $this;
     }
 
@@ -272,7 +272,7 @@ class QueryConstructor
 
     public function sumQuery($column, $table)
     {
-        $this->builder->select("SUM($column) as $column")->from($table);
+        $this->builder->select("SUM($column) as $column")->from($table, $table);
     }
 
     public function getSql()
