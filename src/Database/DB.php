@@ -15,7 +15,7 @@ final class DB
     {
         $instance = new Schema;
         $instance->table($table);
-        return $instance->connection()->createQueryBuilder()->from($instance->getTableName());
+        return $instance->connection()->createQueryBuilder()->from($table, $table);
     }
 
     public static function table($table)

@@ -127,7 +127,8 @@ class Schema extends QueryConstructor
     {
         $instance = new static;
         $instance->setTableName();
-        return $instance->connection()->createQueryBuilder()->from($instance->getTableName());
+        $table = $instance->getTableName();
+        return $instance->connection()->createQueryBuilder()->from($table, $table);
     }
 
 
@@ -555,24 +556,40 @@ class Schema extends QueryConstructor
 
     public function join(string $table, \Closure $callback)
     {
-        $this->builder->join($table, $table, 'WITH');
-        $callback($this->builder);
+        $_table = $this->getTableName();
+        $this->builder->join($_table, $table, '');
+
+        $callback($this);
 
         return $this;
     }
 
     public function leftJoin(string $table, \Closure $callback)
     {
-        $this->builder->leftJoin($table, $table);
-        $callback($this->builder);
+        $_table = $this->getTableName();
+        $this->builder->leftJoin($_table, $table, '');
+
+        $callback($this);
+
+        return $this;
+    }
+
+    public function rightJoin(string $table, \Closure $callback)
+    {
+        $_table = $this->getTableName();
+        $this->builder->leftJoin($_table, $table, '');
+
+        $callback($this);
 
         return $this;
     }
 
     public function innerJoin(string $table, \Closure $callback)
     {
-        $this->builder->innerJoin($table, $table);
-        $callback($this->builder);
+        $_table = $this->getTableName();
+        $this->builder->innerJoin($_table, $table, '');
+        
+        $callback($this);
 
         return $this;
     }
