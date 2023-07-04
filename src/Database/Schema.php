@@ -313,8 +313,6 @@ class Schema extends QueryConstructor
 
         $limits = $start . ", " . $number;
 
-        $this->allQuery($this->table);
-
         $clone = clone $this;
         $total_result = $clone->count();
 
@@ -347,7 +345,7 @@ class Schema extends QueryConstructor
             "end_at" => $to,
             "total" => $total_result,
             "pages" => $total_pages,
-            "count" => $number
+            "per_page" => $number
         ];
 
         $response = json_encode($data);
