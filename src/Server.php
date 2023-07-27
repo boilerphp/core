@@ -175,8 +175,10 @@ class Server extends App
                 /*
                 * Close Connection on instance
                 */
-                GlobalConfig::closeConnection();
             }
+
+            GlobalConfig::closeConnection();
+            
         } catch (\Exception $ex) {
 
             $response = Response::responseFormat();
