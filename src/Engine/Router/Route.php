@@ -108,7 +108,6 @@ class Route extends RoutesConfig
 
         static::$middlewares = array_merge(static::$middlewares, $middlewares);
         $callback();
-        static::$middlewares = [];
     }
 
     static public function group($name, $callback)
