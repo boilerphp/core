@@ -29,8 +29,6 @@ class MailSender extends MailBuilder
     protected $smtpEncryption;
 
 
-
-
     public function getMailAttributes()
     {
         $app_config = GlobalConfig::getAppConfigs();
@@ -107,12 +105,25 @@ class MailSender extends MailBuilder
             $mail->addAddress($this->to, $this->toName);     // Add a recipient
             $mail->addReplyTo($this->replyTo, $this->replyName);
 
-            // $mail->addCC('cc@example.com');
-            // $mail->addBCC('bcc@example.com');
+            if (count($this->ccs)) {
+                foreach ($this->ccs as $address) {
+                    $mail->addCC($address["email"], $address["name"]);
+                }
+            }
+
+            if (count($this->bccs)) {
+                foreach ($this->bccs as $address) {
+                    $mail->addBCC($address["email"], $address["name"]);
+                }
+            }
 
             // Attachments
-            // $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-            // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+            $attachments = $this->getAttachments();
+            if (count($attachments)) {
+                foreach ($attachments as $attachment) {
+                    $mail->addAttachment($attachment);         // Add attachments
+                }
+            }
 
             // Content
             $mail->isHTML(true);                                  // Set email format to HTML

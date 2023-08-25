@@ -10,17 +10,16 @@ use Boiler\Core\Engine\Router\Response;
 class MailBuilder extends MailConfig
 {
 
-    public $header;
-
     public $subject;
-
     public $message;
-
+    public $header;
+    public $mime = "1.0";
     public $charset = "UTF-8";
-
     public $contentType = 'text/html';
 
-    public $mime = "1.0";
+    protected $ccs = [];
+    protected $bccs = [];
+    protected $attachements = [];
 
 
     public function from($email, $name = '')
@@ -50,6 +49,18 @@ class MailBuilder extends MailConfig
         $this->toName = $name;
 
         return $this;
+    }
+
+
+    public function addCC($email, $name)
+    {
+        array_push($this->ccs, ["email" => $email, "name" => $name]);
+    }
+
+
+    public function addBCC($email, $name)
+    {
+        array_push($this->bccs, ["email" => $email, "name" => $name]);
     }
 
 
@@ -105,5 +116,25 @@ class MailBuilder extends MailConfig
 
         $this->message = Response::mailPage($view, $data);
         return $this;
+    }
+
+    public function addAttachments(array $attachements)
+    {
+        foreach ($attachements as $attachement) {
+            array_push($this->attachements, $attachement);
+        }
+
+        return $this;
+    }
+
+    public function addAttachment(string $attachement)
+    {
+        array_push($this->attachements, $attachement);
+        return $this;
+    }
+
+    public function getAttachments()
+    {
+        return $this->attachements;
     }
 }
