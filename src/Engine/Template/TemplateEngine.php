@@ -71,8 +71,9 @@ class TemplateEngine
     {
 
         $fcontent = $fileContent;
+        $file_path = __DIR__ . "/../../../../../../" . ViewsConfig::$views_path;
         // $fcontent = TemplateEngine::htmlSymbolicCharacters($fcontent);
-        $fcontent = preg_replace("/@\{\{(.*)load (.*)\}\}/", '<?php echo \Boiler\Core\Engine\Template\TemplateEngine::loadFile("./../' . ViewsConfig::$views_path . '/".($2).".".self::$ext, $content); ?>', $fcontent);
+        $fcontent = preg_replace("/@\{\{(.*)load (.*)\}\}/", '<?php echo \Boiler\Core\Engine\Template\TemplateEngine::loadFile("' . $file_path . '/".($2).".".self::$ext, $content); ?>', $fcontent);
         $fcontent = static::auth($fcontent);
         $fcontent = static::sessions($fcontent);
         $fcontent = static::keys($fcontent, $content);
@@ -108,7 +109,7 @@ class TemplateEngine
             $layout = substr($fcontent, strpos($fcontent, "@{{extends "), strpos($fcontent, "}}"));
             $layout = str_replace("@{{extends \"", "", $layout);
             $cleaned = str_replace("\"", "", trim($layout, " "));
-            $layoutPath = './../'.$viewPath . "/" . $cleaned . "." . "$ext";
+            $layoutPath = './../' . $viewPath . "/" . $cleaned . "." . "$ext";
 
             $layout = file_get_contents($layoutPath);
 
