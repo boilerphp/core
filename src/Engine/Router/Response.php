@@ -42,7 +42,7 @@ class Response
         $view_path = ViewsConfig::$views_path;
 
         $extension = "fish.php";
-        $full_path = "../" . $view_path . "/" . $filename . "." . $extension;
+        $full_path = __DIR__."/../../../../../../" . $view_path . "/" . $filename . "." . $extension;
 
         return [
             "fullpath" => $full_path,
