@@ -71,9 +71,8 @@ class TemplateEngine
     {
 
         $fcontent = $fileContent;
-        $file_path = __DIR__ . "/../../../../../../" . ViewsConfig::$views_path;
         // $fcontent = TemplateEngine::htmlSymbolicCharacters($fcontent);
-        $fcontent = preg_replace("/@\{\{(.*)load (.*)\}\}/", '<?php echo \Boiler\Core\Engine\Template\TemplateEngine::loadFile("' . $file_path . '/".($2).".".self::$ext, $content); ?>', $fcontent);
+        $fcontent = preg_replace("/@\{\{(.*)load (.*)\}\}/", '<?php echo \Boiler\Core\Engine\Template\TemplateEngine::loadFile(($2), $content); ?>', $fcontent);
         $fcontent = static::auth($fcontent);
         $fcontent = static::sessions($fcontent);
         $fcontent = static::keys($fcontent, $content);
@@ -173,7 +172,8 @@ class TemplateEngine
 
     static public function loadFile($filename, $content)
     {
-        $fcontent = file_get_contents($filename);
+        $file_path = __DIR__ . "/../../../../../../" . ViewsConfig::$views_path . "/" . $filename . "." . self::$ext;
+        $fcontent = file_get_contents($file_path);
         $fcontent = static::editFile($fcontent, $content);
         $fcontent = eval("?>" . $fcontent . "");
         return $fcontent;
