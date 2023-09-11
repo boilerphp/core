@@ -72,7 +72,7 @@ class MigrationReflection extends Migration {
             $tables = $this->query('show tables');
         }
 
-        return $tables->fetchAll();
+        return $tables->fetchAllAssociative();
 
     }
 
