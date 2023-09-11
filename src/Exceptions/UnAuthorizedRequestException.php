@@ -1,6 +1,6 @@
 <?php
 
-namespace Boiler\Core\Engine\Exceptions;
+namespace Boiler\Core\Exceptions;
 
 use Boiler\Core\Engine\Router\Response;
 use Exception;
