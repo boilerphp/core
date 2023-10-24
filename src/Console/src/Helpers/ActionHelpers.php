@@ -41,6 +41,7 @@ class ActionHelpers implements ActionHelpersInterface
         "model" => "configiureModel",
         "controller" => "configureController",
         "migration" => "configureMigration",
+        "job" => "configureJob",
         "notification" => "configureNotification",
         "socket" => "configureSocket",
         "seeder" => "configureSeeder"
@@ -56,6 +57,7 @@ class ActionHelpers implements ActionHelpersInterface
         "view" => "./app/Views/",
         "controller" => "./app/Controllers/",
         "middleware" => "./app/Middlewares/",
+        "job" => "./app/Jobs/",
         "migration" => "./database/Migrations/",
         "notification" => "./app/Notifications/",
         "seeder" => "./database/Seeders/",
@@ -97,22 +99,22 @@ class ActionHelpers implements ActionHelpersInterface
         $type = 'Unit';
         $config = './phpunit.xml';
 
-        if($flags !== null) {
+        if ($flags !== null) {
             foreach ($flags as $flag) {
-                
+
                 list($name, $value) = explode('=', $flag);
-    
-                if($name === '--test') {
+
+                if ($name === '--test') {
                     $target = $value;
                 }
-    
-                if($name === '--type') {
+
+                if ($name === '--type') {
                     $type = $value;
                 }
             }
         }
 
-        if($target) {
+        if ($target) {
             return (new Console())->exec("php ./vendor/bin/phpunit -c {$config} --testsuite={$type} ./tests/{$type}/{$target}.php");
         }
 
@@ -320,6 +322,7 @@ class ActionHelpers implements ActionHelpersInterface
 
             if ($component !== "migration.alter") {
                 $table_name = $name;
+                $class_name .= 'Table';
             } else {
                 $arg_explode = explode("|", $this->arg_string);
                 $end_arg = end($arg_explode);
@@ -336,7 +339,7 @@ class ActionHelpers implements ActionHelpersInterface
             $this->module = preg_replace("/\[TableName\]/", strtolower($table_name), $this->module);
 
             if ($this->writeModule($path)) {
-                $this->verbose("Created migration: $name");
+                $this->verbose("Created migration: $path");
                 return true;
             }
             return false;
@@ -360,6 +363,29 @@ class ActionHelpers implements ActionHelpersInterface
             $this->module = preg_replace("/\[SocketName\]/", $name, $this->component);
             if ($this->writeModule($path)) {
                 $this->verbose("$name socket successfully created!");
+                return true;
+            }
+            return false;
+        }
+    }
+
+    /**
+     * usage: configures job structure and inital setup
+     * @param string $name
+     * 
+     * @param string $path
+     * 
+     * @return void;
+     */
+
+    public function configureJob($name, $path)
+    {
+        $component_path = __DIR__ . "/../../components/job.component";
+
+        if ($this->readComponent($component_path)) {
+            $this->module = preg_replace("/\[JobName\]/", $name, $this->component);
+            if ($this->writeModule($path)) {
+                $this->verbose("$name job successfully created!");
                 return true;
             }
             return false;

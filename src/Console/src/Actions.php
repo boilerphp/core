@@ -147,6 +147,13 @@ class Actions extends ActionHelpers
     public function migration($name, $flag = null)
     {
 
+        $exploded = explode('_', $name);
+        if(end($exploded) === 'table' || end($exploded) === 'tables') {
+            array_splice($exploded, count($exploded)-1, 1);
+            
+            $name = implode("_", $exploded);
+        }
+
         $table = $this->tableFormating($name);
 
         if ($flag == "--alter" || $flag == "--a") {
@@ -295,7 +302,7 @@ class Actions extends ActionHelpers
 
     /**
      * Create Middlewares using command line manager
-     * @param $name, $type
+     * @param $name
      * @return bool
      * */
     public function middleware($name)
@@ -316,6 +323,32 @@ class Actions extends ActionHelpers
         }
 
         print("Unable to create middleware " . $name);
+        return false;
+    }
+
+    /**
+     * Create Jobs using command line manager
+     * @param $name
+     * @return bool
+     * */
+    public function job($name)
+    {
+        if (!Fs::is_active_directory($this->path("job"))) {
+            Fs::create_directory($this->path("job"));
+        }
+
+        $this->path = $this->path("job") . $name . ".php";
+
+        if ($this->checkExistent($this->path)) {
+            $this->verbose("$name already exists");
+            return false;
+        }
+
+        if ($this->configureJob($name, $this->path)) {
+            return true;
+        }
+
+        print("Unable to create job " . $name);
         return false;
     }
 }
