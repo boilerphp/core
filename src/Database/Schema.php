@@ -483,7 +483,7 @@ class Schema extends QueryConstructor
             }
         }
 
-        $statement = $this->query("DELETE FROM {$this->table} WHERE {$key} = {$value}");
+        $statement = $this->query("DELETE FROM {$this->table} WHERE {$key} = '{$value}'");
 
         $this->clearInitalQuery();
         return $statement;
