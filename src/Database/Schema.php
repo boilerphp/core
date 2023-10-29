@@ -161,9 +161,9 @@ class Schema extends QueryConstructor
         }
 
         if ($position === 'first') {
-            $this->orderBy('id', 'ASC')->limit(1);
+            $this->orderBy($this->unique_column_name, 'ASC')->limit(1);
         } else if ($position === 'last') {
-            $this->orderBy('id', 'DESC')->limit(1);
+            $this->orderBy($this->unique_column_name, 'DESC')->limit(1);
         }
 
         $result = $this->get();
@@ -258,7 +258,7 @@ class Schema extends QueryConstructor
     public function find($key, $value = null)
     {
         if ($value == null) {
-            $this->result = $this->where("id", $key)->get();
+            $this->result = $this->where($this->unique_column_name, $key)->get();
         } else {
             $this->result = $this->where($key, $value)->get();
         }
@@ -426,9 +426,9 @@ class Schema extends QueryConstructor
     protected function last_inserted_row()
     {
         if ($this->driver === "sqlite" || $this->driver === "pdo_sqlite") {
-            $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = last_insert_rowid()");
+            $last_inserted = $this->query("SELECT * FROM $this->table WHERE {$this->unique_column_name} = last_insert_rowid()");
         } else {
-            $last_inserted = $this->query("SELECT * FROM $this->table WHERE id = LAST_INSERT_ID()");
+            $last_inserted = $this->query("SELECT * FROM $this->table WHERE {$this->unique_column_name} = LAST_INSERT_ID()");
         }
 
         $instance = $last_inserted->fetchAssociative();

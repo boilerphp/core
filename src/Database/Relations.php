@@ -121,8 +121,8 @@ class Relations extends Schema {
             $modelClassNameSpace = get_class($this);
             $modelClassName = explode("\\", $modelClassNameSpace);
 
-            $this->foreign_key = strtolower(end($modelClassName))."_id";
-            $this->value_key = "id";
+            $this->foreign_key = strtolower(end($modelClassName))."_{$this->unique_column_name}";
+            $this->value_key = $this->unique_column_name;
         }
 
         return true;
