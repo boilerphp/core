@@ -483,19 +483,10 @@ class Schema extends QueryConstructor
             }
         }
 
-        $data = $this->dataFormatChecker($key, $value);
-        $this->deleteQuery($data, $this->table);
+        $statement = $this->query("DELETE FROM {$this->table} WHERE {$key} = {$value}");
 
-        $statement = $this->connection()->prepare($this->getSql());
-        if (count($this->parameters))
-            if ($statement->executeQuery($this->parameters)) {
-                return true;
-            }
-
-        $exec = $statement->executeQuery();
         $this->clearInitalQuery();
-
-        return $exec;
+        return $statement;
     }
 
 
@@ -586,7 +577,7 @@ class Schema extends QueryConstructor
     {
         $_table = $this->getTableName();
         $this->builder->innerJoin($_table, $table, '');
-        
+
         $callback($this);
 
         return $this;
