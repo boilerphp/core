@@ -106,6 +106,19 @@ class Table implements MigrationInterface
             $diagram->dataTypes()->getPrimaryKeys()
         );
 
+        if ($driver === "sqlite") {
+            if ($query !== null) {
+                if (preg_match('/\; ALTER TABLE/', $query)) {
+                    $queries = explode(';', $query);
+                    foreach ($queries as $query) {
+                        (new Schema(static::getConnection()))->query($query);
+                    }
+                }
+            }
+
+            $query = null;
+        }
+
         if($foreignKeysQuery) {
             Table::createAlters($foreignKeysQuery);
         }
