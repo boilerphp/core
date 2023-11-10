@@ -80,12 +80,9 @@ class Command extends Actions
     public function db(...$parameters)
     {
         $action = isset($parameters[0][0]) ? $parameters[0][0] : null;
-        $flag = isset($parameters[0][1]) ? $parameters[0][1] : null;
 
         if ($action != null) {
-            ($flag != null)
-                ? $this->{$action}($flag)
-                : $this->{$action}();
+            $this->{$action}($parameters[0]);
         }
     }
 
@@ -98,6 +95,9 @@ class Command extends Actions
     public function migrate(...$parameters)
     {
         $flags = $parameters[0];
+
+        $this->pathHandler($flags, "migration");
+
         $this->fresh = in_array('--new', $flags) || in_array('--fresh', $flags);
         $this->force = in_array('--force', $flags) || in_array('-f', $flags);
         $this->rollback = in_array('--rollback', $flags);

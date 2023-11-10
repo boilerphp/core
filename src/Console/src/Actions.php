@@ -34,7 +34,7 @@ class Actions extends ActionHelpers
      * */
     public function controller($name, $flag = null)
     {
-        $this->path = $this->path("controller") . $name . ".php";
+        $this->path = $this->getPath("controller") . $name . ".php";
 
         if ($this->checkExistent($this->path)) {
             $this->verbose("$name already exists");
@@ -64,7 +64,7 @@ class Actions extends ActionHelpers
             }
         }
 
-        $path = $this->path("notification") . $name . ".php";
+        $path = $this->getPath("notification") . $name . ".php";
 
         if ($this->checkExistent($path)) {
             $this->verbose("Notification $name already exists");
@@ -94,7 +94,7 @@ class Actions extends ActionHelpers
             }
         }
 
-        $path = $this->path("model") . $name . ".php";
+        $path = $this->getPath("model") . $name . ".php";
 
         if ($this->checkExistent($path)) {
             $this->verbose("Model $name already exists");
@@ -148,9 +148,9 @@ class Actions extends ActionHelpers
     {
 
         $exploded = explode('_', $name);
-        if(end($exploded) === 'table' || end($exploded) === 'tables') {
-            array_splice($exploded, count($exploded)-1, 1);
-            
+        if (end($exploded) === 'table' || end($exploded) === 'tables') {
+            array_splice($exploded, count($exploded) - 1, 1);
+
             $name = implode("_", $exploded);
         }
 
@@ -164,7 +164,7 @@ class Actions extends ActionHelpers
             $component = "migration";
         }
 
-        $this->path = $this->path("migration") . time() . "_" . $file_name;
+        $this->path = $this->getPath("migration") . time() . "_" . $file_name;
         $this->checkMigrationExistent($file_name);
 
 
@@ -202,7 +202,7 @@ class Actions extends ActionHelpers
             }
         }
 
-        $path = $this->path("seeder") . $name . ".php";
+        $path = $this->getPath("seeder") . $name . ".php";
 
         if ($this->checkExistent($path)) {
             $this->verbose("Seeder $name already exists");
@@ -222,10 +222,19 @@ class Actions extends ActionHelpers
         return false;
     }
 
-    public function seed($flag = null)
+    public function seed($flags)
     {
+        $classes = null;
 
-        $all_seeder_file = glob("./database/Seeders/*.php");
+        $this->pathHandler($flags, "seeder");
+
+        $hasClass = preg_match('/--class=(.*)/', implode(' ', $flags));
+        if ($hasClass) {
+            $classes = preg_replace("/(.*)--class=(.*)/", '$2',  implode(' ', $flags));
+        }
+
+
+        $all_seeder_file = glob($this->getPath('seeder') . "*.php");
 
         if ($all_seeder_file) {
             foreach ($all_seeder_file as $seeder_file) {
@@ -233,14 +242,12 @@ class Actions extends ActionHelpers
             }
         }
 
-        if ($flag !== null) 
-        {
-            $seeders = explode('|', $flag);
-            foreach ($seeders as $seeder) 
-            {
+        if ($classes !== null) {
+            $seeders = explode('|', $classes);
+            foreach ($seeders as $seeder) {
 
                 $name = $seeder;
-                $seed_file = "./database/Seeders/{$name}.php";
+                $seed_file = $this->getPath('seeder') . "{$name}.php";
 
                 $this->verbose("Seeding: ", "info", false);
                 $this->verbose("{$seed_file}", breakline: true);
@@ -253,12 +260,12 @@ class Actions extends ActionHelpers
                 $this->verbose("{$seed_file}", breakline: true);
             }
         } else {
-            
-            $seed_file = "./database/Seeders/DatabaseSeeder.php";
+
+            $seed_file = $this->getPath('seeder') . "DatabaseSeeder.php";
             $this->requireOnce($seed_file);
 
             $className = ($this->FileClassName($seed_file)['class']);
-            
+
             $this->verbose("Seeding: ", "info", false);
             $this->verbose("{$seed_file}", breakline: true);
 
@@ -267,7 +274,6 @@ class Actions extends ActionHelpers
 
             $this->verbose("Seeded: ", "success", false);
             $this->verbose("{$seed_file}", breakline: true);
-            
         }
 
         $this->verbose("Database seeding completed!", "success");
@@ -285,7 +291,7 @@ class Actions extends ActionHelpers
         }
 
 
-        $path = $this->path("tests") . ($unit_test ? 'Unit/' : 'Integration/') . $name . ".php";
+        $path = $this->getPath("tests") . ($unit_test ? 'Unit/' : 'Integration/') . $name . ".php";
 
         if ($this->checkExistent($path)) {
             $this->verbose("Test $name already exists");
@@ -307,11 +313,11 @@ class Actions extends ActionHelpers
      * */
     public function middleware($name)
     {
-        if (!Fs::is_active_directory($this->path("middleware"))) {
-            Fs::create_directory($this->path("middleware"));
+        if (!Fs::is_active_directory($this->getPath("middleware"))) {
+            Fs::create_directory($this->getPath("middleware"));
         }
 
-        $this->path = $this->path("middleware") . $name . ".php";
+        $this->path = $this->getPath("middleware") . $name . ".php";
 
         if ($this->checkExistent($this->path)) {
             $this->verbose("$name already exists");
@@ -333,11 +339,11 @@ class Actions extends ActionHelpers
      * */
     public function job($name)
     {
-        if (!Fs::is_active_directory($this->path("job"))) {
-            Fs::create_directory($this->path("job"));
+        if (!Fs::is_active_directory($this->getPath("job"))) {
+            Fs::create_directory($this->getPath("job"));
         }
 
-        $this->path = $this->path("job") . $name . ".php";
+        $this->path = $this->getPath("job") . $name . ".php";
 
         if ($this->checkExistent($this->path)) {
             $this->verbose("$name already exists");

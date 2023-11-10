@@ -37,7 +37,7 @@ class ActionHelpers implements ActionHelpersInterface
         "--backup" => "backup",
     );
 
-    public $configurations = array(
+    private $configurations = array(
         "model" => "configiureModel",
         "controller" => "configureController",
         "migration" => "configureMigration",
@@ -47,12 +47,12 @@ class ActionHelpers implements ActionHelpersInterface
         "seeder" => "configureSeeder"
     );
 
-    public $db_configurations = array(
+    private $db_configurations = array(
         "refresh" => "dropAllExistingTable",
         "rollback" => "rollbackMigrations",
     );
 
-    public $paths = array(
+    private $paths = array(
         "model" => "./app/Models/",
         "view" => "./app/Views/",
         "controller" => "./app/Controllers/",
@@ -72,6 +72,24 @@ class ActionHelpers implements ActionHelpersInterface
         $this->$verbose = $verbose;
     }
 
+    public function setPath(string $key, string $path)
+    {
+        $this->paths[$key] = $path;
+    }
+
+    public function getPath($name)
+    {
+        return $this->paths[$name];
+    }
+
+    protected function pathHandler($flags, $key)
+    {
+        $hasPath = preg_match('/--path=(.*)/', implode(' ', $flags));
+        if ($hasPath) {
+            $path = preg_replace("/(.*)--path=(.*)\//", '$2/',  implode(' ', $flags));
+            $this->setPath($key, $path);
+        }
+    }
 
     public function migrationReflection()
     {
@@ -163,7 +181,7 @@ class ActionHelpers implements ActionHelpersInterface
             $name .= "Controller";
         }
 
-        $path = $this->path($task) . $name . ".php";
+        $path = $this->getPath($task) . $name . ".php";
 
         if ($task == "migration") {
             $name = $this->tableFormating($name);
@@ -175,7 +193,7 @@ class ActionHelpers implements ActionHelpersInterface
                 return;
             }
 
-            $path = $this->path($task) . time() . "_" . $file_name;
+            $path = $this->getPath($task) . time() . "_" . $file_name;
             $this->$configuration($name, $path, $component = "migration");
             return;
         }
@@ -191,16 +209,10 @@ class ActionHelpers implements ActionHelpersInterface
         return false;
     }
 
-    public function path($name)
-    {
-        return $this->paths[$name];
-    }
-
-
     public function checkMigrationExistent($filename)
     {
 
-        $all_migrations_file = glob("./database/Migrations/*.php");
+        $all_migrations_file = glob($this->getPath('migration') . "*.php");
         if ($all_migrations_file) {
             foreach ($all_migrations_file as $migration_file) {
                 if ($this->migrationFileNameChecker($migration_file, $filename)) {
@@ -443,7 +455,7 @@ class ActionHelpers implements ActionHelpersInterface
             $_namespace = $split[0];
             $this->controller_name = $split[1];
 
-            $folder = $this->path("controller") . $_namespace;
+            $folder = $this->getPath("controller") . $_namespace;
             if (!Fs::is_active_directory($folder)) {
                 Fs::create_directory($folder);
             }
@@ -598,7 +610,7 @@ class ActionHelpers implements ActionHelpersInterface
     public function rollbackMigrations($path = null, $steps = 1)
     {
 
-        $all_migrations_file = array_reverse(glob("./database/Migrations/*.php"));
+        $all_migrations_file = array_reverse(glob($this->getPath('migration') . "*.php"));
 
         if ($all_migrations_file) {
 
@@ -639,7 +651,7 @@ class ActionHelpers implements ActionHelpersInterface
     public function newMigrationsChecker()
     {
         $this->new_migrations = array();
-        $all_migrations_file = glob("./database/Migrations/*.php");
+        $all_migrations_file = glob($this->getPath('migration') . "*.php");
 
         if ($all_migrations_file) {
             foreach ($all_migrations_file as $migration_file) {
