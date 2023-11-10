@@ -228,8 +228,11 @@ class Actions extends ActionHelpers
 
         $this->pathHandler($flags, "seeder");
 
-        $hasClass = preg_match('/--class=(.*)/', implode(' ', $flags));
+        $hasClass = preg_match('/--class=(.*) (.*)/', implode(' ', $flags));
+        $hasClass1 = preg_match('/--class=(.*)/', implode(' ', $flags));
         if ($hasClass) {
+            $classes = preg_replace("/(.*)--class=(.*) (.*)/", '$2',  implode(' ', $flags));
+        } else if ($hasClass1) {
             $classes = preg_replace("/(.*)--class=(.*)/", '$2',  implode(' ', $flags));
         }
 
