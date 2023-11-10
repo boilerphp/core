@@ -113,10 +113,10 @@ class Table implements MigrationInterface
                     foreach ($queries as $query) {
                         (new Schema(static::getConnection()))->query($query);
                     }
+
+                    $query = null;
                 }
             }
-
-            $query = null;
         }
 
         if($foreignKeysQuery) {
