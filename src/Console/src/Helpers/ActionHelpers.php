@@ -84,9 +84,9 @@ class ActionHelpers implements ActionHelpersInterface
 
     protected function pathHandler($flags, $key)
     {
-        $hasPath = preg_match('/--path=(.*)/', implode(' ', $flags));
+        $hasPath = preg_match('/--path=(.*)(.*)/', implode(' ', $flags));
         if ($hasPath) {
-            $path = preg_replace("/(.*)--path=(.*)\//", '$2/',  implode(' ', $flags));
+            $path = preg_replace("/(.*)--path=(.*)\/(.*)/", '$2/',  implode(' ', $flags));
             $this->setPath($key, $path);
         }
     }
