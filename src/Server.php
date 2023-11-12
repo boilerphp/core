@@ -175,10 +175,8 @@ class Server extends App
                 /*
                 * Close Connection on instance
                 */
+                GlobalConfig::closeConnection();
             }
-
-            GlobalConfig::closeConnection();
-            
         } catch (\Exception $ex) {
 
             $response = Response::responseFormat();
@@ -189,7 +187,7 @@ class Server extends App
 
                     echo json([
                         "error" => $ex->getMessage(),
-                        "line" => "Line ".$ex->getLine()." of ".$ex->getFile(),
+                        "line" => "Line " . $ex->getLine() . " of " . $ex->getFile(),
                         // "trace" => $ex->getTrace()
                     ], 500);
 
@@ -201,7 +199,6 @@ class Server extends App
                     data: ["ex" => $ex],
                     status: 500
                 );
-
             } else {
 
                 if ($response === "application/json") {
