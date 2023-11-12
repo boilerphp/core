@@ -640,31 +640,23 @@ class Schema extends QueryConstructor
 
     protected function fetch($clear = true)
     {
-        if ($this->builder) {
+        $data = count($this->parameters) ? $this->parameters : null;
+        $result = $this->query($this->getSql(), $data);
+        if ($result) {
 
-            if (count($this->parameters)) {
-                $statement = $this->connection()->prepare($this->getSql());
-                $this->bind($statement, $this->parameters);
-                $result = $statement->executeQuery();
-            } else {
+            ($clear === true ? $this->clearInitalQuery() : null);
 
-                $result = $this->builder->executeQuery();
+            $data = $result->fetchAllAssociative();
+            $count = count($data);
+
+            if ($this->countOnly) {
+                return $count;
             }
 
-            if ($result) {
-                $this->result = $result;
-
-                ($clear === true ? $this->clearInitalQuery() : null);
-
-                if ($this->countOnly) {
-                    return $result->rowCount();
-                }
-
-                if ($result->rowCount() > 0) {
-                    return ($result->rowCount() > 1)
-                        ? $this->resultFormatter($result->fetchAllAssociative(), true)
-                        : $this->resultFormatter($result->fetchAssociative(), false);
-                }
+            if ($count > 0) {
+                return ($count > 1)
+                    ? $this->resultFormatter($data, true)
+                    : $this->resultFormatter($data[0], false);
             }
         }
 

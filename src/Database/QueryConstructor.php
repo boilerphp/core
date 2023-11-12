@@ -31,16 +31,28 @@ class QueryConstructor
         $this->builder = $conn->getConnection()->createQueryBuilder();
     }
 
+    protected function setValue($value)
+    {
+        return $this->driver === "sqlite" ? "'$value'" : "?";
+    }
+
+    protected function setParameters($value)
+    {
+        if ($this->driver !== "sqlite")
+            array_push($this->parameters, $value);
+    }
+
     public function resetQueryBuilder()
     {
         $this->selectedColumns = '*';
         $this->hasFrom = false;
-        $this->builder = $this->conn->getConnection()->createQueryBuilder();
+        // $this->builder = $this->conn->getConnection()->createQueryBuilder();
     }
 
-    protected function fromQuery($table) {
+    protected function fromQuery($table)
+    {
 
-        if(!$this->hasFrom) {
+        if (!$this->hasFrom) {
             $this->builder->from($table, $table);
             $this->hasFrom = true;
         }
@@ -56,7 +68,7 @@ class QueryConstructor
     {
         $this->selectedColumns = is_array($fields) ? implode(',', $fields) : $fields;
         $this->builder->select($this->selectedColumns);
-        
+
         $this->fromQuery($table);
 
         return $this;
@@ -68,8 +80,8 @@ class QueryConstructor
 
         $values = [];
         foreach ($data as $column => $value) {
-            $values[$column] = '?';
-            array_push($this->parameters, $value);
+            $values[$column] = $this->setValue($value);
+            $this->setParameters($value);
         }
         $this->builder->insert($table)->values($values);
 
@@ -87,8 +99,8 @@ class QueryConstructor
         $this->builder->update($table);
 
         foreach ($data as $column => $val) {
-            $this->builder->set($column, '?');
-            array_push($this->parameters, $val);
+            $this->builder->set($column, $this->setValue($val));
+            $this->setParameters($val);
         }
     }
 
@@ -102,17 +114,17 @@ class QueryConstructor
         if ($data !== null) {
             foreach ($data as $column => $value) {
                 if (count($this->parameters) > 0) {
-                    $this->builder->andWhere($column . " = ?");
+                    $this->builder->andWhere($column . " = " . $this->setValue($value));
                 } else {
-                    $this->builder->where($column . " = ?");
+                    $this->builder->where($column . " = " . $this->setValue($value));
                 }
-                array_push($this->parameters, $value);
+                $this->setParameters($value);
             }
         } else {
             if (strpos(strtolower($this->getSql()), "where") === false) {
                 if (isset($this->$unique_column_name)) {
-                    $this->builder->where($unique_column_name . ' = ?');
-                    array_push($this->parameters, $this->$unique_column_name);
+                    $this->builder->where($unique_column_name . ' = ' . $this->setValue($this->$unique_column_name));
+                    $this->setParameters($this->$unique_column_name);
                 }
             }
         }
@@ -128,11 +140,12 @@ class QueryConstructor
             $index = 0;
             foreach ($key as $column => $val) {
                 if (count($this->parameters) > 0) {
-                    $this->builder->andWhere($column . " $op ?");
+                    $this->builder->andWhere($column . " $op " . $this->setValue($val));
                 } else {
-                    $this->builder->where($column . " $op ?");
+                    $this->builder->where($column . " $op " . $this->setValue($val));
                 }
-                array_push($this->parameters, $val);
+
+                $this->setParameters($val);
 
                 $index++;
             }
@@ -142,18 +155,22 @@ class QueryConstructor
 
                 $use_value = true;
 
-                if (preg_match('/\s/',$key) && $value == null){
+                if (preg_match('/\s/', $key) && $value == null) {
                     $use_value = false;
                 }
 
                 if (count($this->parameters) > 0) {
-                    $use_value ? $this->builder->andWhere($key . " $op ?") : $this->builder->andWhere($key);
+                    $use_value
+                        ? $this->builder->andWhere($key . " $op " . $this->setValue($value))
+                        : $this->builder->andWhere($key);
                 } else {
-                    $use_value ? $this->builder->where($key . " $op ?") : $this->builder->where($key);
+                    $use_value
+                        ? $this->builder->where($key . " $op " . $this->setValue($value))
+                        : $this->builder->where($key);
                 }
 
                 if ($use_value) {
-                    array_push($this->parameters, $value);
+                    $this->setParameters($value);
                 }
             }
         }
@@ -163,13 +180,13 @@ class QueryConstructor
     {
         $use_value = true;
 
-        if (preg_match('/\s/',$key) && $value == null){
+        if (preg_match('/\s/', $key) && $value == null) {
             $use_value = false;
         }
 
         if ($use_value) {
-            $this->builder->orWhere("`$key` = ?");
-            return array_push($this->parameters, $value);
+            $this->builder->orWhere("`$key` = " . $this->setValue($value));
+            return $this->setParameters($value);
         } else {
             $this->builder->orWhere($key);
         }
@@ -183,7 +200,7 @@ class QueryConstructor
             foreach ($key as $column => $val) {
 
                 $val = $operation[0] . $val . $operation[1];
-                $search = "`$column` LIKE ?";
+                $search = "`$column` LIKE " . $this->setValue($value);
 
                 if (count($this->parameters) > 0) {
                     $this->builder->andWhere($search);
@@ -191,7 +208,7 @@ class QueryConstructor
                     $this->builder->where($search);
                 }
 
-                array_push($this->parameters, $val);
+                $this->setParameters($val);
             }
         } else {
 
@@ -199,12 +216,12 @@ class QueryConstructor
 
                 $value = $operation[0] . $value . $operation[1];
                 if (count($this->parameters) > 0) {
-                    $this->builder->andWhere("`$key` LIKE ?");
+                    $this->builder->andWhere("`$key` LIKE " . $this->setValue($value));
                 } else {
-                    $this->builder->where("`$key` LIKE ?");
+                    $this->builder->where("`$key` LIKE " . $this->setValue($value));
                 }
 
-                array_push($this->parameters, $value);
+                $this->setParameters($value);
             }
         }
     }
@@ -217,10 +234,10 @@ class QueryConstructor
             foreach ($key as $column => $val) {
 
                 $val = $operation[0] . $val . $operation[1];
-                $search = "`$column` LIKE ?";
+                $search = "`$column` LIKE " . $this->setValue($val);
 
                 $this->builder->orWhere($search);
-                array_push($this->parameters, $val);
+                $this->setParameters($val);
             }
         } else {
 
@@ -228,8 +245,8 @@ class QueryConstructor
 
                 $value = $operation[0] . $value . $operation[1];
 
-                $this->builder->orWhere("`$key` LIKE ?");
-                array_push($this->parameters, $value);
+                $this->builder->orWhere("`$key` LIKE " . $this->setValue($value));
+                $this->setParameters($value);
             }
         }
     }

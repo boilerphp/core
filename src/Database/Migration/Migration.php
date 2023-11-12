@@ -10,6 +10,9 @@ class Migration extends Schema
     protected $table = "migrations";
 
 
+    public int $version = 0;
+
+
     public function registerMigration(array $data)
     {
 

@@ -33,7 +33,7 @@ class MigrationReflection extends Migration {
     {
 
         $checker = $this->find("migration", $migration);
-        if ($checker) {
+        if ($checker instanceof Migration) {
             return true;
         }
 
@@ -112,7 +112,7 @@ class MigrationReflection extends Migration {
     public function getCurrentMigrationVersion() {
 
         $last = $this->last();
-        if($last) {
+        if($last instanceof Migration) {
             return $last->version;
         }
 
