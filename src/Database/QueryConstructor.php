@@ -33,12 +33,12 @@ class QueryConstructor
 
     protected function setValue($value)
     {
-        return $this->driver === "sqlite" ? "'$value'" : "?";
+        return in_array($this->driver, ["sqlite", "pdo_sqlite"]) ? "'$value'" : "?";
     }
 
     protected function setParameters($value)
     {
-        if ($this->driver !== "sqlite")
+        if (!in_array($this->driver, ["sqlite", "pdo_sqlite"]))
             array_push($this->parameters, $value);
     }
 

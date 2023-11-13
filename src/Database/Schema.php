@@ -757,10 +757,10 @@ class Schema extends QueryConstructor
         if ($querystring !== "") {
 
             $statement = $this->connection()->prepare($querystring);
-
-            ($data !== null)
-                ? $result = $statement->executeQuery($data)
-                : $result = $statement->executeQuery();
+            if ($data !== null) {
+                $this->bind($statement, $this->parameters);
+            }
+            $result = $statement->executeQuery();
 
             $this->clearInitalQuery();
             return $result;

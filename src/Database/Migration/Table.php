@@ -47,7 +47,7 @@ class Table implements MigrationInterface
     public static function getSocket()
     {
         if (static::$database !== null && static::$database !== 'default') {
-            
+
             return GlobalConfig::getTargetConnection(static::$database);
         } else {
 
@@ -61,9 +61,9 @@ class Table implements MigrationInterface
 
 
     public static function connection($name)
-    {   
-        if(env('APP_ENV')  == 'testing' && env('DB_CONNECTION') == 'sqlite') {
-            setEnv("DB_DATABASE", $name.".sqlite");
+    {
+        if (env('APP_ENV')  == 'testing' && env('DB_CONNECTION') == 'sqlite') {
+            setEnv("DB_DATABASE", $name . ".sqlite");
         }
 
         static::$database = $name;
@@ -75,17 +75,17 @@ class Table implements MigrationInterface
     {
         $driver = GlobalConfig::getAppConnection()->getDriver();
         $diagram = new Diagram($name, $driver);
-        
+
         $callback($diagram);
         $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
 
         $query = $diagram->createTableQuery(
             $diagram->dataTypes()->getQuery(),
             $diagram->dataTypes()->getPrimaryKeys(),
-            ($driver === "sqlite") ? $foreignKeysQuery : null
+            (in_array($driver, ["sqlite", "pdo_sqlite"])) ? $foreignKeysQuery : null
         );
 
-        if($driver !== "sqlite") {
+        if (!in_array($driver, ["sqlite", "pdo_sqlite"])) {
             Table::createAlters($foreignKeysQuery);
         }
 
@@ -106,7 +106,7 @@ class Table implements MigrationInterface
             $diagram->dataTypes()->getPrimaryKeys()
         );
 
-        if ($driver === "sqlite") {
+        if (in_array($driver, ["sqlite", "pdo_sqlite"])) {
             if ($query !== null) {
                 if (preg_match('/\; ALTER TABLE/', $query)) {
                     $queries = explode(';', $query);
@@ -119,17 +119,18 @@ class Table implements MigrationInterface
             }
         }
 
-        if($foreignKeysQuery) {
+        if ($foreignKeysQuery) {
             Table::createAlters($foreignKeysQuery);
         }
 
-        if($query !== null) {
+        if ($query !== null) {
             (new Schema(static::getConnection()))->query($query);
         }
     }
 
-    public static function renameTable($old_name, $new_name) {
-        
+    public static function renameTable($old_name, $new_name)
+    {
+
         $driver = GlobalConfig::getAppConnection()->getDriver();
         $diagram = new Diagram($old_name, $driver);
 
