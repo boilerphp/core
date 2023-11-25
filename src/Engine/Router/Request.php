@@ -106,7 +106,7 @@ class Request extends Validator
                 break;
 
             case 'delete':
-                $this->map($_POST);
+                $this->map($_GET);
                 break;
         }
 
