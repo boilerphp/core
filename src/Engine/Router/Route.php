@@ -108,6 +108,12 @@ class Route extends RoutesConfig
 
         static::$middlewares = array_merge(static::$middlewares, $middlewares);
         $callback();
+
+        static::$middlewares = array_filter(static::$middlewares, function ($middleware) use ($middlewares) {
+            if (!in_array($middleware, $middlewares)) {
+                return $middleware;
+            }
+        });
     }
 
     static public function group($name, $callback)
