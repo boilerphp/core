@@ -33,7 +33,7 @@ class Schema extends QueryConstructor
      * @var string
      *
      */
-    protected $database;
+    protected $database = "default";
 
 
     /**
@@ -66,7 +66,7 @@ class Schema extends QueryConstructor
     /**
      * Database connection 
      *
-     * @var Boiler\Core\Database\Connection
+     * @var \Boiler\Core\Database\Connection
      *
      */
     protected $connection;
@@ -81,9 +81,8 @@ class Schema extends QueryConstructor
 
 
 
-    public function __construct(string $database = null)
+    public function __construct()
     {
-        $this->database = $database;
         $this->connection =  $this->getSocket();
         $this->driver = $this->connection->getDriver();
 
