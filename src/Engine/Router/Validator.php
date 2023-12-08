@@ -117,8 +117,8 @@ class Validator
         } else if (strpos($prop, ":")) {
             $this->lengthValidation($prop,  $field);
         } else if ($prop == "array") {
-            if ($this->$field[0] == "" || $this->$field[0] == null) {
-                $this->validationMessage($field, "Add at least one " . $this->formatKeyLowercase($field));
+            if (!is_array($this->$field)) {
+                $this->validationMessage($field, "Invalid data for field {$this->$field}" . $this->formatKeyLowercase($field));
             }
         }
     }
