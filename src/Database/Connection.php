@@ -118,6 +118,7 @@ class Connection
 
                     $connParams = [
                         'url' => $this->dataSource,
+                        "driver" => "pdo_sqlite",
                     ];
 
                 } else {
