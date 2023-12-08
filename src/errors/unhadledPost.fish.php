@@ -28,7 +28,6 @@
         <p>This url cannot handle a post request. this may be due to unregistered route. <br>
             Please make sure all request routes are registered in the route.php file.
         </p>
-        <a href="">learn more.</a>
     </div>
 </body>
 </html>

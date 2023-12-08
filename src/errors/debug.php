@@ -22,7 +22,7 @@
             @foreach($ex->getTrace() as $trace)
                 <tr>
                     <td colspan="2">@{{ $trace["file"]}}</td>
-                    <td colspan="3">@{{ $trace["message"] }}</td>
+                    <td colspan="3">@{{ $trace["message"] ?? '' }}</td>
                 </tr>
             @endforeach
         </tbody>
