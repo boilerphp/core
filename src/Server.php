@@ -188,7 +188,7 @@ class Server extends App
                     echo json([
                         "error" => $ex->getMessage(),
                         "line" => "Line " . $ex->getLine() . " of " . $ex->getFile(),
-                        // "trace" => $ex->getTrace()
+                        "trace" => $ex->getTrace()
                     ], 500);
 
                     exit;
