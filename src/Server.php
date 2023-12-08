@@ -53,7 +53,7 @@ class Server extends App
                 return false;
             }
 
-            throw new Exception($errstr, 0);
+            throw new Exception("Error[{$errno}]: {$errstr}.<br/>Line {$errline} of {$errfile}", 0);
         });
 
 
