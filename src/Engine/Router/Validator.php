@@ -106,6 +106,10 @@ class Validator
             if (!filter_var($this->$field, FILTER_VALIDATE_FLOAT)) {
                 $this->validationMessage($field, "Only floating numbers are allowed in " . $this->formatKeyLowercase($field) . " field");
             }
+        } else if ($prop == "boolean") {
+            if (!filter_var($this->$field, FILTER_VALIDATE_BOOLEAN)) {
+                $this->validationMessage($field, "Only boolean values are allowed in " . $this->formatKeyLowercase($field) . " field");
+            }
         } else if ($prop == "string") {
             if (gettype($this->$field) != $prop) {
                 $this->validationMessage($field, "Invalid characters for field " . $this->formatKeyLowercase($field));
