@@ -16,6 +16,8 @@ class Response
     {
         if ($json == true) {
             header('Content-Type: application/json; charset=utf-8');
+        } else {
+            header('Content-Type: text/html; charset=utf-8');
         }
 
         header("HTTP/1.1 " . $status . ' ' . $message);
