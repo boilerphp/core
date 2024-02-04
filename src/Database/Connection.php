@@ -114,14 +114,17 @@ class Connection
 
                 $this->buildConnectionString();
 
-                if($this->driver === "sqlite" || $this->driver === "pdo_sqlite") {
+                if ($this->driver === "sqlite" || $this->driver === "pdo_sqlite") {
 
                     $connParams = [
                         'url' => $this->dataSource,
                         "driver" => "pdo_sqlite",
                     ];
-
                 } else {
+
+                    $pdo = new PDO("mysql:host={$this->host};dbname={$this->dbname}", $this->username, $this->password, array(
+                        PDO::ATTR_PERSISTENT => env('PERSIST_DB_CONNECTION') ?? false
+                    ));
 
                     $connParams = [
                         'dbname' => $this->dbname,
@@ -129,11 +132,11 @@ class Connection
                         'password' => $this->password,
                         'host' => $this->host,
                         'driver' => $this->driver,
+                        'pdo' => $pdo,
                     ];
                 }
-                
-                $this->connection = DriverManager::getConnection($connParams);
 
+                $this->connection = DriverManager::getConnection($connParams);
             } catch (\Exception $ex) {
                 throw $ex;
                 exit;
