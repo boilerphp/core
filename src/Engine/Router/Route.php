@@ -341,7 +341,7 @@ class Route extends RoutesConfig
                 $last_date = Carbon::parse($last_used_date);
                 $current_date = Carbon::now();
 
-                $seconds = $last_date->diffInSeconds($current_date);
+                $seconds = $current_date->diffInSeconds($last_date);
 
                 if ($seconds > \App\Config\App::$token_expiration) {
                     return false;
