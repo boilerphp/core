@@ -21,7 +21,8 @@ trait AccessTokens
             'token_type' => $token_type,
             'token_id' => $token_user_id ? $token_user_id : $this->id,
             'token' => hash('sha256', $this->genenrateToken(40)),
-            'access' => json_encode($access)
+            'access' => json_encode($access),
+            'created_date' => timestamp()
         ];
 
         (new Schema)->table($this->_table)->create($token);
