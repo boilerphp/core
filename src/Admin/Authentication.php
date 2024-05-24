@@ -7,19 +7,8 @@ use Boiler\Core\Middlewares\Session;
 class Authentication
 {
 
-    static public function getAuth() {
-
-        if (Session::get("auth")) {
-            $id = Session::get("auth");
-            return (new AuthenticableUser)->find($id);
-        }
-
-        return null;
-    }
-
     static public function user()
     {
-
         if (Session::get("auth")) {
             return (new AuthenticableUser)->user();
         }
@@ -34,8 +23,12 @@ class Authentication
         Session::end("request_validation_message");
     }
 
-    static public function login($user)
+    static public function login($authenticable)
     {
-        Session::set("auth", $user->id);
+        if ($authenticable instanceof AuthenticableUser) {
+            return Session::set("auth", json_encode(['class' => get_class($authenticable), 'id' => $authenticable->id]));
+        }
+
+        throw new \Exception("Auth must be an instace of AuthenticableUser", 1);
     }
 }

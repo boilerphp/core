@@ -10,11 +10,17 @@ use Boiler\Core\Middlewares\Session;
 class AuthenticableUser extends Model
 {
 
-    protected $table = "users";
-
+    public $id; 
+    
     public function user()
     {
-        $id = Session::get("auth");
-        return (new User)->find($id);
+        $auth = json_decode(Session::get("auth"));
+        $authenticable = new $auth->class;
+
+        if ($authenticable instanceof AuthenticableUser) {
+            return $authenticable->find($auth->id);
+        }
+
+        throw new \Exception("Auth must be an instace of AuthenticableUser", 1);
     }
 }
