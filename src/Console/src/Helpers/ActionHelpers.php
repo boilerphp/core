@@ -347,8 +347,10 @@ class ActionHelpers implements ActionHelpersInterface
                 $table_name = $end_arg;
             }
 
+            $table_name = str_replace('create_', '', strtolower($table_name));
+
             $this->module = preg_replace("/\[ClassName\]/", $class_name, $this->component);
-            $this->module = preg_replace("/\[TableName\]/", strtolower($table_name), $this->module);
+            $this->module = preg_replace("/\[TableName\]/", $table_name, $this->module);
 
             if ($this->writeModule($path)) {
                 $this->verbose("Created migration: $path");
