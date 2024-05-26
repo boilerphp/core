@@ -347,10 +347,8 @@ class ActionHelpers implements ActionHelpersInterface
                 $table_name = $end_arg;
             }
 
-            $table_name = str_replace('create_', '', strtolower($table_name));
-
             $this->module = preg_replace("/\[ClassName\]/", $class_name, $this->component);
-            $this->module = preg_replace("/\[TableName\]/", $table_name, $this->module);
+            $this->module = preg_replace("/\[TableName\]/", strtolower($table_name), $this->module);
 
             if ($this->writeModule($path)) {
                 $this->verbose("Created migration: $path");
@@ -611,42 +609,30 @@ class ActionHelpers implements ActionHelpersInterface
 
     public function rollbackMigrations($path = null, $steps = 1)
     {
+        for ($i = 0; $i < $steps; $i++) {
 
-        $all_migrations_file = array_reverse(glob($this->getPath('migration') . "*.php"));
+            $last = $this->migrationReflection->last();
 
-        if ($all_migrations_file) {
+            // Check if migration exists 
+            $migration_file = $this->getPath('migration') . $last->migration . ".php";
+            $this->requireOnce($migration_file);
 
-            $index = 0;
+            $class = $this->migrationReflection->migrationClass($migration_file);
+            $name = $this->migrationReflection->migrationName($migration_file);
 
-            foreach ($all_migrations_file as $migration_file) {
-                if ($index >= $steps) {
-                    break;
-                }
-
-                // Check if migration exists 
-
-                $this->requireOnce($migration_file);
-
-                $class = $this->migrationReflection->migrationClass($migration_file);
-                $name = $this->migrationReflection->migrationName($migration_file);
-
-                if (!$this->migrationReflection->checkMigration($name)) {
-                    continue;
-                }
-
-
-                $this->verbose("Rolling Back: ", "info", false);
-                $this->verbose("{$name}");
-
-                $class->out();
-
-                $this->migrationReflection->deleteMigration($migration_file);
-
-                $this->verbose("Rolled Back: ", "success", false);
-                $this->verbose("{$name}");
-
-                $index++;
+            if (!$this->migrationReflection->checkMigration($name)) {
+                continue;
             }
+
+            $this->verbose("Rolling Back: ", "info", false);
+            $this->verbose("{$name}");
+
+            $class->out();
+
+            $this->migrationReflection->deleteMigration($migration_file);
+
+            $this->verbose("Rolled Back: ", "success", false);
+            $this->verbose("{$name}");
         }
     }
 

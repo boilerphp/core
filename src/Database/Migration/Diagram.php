@@ -2,14 +2,15 @@
 
 namespace Boiler\Core\Database\Migration;
 
+use Boiler\Core\Database\Schema;
 
 class Diagram extends ColumnDefination {
 
     protected $TableQuery;
 
-    public function __construct(protected string $table, protected string $driver)
+    public function __construct(protected string $table, protected string $driver, protected Schema $schema)
     {
-        parent::__construct($table, $driver);
+        parent::__construct($table, $driver, $schema);
     }
     
     public function createTableQuery($columns, $primary_keys, $foreign_keys = null) 

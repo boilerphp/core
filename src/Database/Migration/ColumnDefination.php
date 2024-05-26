@@ -7,7 +7,6 @@ use Boiler\Core\Database\Migration\DataTypes\SqlLiteMigrationDataTypes;
 use Boiler\Core\Database\Schema;
 use Boiler\Core\Exceptions\DriverNotSupportedException;
 use Exception;
-use Reflection;
 use ReflectionClass;
 
 class ColumnDefination
@@ -16,9 +15,6 @@ class ColumnDefination
     protected $dataTypeClass;
 
 
-    protected $schema;
-    
-
     protected $driverDataTypeMap = [
         "sqlite" => SqlLiteMigrationDataTypes::class,
         "pdo_sqlite" => SqlLiteMigrationDataTypes::class,
@@ -26,12 +22,11 @@ class ColumnDefination
         "pdo_mysql" => MySqlMigrationDataTypes::class,
     ];
 
-    public function __construct(protected string $table, protected string $driver)
+    public function __construct(protected string $table, protected string $driver, protected Schema $schema)
     {
         if (array_key_exists($this->driver, $this->driverDataTypeMap)) {
 
             $this->dataTypeClass = new $this->driverDataTypeMap[$this->driver];
-            $this->schema = new Schema();
             $this->dataTypes()->setTable($table);
             return;
         }
@@ -121,17 +116,17 @@ class ColumnDefination
 
     public function dropPrimaryKey()
     {
-        (new Schema)->query("ALTER TABLE `$this->table` DROP PRIMARY KEY");
+        $this->schema->query("ALTER TABLE `$this->table` DROP PRIMARY KEY");
     }
 
     public function dropForeignKey($name)
     {
-        (new Schema)->query(concat(["ALTER TABLE `$this->table` DROP FOREIGN KEY IF EXISTS", "`$name`"]));
+        $this->schema->query(concat(["ALTER TABLE `$this->table` DROP FOREIGN KEY IF EXISTS", "`$name`"]));
     }
 
     public function dropConstraint($name)
     {
-        (new Schema)->query(concat(["ALTER TABLE `$this->table` DROP CONSTRAINT IF EXISTS", "`$name`"]));
+        $this->schema->query(concat(["ALTER TABLE `$this->table` DROP CONSTRAINT IF EXISTS", "`$name`"]));
     }
 
     public function dropIndex($name)
@@ -140,7 +135,7 @@ class ColumnDefination
             return null;
         }
 
-        (new Schema)->query(concat(["ALTER TABLE `$this->table` DROP INDEX", "`$name`"]));
+        $this->schema->query(concat(["ALTER TABLE `$this->table` DROP INDEX", "`$name`"]));
     }
 
     public function timestamps()

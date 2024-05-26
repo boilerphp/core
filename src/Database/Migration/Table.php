@@ -73,8 +73,8 @@ class Table implements MigrationInterface
 
     public static function create($name, $callback)
     {
-        $driver = GlobalConfig::getAppConnection()->getDriver();
-        $diagram = new Diagram($name, $driver);
+        $driver = static::getConnection()->getDriver();
+        $diagram = new Diagram($name, $driver, static::getSchema());
 
         $callback($diagram);
         $foreignKeysQuery = $diagram->dataTypes()->foreignKeyProccessor($name);
@@ -89,13 +89,17 @@ class Table implements MigrationInterface
             Table::createAlters($foreignKeysQuery);
         }
 
-        (new Schema(static::getConnection()))->query($query);
+        $schema = new Schema();
+        $schema->setConnection(static::getConnection());
+        $schema->query($query);
+
+        static::reset();
     }
 
     public static function modify($name, $callback)
     {
-        $driver = GlobalConfig::getAppConnection()->getDriver();
-        $diagram = new Diagram($name, $driver);
+        $driver = static::getConnection()->getDriver();
+        $diagram = new Diagram($name, $driver, static::getSchema());
         $diagram->dataTypes()->setPkMode(false);
 
         $callback($diagram);
@@ -111,7 +115,7 @@ class Table implements MigrationInterface
                 if (preg_match('/\; ALTER TABLE/', $query)) {
                     $queries = explode(';', $query);
                     foreach ($queries as $query) {
-                        (new Schema(static::getConnection()))->query($query);
+                        static::getSchema()->query($query);
                     }
 
                     $query = null;
@@ -124,18 +128,23 @@ class Table implements MigrationInterface
         }
 
         if ($query !== null) {
-            (new Schema(static::getConnection()))->query($query);
+            static::getSchema()->query($query);
         }
+
+        static::reset();
     }
 
     public static function renameTable($old_name, $new_name)
     {
 
-        $driver = GlobalConfig::getAppConnection()->getDriver();
-        $diagram = new Diagram($old_name, $driver);
+        $driver = static::getConnection()->getDriver();
+        $diagram = new Diagram($old_name, $driver, static::getSchema());
 
         $query = $diagram->renameTableQuery($new_name);
-        (new Schema(static::getConnection()))->query($query);
+
+
+        static::getSchema()->query($query);
+        static::reset();
     }
 
     private static function createAlters($foreignKeysQuery)
@@ -152,11 +161,27 @@ class Table implements MigrationInterface
 
     public static function getConnection()
     {
-        return static::$connection;
+        return static::$connection ?? GlobalConfig::getTargetConnection(static::$database);
+    }
+
+    public static function getSchema()
+    {
+        $schema = new Schema();
+        $schema->setConnection(static::getConnection());
+
+        return $schema;
     }
 
     public static function dropIfExists($table)
     {
-        (new Schema(static::$connection))->dropTable($table);
+        $schema = new Schema();
+        $schema->setConnection(static::getConnection());
+        $schema->dropTable($table);
+    }
+
+    private static function reset()
+    {
+        static::$database = 'default';
+        static::$connection = GlobalConfig::getAppConnection();
     }
 }
