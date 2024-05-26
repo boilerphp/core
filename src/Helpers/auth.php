@@ -11,7 +11,7 @@ if (!function_exists("auth")) {
     function auth()
     {
 
-        $auth = Auth::getAuth();
+        $auth = Auth::user();
         if ($auth != null) {
             return $auth;
         }
