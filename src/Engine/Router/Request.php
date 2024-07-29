@@ -246,7 +246,7 @@ class Request extends Validator
 
     protected function map($data)
     {
-        $accept = $this->headers['Accept'] ?? null;
+        $accept = $this->headers['Content-Type'] ?? null;
         if ($accept === 'application/json') {
             $this->jsonMap();
         }
