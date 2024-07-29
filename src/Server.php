@@ -10,6 +10,9 @@ use Boiler\Core\Configs\GlobalConfig;
 use Boiler\Core\Engine\Router\Response;
 use Boiler\Core\FileSystem\Fs;
 use Exception;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\JsonFormatter;
 
 class Server extends App
 {
@@ -52,7 +55,7 @@ class Server extends App
             if (0 === error_reporting()) {
                 return false;
             }
-
+            error_log("Error[{$errno}]: {$errstr}.<br/>Line {$errline} of {$errfile}");
             throw new Exception("Error[{$errno}]: {$errstr}.<br/>Line {$errline} of {$errfile}", 0);
         });
 
@@ -178,6 +181,14 @@ class Server extends App
                 GlobalConfig::closeConnection();
             }
         } catch (\Exception $ex) {
+
+            // create a log channel
+            $logger = new Logger("example");
+
+            $stream_handler = new StreamHandler("logs/debug.log");
+            $logger->pushHandler($stream_handler);
+
+            $logger->error($ex);
 
             $response = Response::responseFormat();
 
