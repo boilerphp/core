@@ -165,6 +165,8 @@ class Schema extends QueryConstructor
             $order = "DESC";
         }
 
+        $this->select($this->selectedColumns);
+
         $sql = strtolower($this->getSql());
         if (strpos($sql, "order by") === false) {
             $this->orderBy($this->unique_column_name, $order)->limit(1);
@@ -172,8 +174,7 @@ class Schema extends QueryConstructor
             $this->limit(1);
         }
 
-
-        $result = $this->get();
+        $result = $this->fetch();
         return $result;
     }
 
