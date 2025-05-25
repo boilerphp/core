@@ -117,22 +117,21 @@ class TemplateEngine
 
             $scripts = "";
             if (strpos($fcontent, "@startScripts")) {
-                $scripts = preg_replace("/(.*)@startScripts/s", "", $fcontent);
-                $scripts = preg_replace("/(.*)@endScripts/", "", $scripts);
+                $scripts = preg_replace("/(.*)@startScripts(.*)@endScripts(.*)/s", "$2", $fcontent);
             }
 
             $styles = "";
             if (strpos($fcontent, "@startStyles")) {
-                $styles = preg_replace("/(.*)@startStyles/s", "", $fcontent);
-                $styles = preg_replace("/(.*)@endStyles/", "", $styles);
+                $styles = preg_replace("/(.*)@startStyles(.*)@endStyles(.*)/s", "$2", $fcontent);
             }
 
-            $fcontent = preg_replace("/@startScripts(.*)@endScripts/s", "", $fcontent);
-            $fcontent = preg_replace("/@startStyles(.*)@endStyles/s", "", $fcontent);
 
+            $fcontent = preg_replace("/(.*)@startStyles(.*)@endStyles(.*)/s", "$1"."$3", $fcontent);
+            $fcontent = preg_replace("/(.*)@startScripts(.*)@endScripts(.*)/s", "$1"."$3", $fcontent);
+            
             $layout = preg_replace("/@\{\{(.*)content(.*)\}\}/", $fcontent, $layout);
-            $layout = preg_replace("/@\{\{(.*)renderScripts(.*)\}\}/", $scripts, $layout);
             $layout = preg_replace("/@\{\{(.*)renderStyles(.*)\}\}/", $styles, $layout);
+            $layout = preg_replace("/@\{\{(.*)renderScripts(.*)\}\}/", "", $layout);
 
             return $layout;
         }
