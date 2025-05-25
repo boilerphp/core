@@ -131,7 +131,7 @@ class TemplateEngine
             
             $layout = preg_replace("/@\{\{(.*)content(.*)\}\}/", $fcontent, $layout);
             $layout = preg_replace("/@\{\{(.*)renderStyles(.*)\}\}/", $styles, $layout);
-            $layout = preg_replace("/@\{\{(.*)renderScripts(.*)\}\}/", "", $layout);
+            $layout = preg_replace("/@\{\{(.*)renderScripts(.*)\}\}/", $scripts, $layout);
 
             return $layout;
         }
