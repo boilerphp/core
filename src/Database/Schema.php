@@ -160,10 +160,18 @@ class Schema extends QueryConstructor
         }
 
         if ($position === 'first') {
-            $this->orderBy($this->unique_column_name, 'ASC')->limit(1);
+            $order = "ASC";
         } else if ($position === 'last') {
-            $this->orderBy($this->unique_column_name, 'DESC')->limit(1);
+            $order = "DESC";
         }
+
+        $sql = strtolower($this->getSql());
+        if (strpos($sql, "order by") === false) {
+            $this->orderBy($this->unique_column_name, $order)->limit(1);
+        } else {
+            $this->limit(1);
+        }
+
 
         $result = $this->get();
         return $result;
